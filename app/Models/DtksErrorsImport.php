@@ -9,5 +9,5 @@ class DtksErrorsImport extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['row', 'attribute', 'values', 'errors'];
+    protected $fillable = ['dtks_import_id','row', 'attribute', 'values', 'errors'];
 }

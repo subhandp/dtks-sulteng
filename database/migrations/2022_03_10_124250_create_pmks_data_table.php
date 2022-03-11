@@ -27,12 +27,12 @@ class CreatePmksDataTable extends Migration
             $table->string('nomor_kk',20);
             $table->string('nomor_nik',20);
             $table->string('nama');
-            $table->date('tanggal_lahir');
+            $table->string('tanggal_lahir');
             $table->string('tempat_lahir');
-            $table->integer('jenis_kelamin',2);
+            $table->string('jenis_kelamin');
             $table->string('nama_ibu_kandung');
             $table->string('hubungan_keluarga');
-            $table->year('tahun_data');
+            $table->string('tahun_data');
             $table->string('jenis_pmks');
             $table->timestamps();
         });

@@ -18,8 +18,8 @@ class CreateDtksErrorsImportsTable extends Migration
             $table->unsignedBigInteger('dtks_import_id');
             $table->string('attribute');
             $table->unsignedInteger('row');
-            $table->json('values');
-            $table->json('errors');
+            $table->string('values');
+            $table->string('errors');
             $table->foreign('dtks_import_id')->references('id')->on('dtks_imports');
             $table->timestamps();
         });

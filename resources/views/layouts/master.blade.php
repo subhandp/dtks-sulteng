@@ -354,6 +354,7 @@
 
     <script src="/filepond/js/dataTables.responsive.min.js"></script>
 
+    <script src="/filepond/js/filepond-plugin-file-validate-size.js"></script>
     <script src="/filepond/js/filepond.js"></script>
 
     <script>
@@ -367,7 +368,7 @@
         {
             labelMaxTotalFileSizeExceeded: 'Ukuran total keseluruhan file terlampaui',
             labelMaxTotalFileSize: 'Total maksimum seluruh file adalah {filesize}',
-            maxTotalFileSize: '40MB'
+            maxTotalFileSize: '50MB'
         });
 
         
@@ -395,8 +396,7 @@
 
     </script>
 
-    @yield('file-pond-create')
-    @yield('file-pond-edit')
+    @yield('file-pond-import')
 
     <script>
 
