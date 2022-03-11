@@ -13,8 +13,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 // use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 // use Maatwebsite\Excel\Concerns\WithMultipleSheets;
-// use Maatwebsite\Excel\Concerns\WithHeadingRow;
-// use Maatwebsite\Excel\Concerns\Importable;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\SkipsOnError;
 use Maatwebsite\Excel\Concerns\SkipsErrors;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
@@ -24,6 +24,8 @@ use Maatwebsite\Excel\Validators\Failure;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithValidation;
+use Illuminate\Validation\Rule;
+
 
 
 
@@ -31,10 +33,10 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 // WithHeadingRow,
 
 // ToModel, WithBatchInserts,
-class PmksDataImport implements OnEachRow, WithValidation, WithEvents, WithChunkReading, ShouldQueue,  SkipsOnError, SkipsOnFailure
+class PmksDataImport implements OnEachRow, WithHeadingRow, WithValidation, WithEvents, WithChunkReading, ShouldQueue,  SkipsOnError, SkipsOnFailure
 {
-    // use Importable,SkipsErrors, SkipsFailures;
-    use SkipsErrors, SkipsFailures;
+    use Importable,SkipsErrors, SkipsFailures;
+    // use SkipsErrors, SkipsFailures;
 
     public $id;
     public $tahun_data;
@@ -53,19 +55,30 @@ class PmksDataImport implements OnEachRow, WithValidation, WithEvents, WithChunk
     //         'delimiter' => '|',
     //     ];
     // }
-
+    
     public function rules(): array
     {
         return [
-            // '*.email' => ['email', 'unique:users,email'],
-            '0' => function($attribute, $value, $onFailure) {
-                if ($value !== 'ID DTKS') {
-                     $onFailure('TIDAK BOLEH HEADER');
-                }
-            },
-            '1' => 'required'
+            'id_dtks' => [
+                'required',
+                Rule::unique('pmks_data', 'iddtks')
+            ],
+            'provinsi' => ['required']
         ];
     }
+
+    // public function rules(): array
+    // {
+    //     return [
+    //         // '*.email' => ['email', 'unique:users,email'],
+    //         '0' => function($attribute, $value, $onFailure) {
+    //             if ($value === '-------') {
+    //                  $onFailure('TIDAK BOLEH -------');
+    //             }
+    //         },
+    //         '1' => 'required'
+    //     ];
+    // }
 
     public function chunkSize(): int
     {
@@ -128,56 +141,60 @@ class PmksDataImport implements OnEachRow, WithValidation, WithEvents, WithChunk
         $row      = array_map('trim', $row->toArray());
         cache()->forever("current_row_{$this->id}", $rowIndex);
         PmksData::create([ 
-        'iddtks' => $row[0], 
-        'provinsi' => $row[1], 
-        'kabupaten_kota' => $row[2], 
-        'kecamatan' => $row[3], 
-        'desa_kelurahan' => $row[4], 
-        'alamat' => $row[5], 
-        'dusun' => $row[6], 
-        'rt' => $row[7], 
-        'rw' => $row[8],
-        'nomor_kk' => $row[9], 
-        'nomor_nik' => $row[10], 
-        'nama' => $row[11], 
-        'tanggal_lahir' => $row[12], 
-        'tempat_lahir' => $row[13], 
-        'jenis_kelamin' => $row[14], 
-        'nama_ibu_kandung' => $row[15],
-        'hubungan_keluarga' => $row[16], 
+        'iddtks' => $row['id_dtks'], 
+        'provinsi' => $row['provinsi'], 
+        'kabupaten_kota' => $row['kabupatenkota'], 
+        'kecamatan' => $row['kecamatan'], 
+        'desa_kelurahan' => $row['desakeluarahan'], 
+        'alamat' => $row['alamat'], 
+        'dusun' => $row['dusun'], 
+        'rt' => $row['rt'], 
+        'rw' => $row['rw'],
+        'nomor_kk' => $row['nomor_kk'], 
+        'nomor_nik' => $row['nomor_nik'], 
+        'nama' => $row['nama'], 
+        'tanggal_lahir' => $row['tanggal_lahir'], 
+        'tempat_lahir' => $row['tempat_lahir'], 
+        'jenis_kelamin' => $row['jenis_kelamin'], 
+        'nama_ibu_kandung' => $row['nama_ibu_kandung'],
+        'hubungan_keluarga' => $row['hubungan_keluarga'], 
         'tahun_data' => $this->tahun_data, 
         'jenis_pmks' => $this->jenis_pmks
         ]);
     }
 
-    // public function onFailure(Failure ...$failures)
-    // {
-    //     // Handle the failures how you'd like.
-    //     DtksErrorsImport::create([
-    //         'dtks_import_id' => 1,
-    //         'row' => 0,
-    //         'attribute' => 'failure',
-    //         'values' => 'failure',
-    //         'errors' => 'failure'
-    //     ]);
-    //     return true;
-    // }
+    public function onFailure(Failure ...$failures)
+    {
+        // Handle the failures how you'd like.
+        $failures = json_decode(json_encode($failures));
+        foreach ($failures as $key => $val) {
+            
+            DtksErrorsImport::create([
+                'dtks_import_id' => 1,
+                'row' => $val->row,
+                'attribute' => $val->attribute,
+                'values' => 'value',
+                'errors' => $val->errors[0]
+            ]);
+        }
+
+    }
 
     // /**
     //  * @param \Throwable $e
     //  */
-    // public function onError(\Throwable $e)
-    // {
-    //     // Handle the exception how you'd like.
+    public function onError(\Throwable $e)
+    {
+        // Handle the exception how you'd like.
        
-    //     DtksErrorsImport::create([
-    //         'dtks_import_id' => 1,
-    //         'row' => 0,
-    //         'attribute' => 'default',
-    //         'values' => 'default',
-    //         'errors' => $e->getMessage()
-    //     ]);
-    // }
+        DtksErrorsImport::create([
+            'dtks_import_id' => 1,
+            'row' => 0,
+            'attribute' => 'header error',
+            'values' => 'value',
+            'errors' => 'pesan error'
+        ]);
+    }
 
     // public function model(array $row)
     // {
