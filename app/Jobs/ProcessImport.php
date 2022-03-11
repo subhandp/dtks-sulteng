@@ -61,40 +61,6 @@ class ProcessImport implements ShouldQueue
             $import = new PmksDataImport($dtksimport->id, 2022, 'jenis_pmks');
             
             $import->import($path);
-            // return true;
-            // try {
-            //     $import->import($path);
-            // } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-            //     $dtkserror = new DtksErrorsImport();
-            //     $dtkserror->dtks_import_id = 1;
-            //     $dtkserror->row =0;
-            //     $dtkserror->attribute = 'error';
-            //     $dtkserror->values = 'error';
-            //     $dtkserror->errors = 'error';
-            //     $dtkserror->save();
-            // }
-
-        //     foreach ($import->failures() as $failure) {
-        //         $dtkserror = new DtksErrorsImport();
-        //         $dtkserror->dtks_import_id = 1;
-        //         $dtkserror->row =0;
-        //         $dtkserror->attribute = 'failure';
-        //         $dtkserror->values = 'failure';
-        //         $dtkserror->errors = 'failure';
-        //         $dtkserror->save();
-        //    }
-
-        //    foreach ($import->errors() as $error) {
-        //     $dtkserror = new DtksErrorsImport();
-        //     $dtkserror->dtks_import_id = 1;
-        //     $dtkserror->row =0;
-        //     $dtkserror->attribute = 'error';
-        //     $dtkserror->values = 'error';
-        //     $dtkserror->errors = 'error';
-        //     $dtkserror->save();
             
-        //     }
-
-    
     }
 }

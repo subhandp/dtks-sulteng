@@ -44,7 +44,7 @@
                     @endforeach
                 </table>
             @endif
-            
+
             <div class="row">
                 <div class="col">
                 <h5>
@@ -74,21 +74,41 @@
                         <th>TANGGAL UPLOAD</th>
                         <th>JUMLAH BARIS</th>
                         <th>STATUS</th>
-                        <th>KETERANGAN UPLOAD</th>
+                        <th>PERSENTASE</th>
                         <th>AKSI</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $no = 0;?>
-                        @foreach($data_pmks_import as $import)
-                        <?php $no++ ;?>
+                        @php
+                            $no = 0;
+                        @endphp
+                       
+                        @foreach($data_pmks_import as $key => $import)
+                        @php
+                             $no++ ;
+
+                             if (isset($data_pmks_import_status[$key])) {
+                                $total_rows = $data_pmks_import_status[$key]['total_rows'];
+                                $current_rows = $data_pmks_import_status[$key]['current_row'];
+                                $persentase =  $data_pmks_import_status[$key]['persentase'];
+                            }
+                            else{
+                                $total_rows = '-';
+                                $current_rows = '-';
+                                $persentase =  'proses belum mulai';
+                            }
+
+                        @endphp
                         <tr>
+                        
                             <td>{{$no}}</td>
-                            <td>{{ $import->nama_file }}</td>
-                            <td>{{ $import->tgl_upload }}</td>
-                            <td>{{ $import->jumlah_baris }}</td>
-                            <td>{{ $import->status }}</td>
-                            <td>{{ $import->keterangan }}</td>
+                            <td>{{ $import->filename }}</td>
+                            <td>{{ $import->created_at }}</td>
+                            <td> <strong>{{ $total_rows }}</strong> (Total)  => <strong>{{ $current_rows }} </strong> (selesai)</td>
+                            <td>{{ $import->status_import }}</td>
+                            <td>                          
+                                <strong>{{ $persentase }} %</strong>
+                            </td>
                             <td>
                                 <a href="#" class="btn btn-default btn-sm my-1 mr-sm-1 btn-block"><i class="fas fa-eye"></i></a>
                             </td>
@@ -122,11 +142,11 @@
                                     <label for="tahun_data" class="col-sm-3 col-form-label">Tahun data</label>
                                     <div class="input-group col-sm-9">
                                         <select class="form-control" id="tahun_data" name="tahun_data">
-                                            <option>2022</option>
-                                            <option>2021</option>
-                                            <option>2020</option>
-                                            <option>2019</option>
-                                            <option>2018</option>
+                                            <option value="2022">2022</option>
+                                            <option value="2021">2021</option>
+                                            <option value="2020">2020</option>
+                                            <option value="2019">2019</option>
+                                            <option value="2018">2018</option>
                                         </select>
                                     </div>
                                 </div>
@@ -135,10 +155,9 @@
                                     <label for="jenis_pmks" class="col-sm-3 col-form-label">Jenis PMKS</label>
                                     <div class="input-group col-sm-9">
                                         <select class="form-control" id="jenis_pmks" name="jenis_pmks">
-                                            <option value="">Pilih jenis PMKS</option>
-                                            <option value="1">Keluarga fakir miskin</option>
-                                            <option value="2">Korban bencana alam</option>
-                                            <option value="3">Korban bencana sosial</option>
+                                            <option value="Keluarga fakir miskin">Keluarga fakir miskin</option>
+                                            <option value="Korban bencana alam">Korban bencana alam</option>
+                                            <option value="Korban bencana sosial">Korban bencana sosial</option>
                                         </select>
                                     </div>
                                 </div>

@@ -9,19 +9,39 @@ use Illuminate\Http\Request;
 // use Maatwebsite\Excel\Facades\Excel;
 // use App\Imports\PmksDataImport;
 use App\Jobs\ProcessImport;
+// use App\Models\DtksImport;
+use Illuminate\Support\Facades\DB;
 
 class PmksController extends Controller
 {
     
     public function index()
     {
-        // $data_suratmasuk = SuratMasuk::where('users_id', Auth::id())->orderBy('created_at', 'DESC')->get();
-        $data_pmks_import = [];
+        $data_pmks_import = DB::table('dtks_imports')
+        ->orderBy('created_at', 'desc')
+        ->get();
+        
+        $data_pmks_import_status = [];
+        foreach ($data_pmks_import as $import) {
+            $current_row = (int) cache("current_row_$import->id");
+            $total_rows = (int) cache("total_rows_$import->id");
+            $persentase = ceil(($current_row / $total_rows) * 100);
+            $status = [
+                'started' => filled(cache("start_date_$import->id")),
+                'finished' => filled(cache("end_date_$import->id")),
+                'current_row' => $current_row,
+                'total_rows' => $total_rows,
+                'persentase' =>  $persentase
+            ];
+            $data_pmks_import_status[] = $status;
+        }
+        
+
         $class_menu_pmks = "menu-open";
         $class_menu_pmks_import = "sub-menu-open";
         $class_menu_pmks_daftar = "";
 
-        return view('pmks.index', compact('data_pmks_import','class_menu_pmks','class_menu_pmks_import','class_menu_pmks_daftar'));
+        return view('pmks.index', compact('data_pmks_import_status','data_pmks_import','class_menu_pmks','class_menu_pmks_import','class_menu_pmks_daftar'));
 
         // return view('suratmasuk.index',['data_suratmasuk'=> $data_suratmasuk]);
     }
@@ -85,10 +105,21 @@ class PmksController extends Controller
         return redirect('/pmks/import-data')->with("sukses", 1);
        
     }
+    private function statusImport($id)
+    {
+        return [
+            'started' => filled(cache("start_date_$id")),
+            'finished' => filled(cache("end_date_$id")),
+            'current_row' => (int) cache("current_row_$id"),
+            'total_rows' => (int) cache("total_rows_$id"),
+        ];
+    }
 
     public function status()
     {
+        
         $id = request('id');
+
         return response([
             'started' => filled(cache("start_date_$id")),
             'finished' => filled(cache("end_date_$id")),

@@ -49,13 +49,6 @@ class PmksDataImport implements OnEachRow, WithHeadingRow, WithValidation, WithE
         $this->jenis_pmks = $jenis_pmks;
     }
 
-    // public function getCsvSettings(): array
-    // {
-    //     return [
-    //         'delimiter' => '|',
-    //     ];
-    // }
-    
     public function rules(): array
     {
         return [
@@ -63,23 +56,13 @@ class PmksDataImport implements OnEachRow, WithHeadingRow, WithValidation, WithE
                 'required',
                 Rule::unique('pmks_data', 'iddtks')
             ],
-            'provinsi' => ['required']
+            'provinsi' => ['required'],
+            'kabupatenkota' => ['required'],
+            'nama' => ['required']
         ];
     }
 
-    // public function rules(): array
-    // {
-    //     return [
-    //         // '*.email' => ['email', 'unique:users,email'],
-    //         '0' => function($attribute, $value, $onFailure) {
-    //             if ($value === '-------') {
-    //                  $onFailure('TIDAK BOLEH -------');
-    //             }
-    //         },
-    //         '1' => 'required'
-    //     ];
-    // }
-
+   
     public function chunkSize(): int
     {
         return 1000;
@@ -170,7 +153,7 @@ class PmksDataImport implements OnEachRow, WithHeadingRow, WithValidation, WithE
         foreach ($failures as $key => $val) {
             
             DtksErrorsImport::create([
-                'dtks_import_id' => 1,
+                'dtks_import_id' => $this->id,
                 'row' => $val->row,
                 'attribute' => $val->attribute,
                 'values' => 'value',
@@ -180,28 +163,17 @@ class PmksDataImport implements OnEachRow, WithHeadingRow, WithValidation, WithE
 
     }
 
-    // /**
-    //  * @param \Throwable $e
-    //  */
     public function onError(\Throwable $e)
     {
-        // Handle the exception how you'd like.
-       
+        $error = json_decode(json_encode($e));
         DtksErrorsImport::create([
-            'dtks_import_id' => 1,
+            'dtks_import_id' => $this->id,
             'row' => 0,
             'attribute' => 'header error',
-            'values' => 'value',
-            'errors' => 'pesan error'
+            'values' => 'line: '.$error->line,
+            'errors' => substr($error->message, 0, 100)
         ]);
     }
-
-    // public function model(array $row)
-    // {
-    //     return new PmksData([
-    //         //
-    //     ]);
-    // }
 
 
 }
