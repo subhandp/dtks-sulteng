@@ -16,10 +16,10 @@ class CreateDtksErrorsImportsTable extends Migration
         Schema::create('dtks_errors_imports', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('dtks_import_id');
-            $table->string('attribute');
-            $table->unsignedInteger('row');
-            $table->string('values');
-            $table->string('errors');
+            $table->string('attribute')->nullable();
+            $table->unsignedInteger('row')->nullable();
+            $table->string('values')->nullable();
+            $table->string('errors')->nullable();
             $table->foreign('dtks_import_id')->references('id')->on('dtks_imports');
             $table->timestamps();
         });
