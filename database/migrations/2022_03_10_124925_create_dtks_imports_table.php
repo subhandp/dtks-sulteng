@@ -18,7 +18,8 @@ class CreateDtksImportsTable extends Migration
             $table->string('no_tiket');
             $table->string('filename');
             $table->string('filepath');
-            $table->string('jumlah_baris');
+            $table->string('jumlah_baris',100);
+            $table->string('baris_selesai',100)->default(0);
             $table->string('status_import',100);
             $table->mediumText('keterangan');
             $table->timestamps();
