@@ -15,28 +15,31 @@ class CreatePmksDataTable extends Migration
     {
         Schema::create('pmks_data', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('dtks_import_id');
             $table->string('iddtks');
-            $table->string('provinsi');
-            $table->string('kabupaten_kota');
-            $table->string('kecamatan');
-            $table->string('desa_kelurahan');
-            $table->mediumText('alamat');
-            $table->string('dusun');
-            $table->string('rt',5);
-            $table->string('rw',5);
-            $table->string('nomor_kk',20);
-            $table->string('nomor_nik',20);
-            $table->string('nama');
-            $table->string('tanggal_lahir');
-            $table->string('tempat_lahir');
-            $table->string('jenis_kelamin');
-            $table->string('nama_ibu_kandung');
-            $table->string('hubungan_keluarga');
-            $table->string('tahun_data');
-            $table->string('jenis_pmks');
+            $table->string('provinsi')->nullable();
+            $table->string('kabupaten_kota')->nullable();
+            $table->string('kecamatan')->nullable();
+            $table->string('desa_kelurahan')->nullable();
+            $table->string('alamat')->nullable();
+            $table->string('dusun')->nullable();
+            $table->string('rt',5)->nullable();
+            $table->string('rw',5)->nullable();
+            $table->string('nomor_kk',20)->nullable();
+            $table->string('nomor_nik',20)->nullable();
+            $table->string('nama')->nullable();
+            $table->string('tanggal_lahir')->nullable();
+            $table->string('tempat_lahir')->nullable();
+            $table->string('jenis_kelamin')->nullable();
+            $table->string('nama_ibu_kandung')->nullable();
+            $table->string('hubungan_keluarga')->nullable();
+            $table->string('tahun_data')->nullable();
+            $table->string('jenis_pmks')->nullable(); 
+            // $table->foreign('dtks_import_id')->references('id')->on('dtks_imports');
             $table->timestamps();
         });
     }
+            
 
     /**
      * Reverse the migrations.

@@ -33,7 +33,8 @@ use Illuminate\Validation\Rule;
 // WithHeadingRow,
 
 // ToModel, WithBatchInserts,
-class PmksDataImport implements OnEachRow, WithHeadingRow, WithValidation, WithEvents, WithChunkReading, ShouldQueue,  SkipsOnError, SkipsOnFailure
+// OnEachRow
+class PmksDataImport implements ToModel, WithBatchInserts, WithHeadingRow, WithValidation, WithEvents, WithChunkReading, ShouldQueue,  SkipsOnError, SkipsOnFailure
 {
     use Importable,SkipsErrors, SkipsFailures;
     // use SkipsErrors, SkipsFailures;
@@ -88,63 +89,63 @@ class PmksDataImport implements OnEachRow, WithHeadingRow, WithValidation, WithE
                 cache(["end_date_{$this->id}" => now()], now()->addMinute());
                 cache()->forget("total_rows_{$this->id}");
                 cache()->forget("start_date_{$this->id}");
-                cache()->forget("current_row_{$this->id}");
             },
         ];
     }
 
-    // public function model(array $row)
-    // {
-    //     PmksData::create([
-    //         'iddtks' => $row[0], 
-    //         'provinsi' => $row[1], 
-    //         'kabupaten_kota' => $row[2], 
-    //         'kecamatan' => $row[3], 
-    //         'desa_kelurahan' => $row[4], 
-    //         'alamat' => $row[5], 
-    //         'dusun' => $row[6], 
-    //         'rt' => $row[7], 
-    //         'rw' => $row[8],
-    //         'nomor_kk' => $row[9], 
-    //         'nomor_nik' => $row[10], 
-    //         'nama' => $row[11], 
-    //         'tanggal_lahir' => $row[12], 
-    //         'tempat_lahir' => $row[13], 
-    //         'jenis_kelamin' => $row[14], 
-    //         'nama_ibu_kandung' => $row[15],
-    //         'hubungan_keluarga' => $row[16], 
-    //         'tahun_data' => $this->tahun_data, 
-    //         'jenis_pmks' => $this->jenis_pmks
-    //     ]);
-    // }
-
-    public function onRow(Row $row)
+    public function model(array $row)
     {
-        $rowIndex = $row->getIndex();
-        $row      = array_map('trim', $row->toArray());
-        cache()->forever("current_row_{$this->id}", $rowIndex);
-        PmksData::create([ 
-        'iddtks' => $row['id_dtks'], 
-        'provinsi' => $row['provinsi'], 
-        'kabupaten_kota' => $row['kabupatenkota'], 
-        'kecamatan' => $row['kecamatan'], 
-        'desa_kelurahan' => $row['desakeluarahan'], 
-        'alamat' => $row['alamat'], 
-        'dusun' => $row['dusun'], 
-        'rt' => $row['rt'], 
-        'rw' => $row['rw'],
-        'nomor_kk' => $row['nomor_kk'], 
-        'nomor_nik' => $row['nomor_nik'], 
-        'nama' => $row['nama'], 
-        'tanggal_lahir' => $row['tanggal_lahir'], 
-        'tempat_lahir' => $row['tempat_lahir'], 
-        'jenis_kelamin' => $row['jenis_kelamin'], 
-        'nama_ibu_kandung' => $row['nama_ibu_kandung'],
-        'hubungan_keluarga' => $row['hubungan_keluarga'], 
-        'tahun_data' => $this->tahun_data, 
-        'jenis_pmks' => $this->jenis_pmks
+        return new PmksData([
+            'dtks_import_id' => $this->id,
+            'iddtks' => $row['id_dtks'], 
+            'provinsi' => $row['provinsi'], 
+            'kabupaten_kota' => $row['kabupatenkota'], 
+            'kecamatan' => $row['kecamatan'], 
+            'desa_kelurahan' => $row['desakeluarahan'], 
+            'alamat' => $row['alamat'], 
+            'dusun' => $row['dusun'], 
+            'rt' => $row['rt'], 
+            'rw' => $row['rw'],
+            'nomor_kk' => $row['nomor_kk'], 
+            'nomor_nik' => $row['nomor_nik'], 
+            'nama' => $row['nama'], 
+            'tanggal_lahir' => $row['tanggal_lahir'], 
+            'tempat_lahir' => $row['tempat_lahir'], 
+            'jenis_kelamin' => $row['jenis_kelamin'], 
+            'nama_ibu_kandung' => $row['nama_ibu_kandung'],
+            'hubungan_keluarga' => $row['hubungan_keluarga'], 
+            'tahun_data' => $this->tahun_data, 
+            'jenis_pmks' => $this->jenis_pmks
         ]);
     }
+
+    // public function onRow(Row $row)
+    // {
+    //     $rowIndex = $row->getIndex();
+    //     $row      = array_map('trim', $row->toArray());
+    //     cache()->forever("current_row_{$this->id}", $rowIndex);
+    //     PmksData::create([ 
+    //     'iddtks' => $row['id_dtks'], 
+    //     'provinsi' => $row['provinsi'], 
+    //     'kabupaten_kota' => $row['kabupatenkota'], 
+    //     'kecamatan' => $row['kecamatan'], 
+    //     'desa_kelurahan' => $row['desakeluarahan'], 
+    //     'alamat' => $row['alamat'], 
+    //     'dusun' => $row['dusun'], 
+    //     'rt' => $row['rt'], 
+    //     'rw' => $row['rw'],
+    //     'nomor_kk' => $row['nomor_kk'], 
+    //     'nomor_nik' => $row['nomor_nik'], 
+    //     'nama' => $row['nama'], 
+    //     'tanggal_lahir' => $row['tanggal_lahir'], 
+    //     'tempat_lahir' => $row['tempat_lahir'], 
+    //     'jenis_kelamin' => $row['jenis_kelamin'], 
+    //     'nama_ibu_kandung' => $row['nama_ibu_kandung'],
+    //     'hubungan_keluarga' => $row['hubungan_keluarga'], 
+    //     'tahun_data' => $this->tahun_data, 
+    //     'jenis_pmks' => $this->jenis_pmks
+    //     ]);
+    // }
 
     public function onFailure(Failure ...$failures)
     {
@@ -165,13 +166,13 @@ class PmksDataImport implements OnEachRow, WithHeadingRow, WithValidation, WithE
 
     public function onError(\Throwable $e)
     {
-        $error = json_decode(json_encode($e));
+        // $error = json_decode(json_encode($e));
         DtksErrorsImport::create([
             'dtks_import_id' => $this->id,
             'row' => 0,
-            'attribute' => 'header error',
-            'values' => 'line: '.$error->line,
-            'errors' => substr($error->message, 0, 100)
+            'attribute' => 'error exception',
+            'values' => 'line: '.$e->getCode(),
+            'errors' => substr($e->getMessage(), 0, 100)
         ]);
     }
 

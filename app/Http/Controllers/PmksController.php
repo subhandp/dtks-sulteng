@@ -23,7 +23,9 @@ class PmksController extends Controller
         
         $data_pmks_import_status = [];
         foreach ($data_pmks_import as $import) {
-            $current_row = (int) cache("current_row_$import->id");
+            $current_row = DB::table('pmks_data')
+            ->where('dtks_import_id', '=', $import->id)
+            ->count();
             $total_rows = (int) cache("total_rows_$import->id");
             $persentase = ceil(($current_row / $total_rows) * 100);
             $status = [
@@ -105,15 +107,7 @@ class PmksController extends Controller
         return redirect('/pmks/import-data')->with("sukses", 1);
        
     }
-    private function statusImport($id)
-    {
-        return [
-            'started' => filled(cache("start_date_$id")),
-            'finished' => filled(cache("end_date_$id")),
-            'current_row' => (int) cache("current_row_$id"),
-            'total_rows' => (int) cache("total_rows_$id"),
-        ];
-    }
+    
 
     public function status()
     {
