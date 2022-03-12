@@ -23,11 +23,15 @@ class PmksController extends Controller
         
         $data_pmks_import_status = [];
         foreach ($data_pmks_import as $import) {
-            $current_row = DB::table('pmks_data')
-            ->where('dtks_import_id', '=', $import->id)
-            ->count();
-            $total_rows = (int) cache("total_rows_$import->id");
-            $persentase = ceil(($current_row / $total_rows) * 100);
+            // $current_row = DB::table('pmks_data')
+            // ->where('dtks_import_id', '=', $import->id)
+            // ->count();
+            // $total_rows = (int) cache("total_rows_$import->id");
+            // $persentase = ceil(($current_row / $total_rows) * 100);
+            $persentase = 0;
+            $total_rows = 0;
+            $current_row = 0;
+
             $status = [
                 'started' => filled(cache("start_date_$import->id")),
                 'finished' => filled(cache("end_date_$import->id")),

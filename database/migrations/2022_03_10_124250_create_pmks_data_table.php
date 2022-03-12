@@ -15,18 +15,18 @@ class CreatePmksDataTable extends Migration
     {
         Schema::create('pmks_data', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('dtks_import_id');
-            $table->string('iddtks');
+            $table->unsignedBigInteger('dtks_import_id')->nullable();
+            $table->string('iddtks')->nullable();
             $table->string('provinsi')->nullable();
             $table->string('kabupaten_kota')->nullable();
             $table->string('kecamatan')->nullable();
             $table->string('desa_kelurahan')->nullable();
             $table->string('alamat')->nullable();
             $table->string('dusun')->nullable();
-            $table->string('rt',5)->nullable();
-            $table->string('rw',5)->nullable();
-            $table->string('nomor_kk',20)->nullable();
-            $table->string('nomor_nik',20)->nullable();
+            $table->string('rt')->nullable();
+            $table->string('rw')->nullable();
+            $table->string('nomor_kk')->nullable();
+            $table->string('nomor_nik')->nullable();
             $table->string('nama')->nullable();
             $table->string('tanggal_lahir')->nullable();
             $table->string('tempat_lahir')->nullable();

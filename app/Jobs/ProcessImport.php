@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\PmksDataImport;
 use App\Models\DtksErrorsImport;
+use Illuminate\Support\Facades\DB;
 
 class ProcessImport implements ShouldQueue
 {
@@ -58,10 +59,23 @@ class ProcessImport implements ShouldQueue
 
             $path = storage_path('app/'.$finalpath).'/'.$upload['filename'];
             
+            try {
+                $pdo = DB::connection()->getPdo();
+                $path = str_replace('\\', '/', $path);
+                $pdo->exec("LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE pmks_data FIELDS TERMINATED BY '|' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (iddtks, provinsi, kabupaten_kota, kecamatan, desa_kelurahan, alamat, dusun, rt, rw,nomor_kk, nomor_nik, nama, tanggal_lahir, tempat_lahir, jenis_kelamin, nama_ibu_kandung,hubungan_keluarga, @tahun_data, @jenis_pmks, @created_at, @updated_at,@dtks_import_id) SET dtks_import_id = 1, tahun_data = 2022, jenis_pmks = default, created_at = NOW(), updated_at = NOW()");
+            } catch (\Exception  $e) {
+                DtksErrorsImport::create([
+                    'dtks_import_id' => $this->id,
+                    'row' => 0,
+                    'attribute' => 'line: '.$e->getLine(),
+                    'values' => 'code: '.$e->getCode(),
+                    'errors' => substr($e->getMessage(), 0, 100)
+                ]);
+            }
             
-            $import = new PmksDataImport($dtksimport->id, 2022, 'jenis_pmks');
+            // $import = new PmksDataImport($dtksimport->id, 2022, 'jenis_pmks');
             
-            $import->import($path);
+            // $import->import($path);
             
     }
 }
