@@ -57,7 +57,9 @@ class PmksController extends Controller
     public function daftarpmks()
     {
         // $data_suratmasuk = SuratMasuk::where('users_id', Auth::id())->orderBy('created_at', 'DESC')->get();
-        $data_daftar_pmks = [];
+        $data_daftar_pmks = DB::table('pmks_data_temp')
+        ->orderBy('created_at', 'desc')
+        ->get();
         $class_menu_pmks = "menu-open";
         $class_menu_daftar_pmks = "sub-menu-open";
         $class_menu_pmks_import = "";

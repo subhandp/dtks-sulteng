@@ -238,7 +238,7 @@
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-mail-bulk"></i>
                                 <p>
-                                    PMKS
+                                    Import Data PMKS
                                     <i class="fas fa-angle-left right"></i>
                                 </p>
                             </a>
@@ -260,7 +260,7 @@
                                     @endisset
                                     ">
                                         <i class="far fa-envelope-open nav-icon"></i>
-                                        <p>Daftar PMKS</p>
+                                        <p>Daftar Data</p>
                                     </a>
                                 </li>
                             </ul>

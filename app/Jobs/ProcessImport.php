@@ -56,7 +56,7 @@ class ProcessImport implements ShouldQueue
                 $dtksimport->filepath = $finalpath;
                 $dtksimport->jumlah_baris = '-';
                 $dtksimport->baris_selesai = '-';
-                $dtksimport->status_import = 'file-stored';
+                $dtksimport->status_import = 'FILE TERSIMPAN';
                 $dtksimport->keterangan = '-';
                 $dtksimport->save();
                 $this->dtksimportId = $dtksimport->id;
@@ -66,6 +66,8 @@ class ProcessImport implements ShouldQueue
 
             $path = storage_path('app/'.$finalpath).'/'.$upload['filename'];
             
+            DtksImport::find($this->dtksimportId)
+                        ->update(['status_import' => 'PROSES IMPORT']);
             try {
                 $pdo = DB::connection()->getPdo();
                 $path = str_replace('\\', '/', $path);
@@ -78,8 +80,13 @@ class ProcessImport implements ShouldQueue
                     'values' => 'code: '.$e->getCode(),
                     'errors' => substr($e->getMessage(), 0, 200)
                 ]);
+                DtksImport::find($this->dtksimportId)
+                        ->update(['status_import' => 'GAGAL IMPORT']);
                 return false;
             }
+
+            DtksImport::find($this->dtksimportId)
+                        ->update(['status_import' => 'SUKSES IMPORT']);
     }
 }
 

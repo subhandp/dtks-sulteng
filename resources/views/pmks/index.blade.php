@@ -72,9 +72,9 @@
                         <th>NO.</th>
                         <th>NAMA FILE</th>
                         <th>TANGGAL UPLOAD</th>
-                        <th>JUMLAH BARIS</th>
-                        <th>STATUS</th>
-                        <th>PERSENTASE</th>
+                        <th>STATUS IMPORT</th>
+                        <th>STATUS POSTING</th>
+                        <th>(%) POSTING</th>
                         <th>AKSI</th>
                         </tr>
                     </thead>
@@ -104,13 +104,20 @@
                             <td>{{$no}}</td>
                             <td>{{ $import->filename }}</td>
                             <td>{{ $import->created_at }}</td>
+                            <td><strong>{{ $import->status_import }}</strong></td>
                             <td> <strong>{{ $total_rows }}</strong> (Total)  => <strong>{{ $current_rows }} </strong> (selesai)</td>
-                            <td>{{ $import->status_import }}</td>
                             <td>                          
                                 <strong>{{ $persentase }} %</strong>
                             </td>
                             <td>
-                                <a href="#" class="btn btn-default btn-sm my-1 mr-sm-1 btn-block"><i class="fas fa-eye"></i></a>
+                                @if ($import->status_import === 'SUKSES IMPORT')
+                                    <span class="badge badge-warning">Belum Posting</span><br><a href="#" class="btn btn-default btn-sm my-1 mr-sm-1 btn-block">Validasi x Posting</a>
+                                @elseif ($import->status_import == 'SUKSES POSTING')
+                                    <span class="badge badge-info">Sudah Posting</span><a href="#" class="btn btn-default btn-sm my-1 mr-sm-1 btn-block"><i class="fas fa-eye"></i></a>
+                                @else
+                                    #    
+                                @endif
+                                
                             </td>
                         </tr>
                         @endforeach

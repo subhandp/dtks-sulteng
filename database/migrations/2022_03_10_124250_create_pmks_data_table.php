@@ -37,6 +37,7 @@ class CreatePmksDataTable extends Migration
             $table->string('jenis_pmks')->nullable(); 
             // $table->foreign('dtks_import_id')->references('id')->on('dtks_imports');
             $table->timestamps();
+            $table->index(['dtks_import_id', 'iddtks', 'tahun_data', 'jenis_pmks']);
         });
 
         Schema::create('pmks_data_temp', function (Blueprint $table) {
@@ -63,6 +64,8 @@ class CreatePmksDataTable extends Migration
             $table->string('jenis_pmks')->nullable(); 
             // $table->foreign('dtks_import_id')->references('id')->on('dtks_imports');
             $table->timestamps();
+            $table->index(['dtks_import_id', 'iddtks', 'tahun_data', 'jenis_pmks']);
+
         });
 
         
