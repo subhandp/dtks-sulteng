@@ -18,6 +18,8 @@ use App\Imports\PmksDataImport;
 use App\Models\DtksErrorsImport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Hashids\Hashids;
 
 class ProcessImport implements ShouldQueue
 {
@@ -44,34 +46,74 @@ class ProcessImport implements ShouldQueue
      */
     public function handle()
     {
-        
-            foreach($this->request as $uploads){
-                $upload = json_decode($uploads, true);
-             
-                $finalpath = $upload['disk'].'/'.explode('/',$upload['filepath'])[1];
-    
-                $dtksimport = new DtksImport();
-                $dtksimport->no_tiket = 'default';
-                $dtksimport->filename = $upload['filename'];
-                $dtksimport->filepath = $finalpath;
-                $dtksimport->jumlah_baris = '-';
-                $dtksimport->baris_selesai = '-';
-                $dtksimport->status_import = 'FILE TERSIMPAN';
-                $dtksimport->keterangan = '-';
-                $dtksimport->save();
-                $this->dtksimportId = $dtksimport->id;
-                File::moveDirectory(storage_path('app/'.$upload['filepath']), storage_path('app/'.$finalpath));
-            }
-          
-
-            $path = storage_path('app/'.$finalpath).'/'.$upload['filename'];
-            
-            DtksImport::find($this->dtksimportId)
-                        ->update(['status_import' => 'PROSES IMPORT']);
             try {
-                $pdo = DB::connection()->getPdo();
-                $path = str_replace('\\', '/', $path);
-                $pdo->exec("LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE pmks_data_temp FIELDS TERMINATED BY '|' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (iddtks, provinsi, kabupaten_kota, kecamatan, desa_kelurahan, alamat, dusun, rt, rw,nomor_kk, nomor_nik, nama, tanggal_lahir, tempat_lahir, jenis_kelamin, nama_ibu_kandung,hubungan_keluarga, @tahun_data, @jenis_pmks, @created_at, @updated_at,@dtks_import_id) SET dtks_import_id = '".$this->dtksimportId."', tahun_data = 2022, jenis_pmks = 'default', created_at = NOW(), updated_at = NOW()");
+            
+                foreach($this->request as $uploads){
+                    $upload = json_decode($uploads, true);
+                
+                    $finalpath = $upload['disk'].'/'.explode('/',$upload['filepath'])[1];
+        
+                    $dtksimport = new DtksImport();
+                    $dtksimport->no_tiket = 'default';
+                    $dtksimport->filename = $upload['filename'];
+                    $dtksimport->filepath = $finalpath;
+                    $dtksimport->jumlah_baris = '-';
+                    $dtksimport->baris_selesai = '-';
+                    $dtksimport->status_import = 'FILE TERSIMPAN';
+                    $dtksimport->keterangan = '-';
+                    $dtksimport->save();
+                    $this->dtksimportId = $dtksimport->id;
+                    File::moveDirectory(storage_path('app/'.$upload['filepath']), storage_path('app/'.$finalpath));
+                }
+
+                $path = storage_path('app/'.$finalpath).'/'.$upload['filename'];
+                
+                $hashids = new Hashids();
+                $hashids = new Hashids('', 5, '123456789abcdefghijklmnopqrstuvwxyz'); 
+                $noTiket = $hashids->encode($this->dtksimportId);
+
+                DtksImport::find($this->dtksimportId)
+                            ->update(['status_import' => 'Prosess Import...', 'no_tiket' => $noTiket]);
+                
+                    
+                    //ambil line pertama dari csv untuk header
+                    $file = fopen($path,"r");
+                        $headerCsv = fgetcsv($file,0,'|');
+                    fclose($file);  
+
+                    $header = ["ID DTKS","PROVINSI","KABUPATEN/KOTA","KECAMATAN","DESA/KELUARAHAN","ALAMAT","DUSUN","RT","RW","NOMOR KK","NOMOR NIK","NAMA","TANGGAL LAHIR","TEMPAT LAHIR","JENIS KELAMIN","NAMA IBU KANDUNG","HUBUNGAN KELUARGA"];
+                    // Str::slug('Laravel 5 Framework', '-');
+                    $validHeader = true;
+                    foreach ($header as $key => $h) {
+                        $h = Str::slug($h);
+                        $hCompare = Str::slug($headerCsv[$key]);
+                        if( $h != $hCompare ){
+                            $validHeader = false;
+                            break;
+                        }
+                    }
+
+                    // bandingkan apa header csv yang di upload sesuai jika tidak catat error
+                    if(!$validHeader){
+                        DtksErrorsImport::create([
+                            'dtks_import_id' => $this->dtksimportId,
+                            'row' => 0,
+                            'attribute' => 'Format CSV',
+                            'values' => 'Format CSV Tidak Valid.',
+                            'errors' => "GAGAL IMPORT"
+                        ]);
+
+                        DtksImport::find($this->dtksimportId)
+                            ->update(['status_import' => 'GAGAL IMPORT']);
+
+                        return False;
+                    }
+                    else{
+                        $pdo = DB::connection()->getPdo();
+                        $path = str_replace('\\', '/', $path);
+                        $pdo->exec("LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE pmks_data_temps FIELDS TERMINATED BY '|' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (iddtks, provinsi, kabupaten_kota, kecamatan, desa_kelurahan, alamat, dusun, rt, rw,nomor_kk, nomor_nik, nama, tanggal_lahir, tempat_lahir, jenis_kelamin, nama_ibu_kandung,hubungan_keluarga, @tahun_data, @jenis_pmks, @created_at, @updated_at,@dtks_import_id) SET dtks_import_id = '".$this->dtksimportId."', tahun_data = 2022, jenis_pmks = 'default', created_at = NOW(), updated_at = NOW()");
+                    }
+                
             } catch (\Exception  $e) {
                 DtksErrorsImport::create([
                     'dtks_import_id' => $this->dtksimportId,
@@ -92,7 +134,7 @@ class ProcessImport implements ShouldQueue
 
 
 
-            // DB::table('pmks_data_temp')->where('dtks_import_id', 1)
+            // DB::table('pmks_data_temps')->where('dtks_import_id', 1)
             // ->chunkById(500, function ($pmks_datas) {
             //     foreach ($pmks_datas as $pmks_data) {
                     
@@ -128,11 +170,11 @@ class ProcessImport implements ShouldQueue
             // });
 
 
-            // $pmks_data = DB::table('pmks_data_temp')
+            // $pmks_data = DB::table('pmks_data_temps')
             // ->where('dtks_import_id', '=',  $this->id)
             // ->get();
 
-            // DB::table('pmks_data_temp')->where('dtks_import_id', $this->id)
+            // DB::table('pmks_data_temps')->where('dtks_import_id', $this->id)
             // ->chunkById(100, function ($pmks_datas) {
             //     foreach ($pmks_datas as $pmks_data) {
             //         Validator::make($pmks_data, [

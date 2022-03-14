@@ -5,6 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PmksController;
 use App\Http\Controllers\FilepondController;
+use App\Http\Controllers\DtksController;
+
 
 
 
@@ -32,7 +34,17 @@ Route::group(['middleware' => ['auth','checkRole:admin']], function () {
     Route::get('/pmks/import-data',[PmksController::class, 'index']);
     Route::get('/pmks/daftar-pmks',[PmksController::class, 'daftarpmks']);
     Route::post('/pmks/store-import',[PmksController::class, 'store']);
+    Route::get('/pmks/store-posting',[PmksController::class, 'posting']);
     Route::get('/pmks/import-status', [PmksController::class, 'status']);
+    Route::get('/pmks/impor-data-pmks', [PmksController::class, 'dataimportpmks'])->name('pmks.dataimport');
+
+    Route::get('/pmks/data',[PmksController::class, 'data'])->name('pmks.data');
+    Route::get('/pmks/data-pmks',[PmksController::class, 'datapmks'])->name('pmks.datapmks');
+    Route::get('/pmks/data-errors',[PmksController::class, 'dataerrors'])->name('pmks.dataerrors');
+
+    Route::get('/dtks/posting',[DtksController::class, 'posting'])->name('dtks.posting');
+    Route::get('/dtks/select-dtksimport',[DtksController::class, 'selectdtksimport'])->name('dtks.selectdtksimport');
+
 
 
 });

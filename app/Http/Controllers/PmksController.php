@@ -11,9 +11,11 @@ use  App\Models\PmksData;
 // use Maatwebsite\Excel\Facades\Excel;
 // use App\Imports\PmksDataImport;
 use App\Jobs\ProcessImport;
-// use App\Models\DtksImport;
+use App\Jobs\PostingImport;
+use App\Models\DtksImport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Yajra\DataTables\Facades\DataTables;
 
 class PmksController extends Controller
 {
@@ -23,11 +25,9 @@ class PmksController extends Controller
     public function index()
     {
         $data_pmks_import = DB::table('dtks_imports')
-        ->orderBy('created_at', 'desc')
+        ->orderBy('updated_at', 'desc')
         ->get();
 
-       
-                        
         $data_pmks_import_status = [];
         foreach ($data_pmks_import as $import) {
             $persentase = 0;
@@ -48,23 +48,78 @@ class PmksController extends Controller
         $class_menu_pmks = "menu-open";
         $class_menu_pmks_import = "sub-menu-open";
         $class_menu_pmks_daftar = "";
+        $class_menu_posting = "";
 
         return view('pmks.index', compact('data_pmks_import_status','data_pmks_import','class_menu_pmks','class_menu_pmks_import','class_menu_pmks_daftar'));
 
         // return view('suratmasuk.index',['data_suratmasuk'=> $data_suratmasuk]);
     }
 
+    public function dataerrors(){
+        $id = request('id');
+        $importErrors = DtksErrorsImport::where('dtks_import_id', $id)->orderBy('id', 'desc')->get(['row','values','errors']);
+        return json_encode($importErrors);
+        // return Datatables::of(DtksErrorsImport::where('dtks_import_id', $id)->select())->make(true);
+    }
+
+    public function dataimportpmks(){
+        
+
+        $data = PmksDataTemp::select('*');
+
+        return DataTables::of($data)
+                        ->addIndexColumn()
+                                    ->addColumn('no_tiket',function(PmksDataTemp $pmksdatatemp){
+                                        return $pmksdatatemp->dtksImports->no_tiket;
+                                        //return DB::raw("SELECT * FROM 'patients' WHERE 'patients_id' = ?", $action->patient_id);
+                                    })
+                                    ->addColumn('action', function($row){
+                    
+                                        $btn = '<span class="badge badge-warning">Belum Posting</span><a href="javascript:void(0)" class="edit btn btn-default btn-sm data-toggle="tooltip" data-placement="left" title="Edit"><i class="fas fa-edit"></i></a> <a href="javascript:void(0)" class="edit btn btn-default btn-sm data-toggle="tooltip" data-placement="left" title="Delete"><i class="fas fa-trash"></i></a>';
+                    
+                                            return $btn;
+                                    })
+                                    ->rawColumns(['action'])
+                                    ->make(true);
+
+    }
+
     public function daftarpmks()
     {
         // $data_suratmasuk = SuratMasuk::where('users_id', Auth::id())->orderBy('created_at', 'DESC')->get();
-        $data_daftar_pmks = DB::table('pmks_data_temp')
-        ->orderBy('created_at', 'desc')
-        ->get();
+        // $data_daftar_pmks = DB::table('pmks_data_temps')
+        // ->orderBy('created_at', 'desc')
+        // ->get();
         $class_menu_pmks = "menu-open";
         $class_menu_daftar_pmks = "sub-menu-open";
         $class_menu_pmks_import = "";
+        $class_menu_posting = "";
 
-        return view('pmks.daftar', compact('data_daftar_pmks','class_menu_pmks','class_menu_daftar_pmks','class_menu_pmks_import'));
+        return view('pmks.daftar-imported', compact('class_menu_pmks','class_menu_daftar_pmks','class_menu_pmks_import'));
+
+    }
+
+    public function data(){
+        $class_menu_data_pmks = "menu-open";
+       
+        return view('pmks.daftar', compact('class_menu_data_pmks'));
+
+    }
+
+    public function datapmks(){
+        $data = PmksData::select('*');
+
+        return DataTables::of($data)
+                        ->addIndexColumn()
+                                    
+                                    ->addColumn('action', function($row){
+                    
+                                        $btn = '<a href="javascript:void(0)" class="edit btn btn-default btn-sm" data-toggle="tooltip" data-placement="left" title="Edit"><i class="fas fa-edit"></i></a> <a href="javascript:void(0)" class="delete btn btn-default btn-sm data-toggle="tooltip" data-placement="left" title="Delete"><i class="fas fa-trash"></i></a>';
+                    
+                                            return $btn;
+                                    })
+                                    ->rawColumns(['action'])
+                                    ->make(true);
 
     }
 
@@ -96,9 +151,31 @@ class PmksController extends Controller
             'jenis_pmks' => 'required',
             'upload' => 'required'
        ]);
-        ProcessImport::dispatch($request->input('upload'));
-        return redirect('/pmks/import-data')->with("sukses", 1);
-       
+
+        $jobs = DB::table('jobs')->select("*")->count();
+        if($jobs > 0){
+            return redirect('/pmks/import-data')->with("gagal-jobs", 1);
+        }
+        else{
+            ProcessImport::dispatch($request->input('upload'));
+            return redirect('/pmks/import-data')->with("sukses", 1);
+        }
+        
+        
+
+    }
+
+    public function posting(){
+        $id = request('id');
+        $jobs = DB::table('jobs')->select("*")->count();
+        if($jobs > 0){
+            return redirect('/pmks/import-data')->with("gagal-jobs", 1);
+        }
+        else{
+            PostingImport::dispatch($id);
+            return redirect('/pmks/import-data')->with("sukses-posting", 1);
+        }
+
     }
     
 
@@ -122,14 +199,14 @@ class PmksController extends Controller
 
  // dd($data_pmks_import);
 
-        // $pmks_datas = DB::table('pmks_data_temp')
+        // $pmks_datas = DB::table('pmks_data_temps')
         //     ->where('dtks_import_id', '=',  1)
         //     ->get();
         // dd($pmks_data);
             // $this->counter = 0;
 
             // $this->metodeImport = 'firstOrCreate';
-            // DB::table('pmks_data_temp')->where('dtks_import_id', 1)
+            // DB::table('pmks_data_temps')->where('dtks_import_id', 1)
             // ->chunkById(500, function ($pmks_datas) {
             //     foreach ($pmks_datas as $key => $pmks_data) {
             //         $this->counter++;

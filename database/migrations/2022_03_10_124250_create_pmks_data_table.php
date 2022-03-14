@@ -37,10 +37,10 @@ class CreatePmksDataTable extends Migration
             $table->string('jenis_pmks')->nullable(); 
             // $table->foreign('dtks_import_id')->references('id')->on('dtks_imports');
             $table->timestamps();
-            $table->index(['dtks_import_id', 'iddtks', 'tahun_data', 'jenis_pmks']);
+            $table->index(['dtks_import_id', 'iddtks']);
         });
 
-        Schema::create('pmks_data_temp', function (Blueprint $table) {
+        Schema::create('pmks_data_temps', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('dtks_import_id')->nullable();
             $table->string('iddtks')->nullable();
@@ -64,7 +64,7 @@ class CreatePmksDataTable extends Migration
             $table->string('jenis_pmks')->nullable(); 
             // $table->foreign('dtks_import_id')->references('id')->on('dtks_imports');
             $table->timestamps();
-            $table->index(['dtks_import_id', 'iddtks', 'tahun_data', 'jenis_pmks']);
+            $table->index(['dtks_import_id', 'iddtks']);
 
         });
 
@@ -80,7 +80,7 @@ class CreatePmksDataTable extends Migration
     public function down()
     {
         Schema::dropIfExists('pmks_data');
-        Schema::dropIfExists('pmks_data_temp');
+        Schema::dropIfExists('pmks_data_temps');
 
     }
 }

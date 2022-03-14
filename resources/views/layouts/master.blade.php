@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>DTKS - Sulteng</title>
+    
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Font Awesome -->
@@ -16,15 +17,24 @@
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="/adminlte/css/adminlte.min.css">
     <!-- DataTable -->
-    <link rel="stylesheet" href="/adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css">
+    {{-- <link rel="stylesheet" href="/adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.css"> --}}
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
     
     <link rel="stylesheet" href="/adminlte/css/sidebar-menu-feature.css">
     <link href="/filepond/css/filepond.css" rel="stylesheet" />
 
+    {{-- <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet"> --}}
+    <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     <style>
 
+#wrapper-table-errors {
+  overflow-x: auto;
+
+}
     .short-text,.full-text {
         font-weight: bold;
         font-size: 1.5em;
@@ -222,11 +232,27 @@
                         <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
 
-                        <li class="nav-item">
+                        <li class="nav-item 
+                        @isset($class_menu_data_dashboard)
+                            {{ $class_menu_data_dashboard}}
+                        @endisset 
+                        ">
                             <a href="/dashboard" class="nav-link">
                                 <i class="nav-icon fas fa-home"></i>
                                 <p>
                                     Beranda
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item
+                        @isset($class_menu_data_pmks)
+                            {{ $class_menu_data_pmks }}
+                        @endisset 
+                        ">
+                            <a href="/pmks/data" class="nav-link">
+                                <i class="nav-icon fas fa-book"></i>
+                                <p>
+                                    Data PMKS
                                 </p>
                             </a>
                         </li>
@@ -263,6 +289,18 @@
                                         <p>Daftar Data</p>
                                     </a>
                                 </li>
+
+                                <li class="nav-item">
+                                    <a href="/dtks/posting" class="nav-link 
+                                    @isset($class_menu_posting)
+                                        {{ $class_menu_posting }}
+                                    @endisset
+                                    ">
+                                        <i class="fas fa-plane"></i>
+                                        <p>Posting</p>
+                                    </a>
+                                </li>
+
                             </ul>
                         </li>
                         
@@ -349,15 +387,32 @@
     <!-- Filterizr-->
     <script src="/adminlte/plugins/filterizr/jquery.filterizr.min.js"></script>
     <!-- Data Table -->
-    <script src="/adminlte/plugins/datatables/jquery.dataTables.js"></script>
-    <script src="/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script>
+    {{-- <script src="/adminlte/plugins/datatables/jquery.dataTables.js"></script> --}}
+    {{-- <script src="/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.js"></script> --}}
 
-    <script src="/filepond/js/dataTables.responsive.min.js"></script>
+    {{-- <script src="/filepond/js/dataTables.responsive.min.js"></script> --}}
 
     <script src="/filepond/js/filepond-plugin-file-validate-size.js"></script>
     <script src="/filepond/js/filepond.js"></script>
 
+    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>   --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    {{-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script> --}}
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+
+
+    <script src="https://unpkg.com/echarts/dist/echarts.min.js"></script>
+    <!-- Chartisan -->
+    <script src="https://unpkg.com/@chartisan/echarts/dist/chartisan_echarts.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <script>
+
+        $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+        })
 
         FilePond.registerPlugin(
         FilePondPluginFileValidateSize
@@ -397,38 +452,15 @@
     </script>
 
     @yield('file-pond-import')
-
+    @yield('file-pond-data-import')
+    
     <script>
 
 
-        // function show1(){
-        //     document.getElementById('select-keterangan').style.display = 'none';
-        //     document.getElementById('input-keterangan').style.display ='block';
-
-        // }
-        // function show2(){
-        //     document.getElementById('input-keterangan').style.display ='none';
-        //     document.getElementById('select-keterangan').style.display = 'block';
-
-        // }
-
         $(function () {
-            
-            $("#tabel-import-data").DataTable();
+                        
             $("#tabel-daftar-pmks").DataTable();
-
-            // $("#tabelKlasifikasi").DataTable({
-            //     "paging": true,
-            //     "lengthChange": true,
-            //     "searching": true,
-            //     "ordering": true,
-            //     "info": true,
-            //     "autoWidth": true,
-            // });
         });
-
-      
-
 
     </script>
 

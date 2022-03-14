@@ -8,9 +8,21 @@
                 </div>
                 @endif
 
+                @if(session('sukses-posting'))
+                <div class="alert alert-success" role="alert">
+                    Data masuk proses Posting, Validasi data sedang berlangsung. <strong>Klik refresh</strong> untuk melihat progress.<a href="{{session('sukses')}}"></a>
+                </div>
+                @endif
+
                 @if(session('sukseshapus'))
                 <div class="alert alert-success" role="alert">
                     {{session('sukseshapus')}}
+                </div>
+                @endif
+
+                @if(session('gagal-jobs'))
+                <div class="alert alert-danger" role="alert">
+                    <strong>Masih ada proses Import/Posting yang berlangsung.</strong> Pastikan tidak ada proses yang sedang berlangsung.<a href="{{session('sukses')}}"></a>
                 </div>
                 @endif
 
@@ -55,7 +67,8 @@
                     <strong>Import Data PMKS </strong>
                     <span class="float-right">
                         <a data-toggle="modal" data-target="#myModal" class="btn btn-warning btn-sm my-1 mr-sm-1" href="create" role="button"><i class="fas fa-upload"></i> Import Data</a>
-                        <a class="btn btn-warning btn-sm my-1 mr-sm-1" href="create" role="button"><i class="fas fa-sync"></i> Refresh</a>
+                        <a onclick="location.reload()" class="btn btn-warning btn-sm my-1 mr-sm-1" href="#" role="button"><i class="fas fa-sync"></i> Refresh</a><span id="timer-refresh">00.00</span> 
+                        <input onclick="setAutoRefresh()" type="checkbox" id="autoRefresh" name="autoRefresh" value="autoRefresh"> <label for="autoRefresh"> Auto</label><br>
                     </span>
                 </h5>
                 
@@ -70,11 +83,12 @@
                     <thead>
                         <tr class="bg-light">
                         <th>NO.</th>
+                        <th>NO TIKET</th>
                         <th>NAMA FILE</th>
                         <th>TANGGAL UPLOAD</th>
                         <th>STATUS IMPORT</th>
-                        <th>STATUS POSTING</th>
-                        <th>(%) POSTING</th>
+                        {{-- <th>STATUS POSTING</th> --}}
+                        <th>POSTING (%)</th>
                         <th>AKSI</th>
                         </tr>
                     </thead>
@@ -87,36 +101,59 @@
                         @php
                              $no++ ;
 
-                             if (isset($data_pmks_import_status[$key])) {
-                                $total_rows = $data_pmks_import_status[$key]['total_rows'];
-                                $current_rows = $data_pmks_import_status[$key]['current_row'];
-                                $persentase =  $data_pmks_import_status[$key]['persentase'];
+                             if ($import->baris_selesai !== '-') {
+                                $total_rows = $import->jumlah_baris;
+                                $current_rows = $import->baris_selesai;
+                                $persentase =  ceil(($current_rows/$total_rows)*100).' %';
                             }
                             else{
-                                $total_rows = '-';
-                                $current_rows = '-';
-                                $persentase =  'proses belum mulai';
+                                $total_rows = 0;
+                                $current_rows = 0;
+                                $persentase =  '-';
                             }
 
                         @endphp
                         <tr>
                         
                             <td>{{$no}}</td>
+                            <td>{{ $import->no_tiket }}</td>
                             <td>{{ $import->filename }}</td>
-                            <td>{{ $import->created_at }}</td>
-                            <td><strong>{{ $import->status_import }}</strong></td>
-                            <td> <strong>{{ $total_rows }}</strong> (Total)  => <strong>{{ $current_rows }} </strong> (selesai)</td>
+                            <td>{{ $import->updated_at }}</td>
+                            <td>
+                                @if ($import->status_import == 'SUKSES POSTING')
+                                    <strong> {{ $import->status_import }}</strong>
+                                @else
+                                    {{ $import->status_import }}
+                                @endif
+
+                                
+                                @if ($import->status_import === 'SUKSES IMPORT' && $import->keterangan !== 'SUKSES POSTING')
+                                    @if ($import->baris_selesai !== '-' )
+                                        <span class="badge badge-info">{{ $import->keterangan }}</span>
+                                    @else
+                                        <span class="badge badge-warning">Belum Posting</span>
+                                        {{-- <br><a href="/pmks/store-posting?id={{ $import->id }}" class="btn btn-default btn-sm my-1 mr-sm-1 btn-block">Posting</a> --}}
+                                    @endif
+                                @endif
+                            </td>
+                            {{-- <td> <strong>{{ $total_rows }}</strong> (Total)  => <strong>{{ $current_rows }} </strong> (selesai)</td> --}}
                             <td>                          
-                                <strong>{{ $persentase }} %</strong>
+                                <strong>{{ $persentase }} </strong>
                             </td>
                             <td>
-                                @if ($import->status_import === 'SUKSES IMPORT')
-                                    <span class="badge badge-warning">Belum Posting</span><br><a href="#" class="btn btn-default btn-sm my-1 mr-sm-1 btn-block">Validasi x Posting</a>
-                                @elseif ($import->status_import == 'SUKSES POSTING')
-                                    <span class="badge badge-info">Sudah Posting</span><a href="#" class="btn btn-default btn-sm my-1 mr-sm-1 btn-block"><i class="fas fa-eye"></i></a>
-                                @else
-                                    #    
-                                @endif
+                                
+                            @if ($import->status_import === 'SUKSES IMPORT' && $import->baris_selesai == '-')
+                            <a href="/pmks/store-posting?id={{ $import->id }}" class="btn btn-default btn-sm my-1 mr-sm-1 btn-block">Posting</a>
+                            @endif
+                              
+                            <a href="#" data-toggle="modal" id="smallButton" data-target="#smallModal"
+                                data-attr="{{ route('pmks.dataerrors',  ['id' => $import->id]) }}" class="btn btn-default btn-sm my-1 mr-sm-1 btn-block" data-toggle="tooltip" data-placement="left" title="Detail">
+                                
+                                <i class="fas fa-eye"></i>
+                            </a>
+
+                            {{-- <a href="#" class="btn btn-default btn-sm my-1 mr-sm-1 btn-block" data-toggle="tooltip" data-placement="left" title="Detail"><i class="fas fa-eye"></i></a> --}}
+                                
                                 
                             </td>
                         </tr>
@@ -186,12 +223,46 @@
             </div>
         </div>
 
+    <div class="modal fade" id="smallModal" tabindex="-1" role="dialog" aria-labelledby="smallModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="smallBody">
+                    <div id="wrapper-table-errors">
+                        <table class="table table-bordered" id="table-errors">
+                            <thead>
+                              <tr>
+                                <th>No</th>
+                                <th>Baris</th>
+                                <th>Nilai</th>
+                                <th>Error</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+                          </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     </section>
  @endsection
 
 
  @section('file-pond-import')
  <script>
+
+    var tableErrros = $('#table-errors').DataTable();
+    
+    
      FilePond.setOptions({
          server: {
              process:  '/filepond/process',
@@ -202,5 +273,95 @@
          },
          
      });
+
+
+
+function checklength(i) {
+    'use strict';
+    if (i < 10) {
+        i = "0" + i;
+    }
+    return i;
+}
+
+let minutes, seconds, count, counter;
+count = 60; //seconds
+if (localStorage.autorefresh == 'enable') {
+    document.getElementById("autoRefresh").checked = true;
+    counter = setInterval(timer, 1000);
+}
+else{
+    document.getElementById("autoRefresh").checked = false;
+}
+
+function timer() {
+    'use strict';
+    count = count - 1;
+    minutes = checklength(Math.floor(count / 60));
+    seconds = checklength(count - minutes * 60);
+    if (count < 0) {
+        clearInterval(counter);
+        return;
+    }
+    document.getElementById("timer-refresh").innerHTML = minutes + ':' + seconds + ' ';
+    if (count === 0) {
+        location.reload();
+    }
+}
+
+function setAutoRefresh() {
+  if (localStorage.autorefresh == 'enable') {
+    localStorage.autorefresh = 'disable';
+    document.getElementById("autoRefresh").checked = false;
+  } 
+  else if (localStorage.autorefresh == 'disable') {
+    localStorage.autorefresh = 'enable';
+    document.getElementById("autoRefresh").checked = true;
+    counter = setInterval(timer, 1000);
+  }
+  else {
+    localStorage.autorefresh = 'disable';
+    document.getElementById("autoRefresh").checked = false;
+  }
+
+  
+}
+
+$(document).on('click', '#smallButton', function(event) {
+            event.preventDefault();
+            tableErrros.clear().draw();
+            let href = $(this).attr('data-attr');
+            $.ajax({
+                url: href,
+                beforeSend: function() {
+                    $('#loader').show();
+                },
+                // return the result
+                success: function(result) {
+                    let errorsResult = JSON.parse(result);
+                    for (var i = 0; i < errorsResult.length; i++) {
+                        tableErrros.row.add( [
+                            (i+1),
+                            errorsResult[i].row,
+                            errorsResult[i].values,
+                            errorsResult[i].errors,
+                        ] ).draw( true );
+                    }
+
+                    
+                    
+                },
+                complete: function() {
+                    $('#loader').hide();
+                },
+                error: function(jqXHR, testStatus, error) {
+                    console.log(error);
+                    alert("Page " + href + " cannot open. Error:" + error);
+                    $('#loader').hide();
+                }
+            })
+        });
+
+
  </script>
  @endsection
