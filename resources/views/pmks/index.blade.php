@@ -10,7 +10,7 @@
 
                 @if(session('sukses-posting'))
                 <div class="alert alert-success" role="alert">
-                    Data masuk proses Posting, Validasi data sedang berlangsung. <strong>Klik refresh</strong> untuk melihat progress.<a href="{{session('sukses')}}"></a>
+                    Data masuk proses Posting, Validasi data sedang berlangsung. <strong></strong> untuk melihat progress.<a href="{{session('sukses')}}"></a>
                 </div>
                 @endif
 
@@ -72,8 +72,9 @@
                     </span>
                 </h5>
                 
-
+                <br>
                 <hr>
+                
             </div>
             </div>
         
@@ -141,10 +142,7 @@
                                 <strong>{{ $persentase }} </strong>
                             </td>
                             <td>
-                                
-                            @if ($import->status_import === 'SUKSES IMPORT' && $import->baris_selesai == '-')
-                            <a href="/pmks/store-posting?id={{ $import->id }}" class="btn btn-default btn-sm my-1 mr-sm-1 btn-block">Posting</a>
-                            @endif
+                            
                               
                             <a href="#" data-toggle="modal" id="smallButton" data-target="#smallModal"
                                 data-attr="{{ route('pmks.dataerrors',  ['id' => $import->id]) }}" class="btn btn-default btn-sm my-1 mr-sm-1 btn-block" data-toggle="tooltip" data-placement="left" title="Detail">
@@ -199,9 +197,14 @@
                                     <label for="jenis_pmks" class="col-sm-3 col-form-label">Jenis PMKS</label>
                                     <div class="input-group col-sm-9">
                                         <select class="form-control" id="jenis_pmks" name="jenis_pmks">
-                                            <option value="Keluarga fakir miskin">Keluarga fakir miskin</option>
-                                            <option value="Korban bencana alam">Korban bencana alam</option>
-                                            <option value="Korban bencana sosial">Korban bencana sosial</option>
+                                            <option value="KELUARGA FAKIR MISKIN">KELUARGA FAKIR MISKIN</option>
+                                            <option value="KORBAN BENCANA ALAM">KORBAN BENCANA ALAM</option>
+                                            <option value="KORBAN BENCANA SOSIAL">KORBAN BENCANA SOSIAL</option>
+                                            
+                                            <option value="KELOMPOK MINORITAS">KELOMPOK MINORITAS</option>
+                                            <option value="BEKAS WARGA BINAAN LEMBAGA PEMASYARAKATAN  (BWBLP)">BEKAS WARGA BINAAN LEMBAGA PEMASYARAKATAN  (BWBLP)</option>
+                                            <option value="KORBAN BENCANA SOSIAL">ORANG DENGAN HIV AIDS</option>
+                                       
                                         </select>
                                     </div>
                                 </div>

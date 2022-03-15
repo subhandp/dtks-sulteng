@@ -36,10 +36,15 @@ class DtksController extends Controller
         if ($request->has('q')) {
             $search = $request->q;
             $dtksImport = DtksImport::select("id", "no_tiket")
-                ->Where('no_tiket', 'LIKE', "%$search%")
+                ->where('status_import', '=', "SUKSES IMPORT")
+                ->where('jumlah_baris', '=', "-")
+                ->where('no_tiket', 'LIKE', "%$search%")
                 ->get();
         } else {
-            $dtksImport = DtksImport::get();
+            $dtksImport = DtksImport::select("id", "no_tiket")
+                ->where('status_import', '=', "SUKSES IMPORT")
+                ->where('jumlah_baris', '=', "-")
+                ->get();
         }
         return response()->json($dtksImport);
     }

@@ -157,24 +157,32 @@ class PmksController extends Controller
             return redirect('/pmks/import-data')->with("gagal-jobs", 1);
         }
         else{
-            ProcessImport::dispatch($request->input('upload'));
+            ProcessImport::dispatch(['upload' => $request->input('upload'), 'tahun_data' => $request->input('tahun_data'), 'jenis_pmks' => $request->input('jenis_pmks')]);
             return redirect('/pmks/import-data')->with("sukses", 1);
         }
         
-        
-
     }
 
-    public function posting(){
-        $id = request('id');
-        $jobs = DB::table('jobs')->select("*")->count();
-        if($jobs > 0){
-            return redirect('/pmks/import-data')->with("gagal-jobs", 1);
-        }
-        else{
-            PostingImport::dispatch($id);
-            return redirect('/pmks/import-data')->with("sukses-posting", 1);
-        }
+        
+
+    public function posting(Request $request){
+        // dd($request);
+        $request->validate([
+            'selectDtksImport' => 'required',
+       ]);
+       if($request->has('selectDtksImport')){
+            $link = url("/pmks/import-data");
+            $idDtksImport = $request->input('selectDtksImport');
+            $jobs = DB::table('jobs')->select("*")->count();
+            if($jobs > 0){
+                return redirect('/dtks/posting')->with("gagal-jobs", $link);
+            }
+            else{
+                PostingImport::dispatch($idDtksImport);
+                return redirect('/dtks/posting')->with("sukses-posting", $link);
+            }
+       }
+       
 
     }
     

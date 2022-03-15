@@ -168,6 +168,42 @@
         }
         }
 
+        .mycontainer {
+  background: #eee;
+  padding: 32px;
+  margin: 0 auto;
+  max-width: 500px;
+  
+  .select2 {
+    width: 100%!important; /* force fluid responsive */
+  }
+  
+  .select2-container {
+    
+    .select2-selection--single {
+       height: 56px;
+       position: relative;
+      
+      .select2-selection__rendered {
+        line-height: 56px;
+      }
+    
+      .select2-selection__arrow {
+        top: 16px;
+        right: 8px;
+      }
+  
+      .select2-container--default {
+
+        .select2-results>.select2-results__options {
+          -webkit-overflow-scrolling: touch; /* use momentum scrolling */
+        }
+      }
+    }      
+  }
+}
+
+
 	</style>
 
 </head>
@@ -365,7 +401,7 @@
             <div class="float-right d-none d-sm-block">
                 <b>TEMPORARY APP</b>
             </div>
-            BIMAS HINDU PROVINSI SULAWESI TENGAH
+            DTKS PROVINSI SULAWESI TENGAH
         </footer>
 
         <!-- Control Sidebar -->
@@ -407,6 +443,9 @@
     <script src="https://unpkg.com/@chartisan/echarts/dist/chartisan_echarts.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
+
 
     <script>
 

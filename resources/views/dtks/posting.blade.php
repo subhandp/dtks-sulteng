@@ -4,17 +4,18 @@
 
 
         <div class="box">
-                @if(session('sukses'))
+                @if(session('sukses-posting'))
                 <div class="alert alert-success" role="alert">
-                    Data berhasil diposting <a href="{{session('sukses')}}"></a>
+                    <strong>Data berhasil masuk Posting.</strong> Proses akan berjalan.<a href="{{session('sukses-posting')}}"> lihat</a>
                 </div>
                 @endif
 
-                @if(session('sukseshapus'))
-                <div class="alert alert-success" role="alert">
-                    {{session('sukseshapus')}}
+                @if(session('gagal-jobs'))
+                <div class="alert alert-danger" role="alert">
+                    <strong>Masih ada proses Import/Posting yang berlangsung.</strong> Pastikan tidak ada proses yang sedang berlangsung.<a href="{{session('gagal-jobs')}}"> lihat</a>
                 </div>
                 @endif
+
             <div class="row">
                 <div class="col">
                 <h5>
@@ -24,21 +25,24 @@
                 <hr>
             </div>
             </div>
-        
-            <div class="row table-responsive">
-                <form class="form-inline">
-                   
-                    <div class="form-group mb-12">
-                        <label class="form-label">
-                           No Tiket
-                        </label>
-                        <select id="selectDtksImport" name="selectDtksImport" data-placeholder="Pilih No Tiket" class="custom-select w-100">
-                        </select>
-                     </div>
+            <div class="m-4 d-flex justify-content-center">
+                <form class="form-inline" action="/pmks/store-posting" method="POST"  id="postingForm" >
+                    @csrf
+                    <div class="row align-items-center g-3 mycontainer">
+                        <div class="col-auto ">
+                            
+                            <select id="selectDtksImport" name="selectDtksImport" data-placeholder="Pilih No Tiket" style='width: 300px;height: 100px;'>
+                            </select>
 
-                    <button type="submit" class="btn btn-primary mb-2">Confirm identity</button>
-                  </form>
+                        </div>
+                        
+                        <div class="col-auto">
+                            <button id="btn-posting" type="button" class="btn btn-warning btn-sm my-1 mr-sm-1">Posting</button>
+                        </div>
+                    </div>
+                </form>
             </div>
+        
         </div>
     </section>
  @endsection
@@ -65,6 +69,23 @@
                }
             }
          });
+
+         $(document).on('click', '#btn-posting', function(event) {
+            bootbox.confirm({ 
+                buttons: {
+                    confirm: {
+                        label: 'Posting',
+                        className: 'btn-primary'
+                    }
+                },
+                size: "small",
+                message: "Lanjutkan Posting data ?",
+                callback: function(result){ 
+                    document.getElementById("postingForm").submit(); 
+                }
+            })
+         });
+         
 
  </script>
  @endsection
