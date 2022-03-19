@@ -72,7 +72,13 @@ class ProcessImport implements ShouldQueue
                 // $hashids = new Hashids();
                 // $hashids = new Hashids('', 5, '123456789abcdefghijklmnopqrstuvwxyz'); 
                 // $noTiket = $hashids->encode($this->dtksimportId);
-                $noTiket = str_pad($this->dtksimportId,5,"0",STR_PAD_LEFT);
+                // $noTiket = str_pad($this->dtksimportId,5,"0",STR_PAD_LEFT);
+
+                $digits = 4;
+                $ra =  rand(pow(10, $digits-1), pow(10, $digits)-1);
+                $noTiket= $ra.$dtksimport->id;
+
+                
 
                 DtksImport::find($this->dtksimportId)
                             ->update(['status_import' => 'Prosess Import...', 'no_tiket' => $noTiket]);

@@ -6,6 +6,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PmksController;
 use App\Http\Controllers\FilepondController;
 use App\Http\Controllers\DtksController;
+use App\Http\Controllers\DependentDropdownController;
+
 
 
 
@@ -44,9 +46,22 @@ Route::group(['middleware' => ['auth','checkRole:admin']], function () {
 
     Route::post('/pmks/store-posting',[PmksController::class, 'posting']);
 
+    Route::get('/pmks/create',[PmksController::class, 'create'])->name('pmks.create');
+    Route::post('/pmks/store-create',[PmksController::class, 'storeCreate'])->name('pmks.store-create');
+    Route::get('/pmks/create/edit',[PmksController::class, 'editCreate'])->name('pmks.edit-create');
+    Route::post('/pmks/store-edit',[PmksController::class, 'storeEdit'])->name('pmks.store-edit');
+    Route::get('/pmks/delete',[PmksController::class, 'delete'])->name('pmks.delete');
+
+
+
     Route::get('/dtks/posting',[DtksController::class, 'posting'])->name('dtks.posting');
     Route::get('/dtks/select-dtksimport',[DtksController::class, 'selectdtksimport'])->name('dtks.selectdtksimport');
 
+
+    Route::get('/provinces', [DependentDropdownController::class,'provinces'])->name('provinces');
+    Route::get('/cities', [DependentDropdownController::class,'cities'])->name('cities');
+    Route::get('/districts', [DependentDropdownController::class, 'districts'])->name('districts');
+    Route::get('/villages', [DependentDropdownController::class, 'villages'])->name('villages');
 
 
 });

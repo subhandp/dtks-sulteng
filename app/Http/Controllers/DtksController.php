@@ -17,9 +17,7 @@ class DtksController extends Controller
     
     
     public function posting()
-    {
-
-        
+    {   
         $class_menu_pmks = "menu-open";
         $class_menu_posting = "sub-menu-open";
         $class_menu_daftar_pmks = "";

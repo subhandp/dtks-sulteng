@@ -19,7 +19,7 @@
                 <h5>
                     <strong>Daftar PMKS </strong>
                     <span class="float-right">
-                        <a class="btn btn-warning btn-sm my-1 mr-sm-1" href="create" role="button"><i class="fas fa-edit"></i> Rekam</a>
+                        <a class="btn btn-warning btn-sm my-1 mr-sm-1" href="{{ route('pmks.create') }}" role="button"><i class="fas fa-edit"></i> Rekam</a>
                     </span>
                 </h5>
                 
@@ -71,7 +71,6 @@
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });
-
     
 
  </script>

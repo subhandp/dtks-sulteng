@@ -23,8 +23,6 @@ class PostingImport implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $counter;
-    public $counterSuccess;
-    public $counterErrors;
     public $metodeImport;
     public $dtksimportId;
 
@@ -51,8 +49,6 @@ class PostingImport implements ShouldQueue
                 ->update(['keterangan' => 'Validasi Data...', 'jumlah_baris' => $jumlahBaris]);
                 
                 $this->counter = 0;
-                $this->counterSuccess = 0;
-                $this->counterErorrs = 0;
 
                 $this->metodeImport = 'firstOrCreate';
                 try {
@@ -66,62 +62,32 @@ class PostingImport implements ShouldQueue
 
                         foreach ($pmks_datas as $key => $pmks_data) {
                             $this->counter++;
-                            if(empty($pmks_data->iddtks)){
-                                $dtksErrorImport[] = [
-                                    'dtks_import_id' => $this->dtksimportId,
-                                    'row' => $this->counter,
-                                    'attribute' => '[iddtks]',
-                                    'values' => 'iddtks',
-                                    'errors' => 'data kosong'
-                                ];
-                                $this->counterErorrs++;
-                            }
-                            else{
-                                if (DB::table('pmks_data')->where('iddtks', $pmks_data->iddtks)->exists()) {
+                            $pmksData[] = [
+                                'dtks_import_id' => $this->dtksimportId,
+                                'iddtks' => $pmks_data->iddtks, 
+                                'provinsi' => $pmks_data->provinsi, 
+                                'kabupaten_kota' => $pmks_data->kabupaten_kota, 
+                                'kecamatan' => $pmks_data->kecamatan, 
+                                'desa_kelurahan' => $pmks_data->desa_kelurahan, 
+                                'alamat' => $pmks_data->alamat, 
+                                'dusun' => $pmks_data->dusun, 
+                                'rt' => $pmks_data->rt, 
+                                'rw' => $pmks_data->rw,
+                                'nomor_kk' => $pmks_data->nomor_kk, 
+                                'nomor_nik' => $pmks_data->nomor_nik, 
+                                'nama' => $pmks_data->nama, 
+                                'tanggal_lahir' => $pmks_data->tanggal_lahir, 
+                                'tempat_lahir' => $pmks_data->tempat_lahir, 
+                                'jenis_kelamin' => $pmks_data->jenis_kelamin, 
+                                'nama_ibu_kandung' => $pmks_data->nama_ibu_kandung,
+                                'hubungan_keluarga' => $pmks_data->hubungan_keluarga, 
+                                'tahun_data' => $pmks_data->tahun_data, 
+                                'jenis_pmks' => $pmks_data->jenis_pmks
+                            ];
 
-                                    $dtksErrorImport[] = [
-                                        'dtks_import_id' => $this->dtksimportId,
-                                        'row' => $this->counter,
-                                        'attribute' => '[iddtks]',
-                                        'values' => $pmks_data->iddtks,
-                                        'errors' => 'ID DTKS sudah ada'
-                                    ];
-
-                                    $this->counterErorrs++;
-                                }
-                                else{
-
-                                        $pmksData[] = [
-                                            'dtks_import_id' => $this->dtksimportId,
-                                            'iddtks' => $pmks_data->iddtks, 
-                                            'provinsi' => $pmks_data->provinsi, 
-                                            'kabupaten_kota' => $pmks_data->kabupaten_kota, 
-                                            'kecamatan' => $pmks_data->kecamatan, 
-                                            'desa_kelurahan' => $pmks_data->desa_kelurahan, 
-                                            'alamat' => $pmks_data->alamat, 
-                                            'dusun' => $pmks_data->dusun, 
-                                            'rt' => $pmks_data->rt, 
-                                            'rw' => $pmks_data->rw,
-                                            'nomor_kk' => $pmks_data->nomor_kk, 
-                                            'nomor_nik' => $pmks_data->nomor_nik, 
-                                            'nama' => $pmks_data->nama, 
-                                            'tanggal_lahir' => $pmks_data->tanggal_lahir, 
-                                            'tempat_lahir' => $pmks_data->tempat_lahir, 
-                                            'jenis_kelamin' => $pmks_data->jenis_kelamin, 
-                                            'nama_ibu_kandung' => $pmks_data->nama_ibu_kandung,
-                                            'hubungan_keluarga' => $pmks_data->hubungan_keluarga, 
-                                            'tahun_data' => $pmks_data->tahun_data, 
-                                            'jenis_pmks' => $pmks_data->jenis_pmks
-                                        ];
-
-                                        $this->counterSuccess++;
-                                }
-                               
-                            }
                         }
 
-                        PmksData::insert($pmksData);
-
+                        DB::table('pmks_data')->insertOrIgnore($pmksData);
                         DtksErrorsImport::insert($dtksErrorImport);
 
                         DtksImport::find($this->dtksimportId)

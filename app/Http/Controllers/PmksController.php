@@ -16,6 +16,7 @@ use App\Models\DtksImport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
+use Hashids\Hashids;
 
 class PmksController extends Controller
 {
@@ -107,14 +108,18 @@ class PmksController extends Controller
     }
 
     public function datapmks(){
+
+        
+
         $data = PmksData::select('*');
 
         return DataTables::of($data)
                         ->addIndexColumn()
                                     
                                     ->addColumn('action', function($row){
-                    
-                                        $btn = '<a href="javascript:void(0)" class="edit btn btn-default btn-sm" data-toggle="tooltip" data-placement="left" title="Edit"><i class="fas fa-edit"></i></a> <a href="javascript:void(0)" class="delete btn btn-default btn-sm data-toggle="tooltip" data-placement="left" title="Delete"><i class="fas fa-trash"></i></a>';
+                                        $hashids = new Hashids('dtks', 15); 
+                                        $id = $hashids->encode($row->id);
+                                        $btn = '<a href="'.route('pmks.edit-create',['q' => $id]).'" class="edit btn btn-default btn-sm" data-toggle="tooltip" data-placement="left" title="Edit"><i class="fas fa-edit"></i></a> <a href="'.route('pmks.delete',['q' => $id]).'" onclick="return confirm(\'Hapus Data ?\')" class="delete btn btn-default btn-sm data-toggle="tooltip" data-placement="left" title="Delete"><i class="fas fa-trash"></i></a>';
                     
                                             return $btn;
                                     })
@@ -200,6 +205,202 @@ class PmksController extends Controller
         ]);
     }
 
+    public function editCreate(Request $request){
+        if($request->has('q')){
+
+            $myhashid = $request->input('q');
+            $hashids = new Hashids('dtks', 15); 
+            $id = $hashids->decode($myhashid);
+
+            if(DB::table('pmks_data')->where('id', $id)->exists()){
+                $pmksData = DB::table('pmks_data')->select('iddtks', 'provinsi', 'kabupaten_kota', 'kecamatan', 'desa_kelurahan', 'alamat', 'dusun', 'rt', 'rw',
+                'nomor_kk', 'nomor_nik', 'nama', 'tanggal_lahir', 'tempat_lahir', 'jenis_kelamin', 'nama_ibu_kandung',
+                'hubungan_keluarga', 'tahun_data', 'jenis_pmks')->where('id', $id)->first();
+                
+                $provinces = DB::table('indonesia_provinces')
+                    ->Where('code', '72')
+                    ->select('code', 'name')
+                    ->first();
+
+                $kabupatenKotaCreateSelect = DB::table('indonesia_cities')
+                    ->Where('province_code', '72')
+                    ->Where('name', $pmksData->kabupaten_kota)
+                    ->select('code', 'name')
+                    ->first();
+                
+                // dd($pmksData);
+
+                $kecamatanCreateSelect = DB::table('indonesia_districts')
+                    ->Where('city_code', $kabupatenKotaCreateSelect->code)
+                    ->Where('name', $pmksData->kecamatan)
+                    ->select('code', 'name')
+                    ->first();
+                
+                $desaKelurahanCreateSelect = DB::table('indonesia_villages')
+                    ->Where('district_code', $kecamatanCreateSelect->code)
+                    ->Where('name', $pmksData->desa_kelurahan)
+                    ->select('code', 'name')
+                    ->first();
+                
+                
+                $kabupatenKotaCreate = DB::table('indonesia_cities')
+                    ->select('code', 'name')
+                    ->Where('province_code', '72')
+                    ->get();
+
+                $kecamatanCreate = DB::table('indonesia_districts')
+                    ->select('code', 'name')
+                    ->Where('city_code', $kabupatenKotaCreateSelect->code)
+                    ->get();
+                
+                $desaKelurahanCreate = DB::table('indonesia_villages')
+                    ->select('code', 'name')
+                    ->Where('district_code', $kecamatanCreateSelect->code)
+                    ->get();
+                
+                $jenisPmks = DB::table('jenis_pmks')->select('jenis','detail')->get();
+                $class_menu_data_pmks = "menu-open";
+                return view('pmks.edit', compact(
+                    'pmksData', 'myhashid',
+                    'class_menu_data_pmks', 'jenisPmks', 'provinces',
+                    'desaKelurahanCreate', 'kecamatanCreate', 'kabupatenKotaCreate',
+                    'desaKelurahanCreateSelect', 'kecamatanCreateSelect', 'kabupatenKotaCreateSelect'
+                ));
+            }
+            
+
+        }
+
+        abort(404);
+        
+    }
+
+    public function storeEdit(Request $request){
+        
+        $request->validate([
+            'iddtks' => 'required',
+            'tahun_data' => 'required',
+            'jenis_pmks' => 'required',
+            'provinsi' => 'required',
+            'kabupaten_kota' => 'required',
+            'kecamatan' => 'required',
+            'desa_kelurahan' => 'required',
+            'alamat' => 'required',
+            'dusun' => 'required',
+            'rt' => 'required',
+            'rw' => 'required',
+            'nomor_kk' => 'required|max:16',
+            'nomor_nik' => 'required|max:16',
+            'nama' => 'required',
+            'tanggal_lahir' => 'required',
+            'tempat_lahir' => 'required',
+            'jenis_kelamin' => 'required',
+            'nama_ibu_kandung' => 'required',
+            'hubungan_keluarga' => 'required',
+       ]);
+
+       
+
+        if ($request->has('id')) {
+
+            $hashids = new Hashids('dtks', 15); 
+            $id = $hashids->decode($request->input('id'));
+
+            if(DB::table('pmks_data')->where('id', $id)->exists()){
+                $provinsi = DB::table('indonesia_provinces')->where('code', $request->input('provinsi'))->first();
+                $kabupatenKota = DB::table('indonesia_cities')->where('code', $request->input('kabupaten_kota'))->first();
+                $kecamatan = DB::table('indonesia_districts')->where('code', $request->input('kecamatan'))->first();
+                $desaKelurahan = DB::table('indonesia_villages')->where('code', $request->input('desa_kelurahan'))->first();
+
+                $storeData = request()->except(['_token','id']);
+                
+                $storeData['provinsi'] = $provinsi->name;
+                $storeData['kabupaten_kota'] = $kabupatenKota->name;
+                $storeData['kecamatan'] = $kecamatan->name;
+                $storeData['desa_kelurahan'] = $desaKelurahan->name;
+
+                DB::table('pmks_data')
+                ->where('id', $id)
+                ->update($storeData);
+                    
+
+                // PmksData::create($storeData);
+                return back()->with('success', 'Data berhasil di update');
+            }
+            
+        }
+
+        abort(404);
+        
+    }
+
+    public function create(Request $request){
+        $jenisPmks = DB::table('jenis_pmks')->select('jenis','detail')->get();
+        $class_menu_data_pmks = "menu-open";
+        return view('pmks.create', compact(
+            'class_menu_data_pmks', 'jenisPmks'
+        ));
+    }
+
+    
+
+    public function storeCreate(Request $request){
+        // dd($request);
+        $request->validate([
+            'iddtks' => 'required|unique:pmks_data,iddtks',
+            'tahun_data' => 'required',
+            'jenis_pmks' => 'required',
+            'provinsi' => 'required',
+            'kabupaten_kota' => 'required',
+            'kecamatan' => 'required',
+            'desa_kelurahan' => 'required',
+            'alamat' => 'required',
+            'dusun' => 'required',
+            'rt' => 'required',
+            'rw' => 'required',
+            'nomor_kk' => 'required|max:16',
+            'nomor_nik' => 'required|max:16',
+            'nama' => 'required',
+            'tanggal_lahir' => 'required',
+            'tempat_lahir' => 'required',
+            'jenis_kelamin' => 'required',
+            'nama_ibu_kandung' => 'required',
+            'hubungan_keluarga' => 'required',
+       ]);
+
+        $provinsi = DB::table('indonesia_provinces')->where('code', $request->input('provinsi'))->first();
+        $kabupatenKota = DB::table('indonesia_cities')->where('code', $request->input('kabupaten_kota'))->first();
+        $kecamatan = DB::table('indonesia_districts')->where('code', $request->input('kecamatan'))->first();
+        $desaKelurahan = DB::table('indonesia_villages')->where('code', $request->input('desa_kelurahan'))->first();
+
+        $storeData = $request->all();
+        
+        $storeData['provinsi'] = $provinsi->name;
+        $storeData['kabupaten_kota'] = $kabupatenKota->name;
+        $storeData['kecamatan'] = $kecamatan->name;
+        $storeData['desa_kelurahan'] = $desaKelurahan->name;
+
+        PmksData::create($storeData);
+        return back()->with('success', 'Data berhasil di rekam.');
+    }
+
+
+    public function delete(Request $request){
+        if($request->has('q')){
+
+            $myhashid = $request->input('q');
+            $hashids = new Hashids('dtks', 15); 
+            $id = $hashids->decode($myhashid);
+
+            if(DB::table('pmks_data')->where('id', $id)->exists()){
+                DB::table('pmks_data')->where('id', $id)->delete();
+            }
+
+            return back()->with('sukseshapus', 'Data berhasil di Hapus.');
+        }
+
+        abort(404);
+    }
 
 }
 

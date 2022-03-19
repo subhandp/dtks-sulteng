@@ -1,14 +1,12 @@
 @extends('layouts.master')
 
 @section('content')
-@php
-    // dd(old())
-@endphp
+
 <section class="content card" style="padding: 10px 10px 10px 10px ">
     <div class="row">
         <div class="col">
             <h5>
-                <strong>TAMBAH DATA PMKS </strong>
+                <strong>EDIT DATA PMKS </strong>
             </h5>
             
             <hr>
@@ -26,28 +24,33 @@
             
             
 
-                <form method="post" action="{{ route('pmks.store-create') }}" class="form" role="form">
+                <form method="post" action="{{ route('pmks.store-edit') }}" class="form" role="form">
                     @csrf
+
+                    <input type="hidden" name="id" value="{{ $myhashid }}">
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label form-control-label">Tahun Data</label>
                         <div class="col-lg-5">
                             
                                 <input placeholder="tttt" type="text" class="form-control bg-light @error('tahun_data') is-invalid @enderror" name="tahun_data" id="input-tahun-data" 
-                                    value="{{ old('tahun_data') }}"
+                                    value="{{ $pmksData->tahun_data }}"
                                 >
+
                                 @error('tahun_data')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
+
                         </div>
                     </div>
+                    
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label form-control-label">Jenis PMKS</label>
                         <div class="col-lg-9">
                             <select class="@error('jenis_pmks') is-invalid @enderror" id="jenis_pmks" name="jenis_pmks"  data-placeholder="Pilih Jenis PMKS" style="width: 100%"  >
                                 @foreach ($jenisPmks as $pmks)
-                                @if (old('jenis_pmks') == $pmks->jenis )
+                                @if ($pmksData->jenis_pmks == $pmks->jenis )
                                     <option value="{{ $pmks->jenis }}" selected="selected">
                                         {{ $pmks->jenis }}
                                     </option>
@@ -75,7 +78,7 @@
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label form-control-label">ID DTKS</label>
                         <div class="col-lg-9">
-                            <input name="iddtks" class="form-control @error('iddtks') is-invalid @enderror" type="text" value="{{old('iddtks')}}">
+                            <input name="iddtks" class="form-control @error('iddtks') is-invalid @enderror" type="text" value="{{ $pmksData->iddtks }}">
                             @error('iddtks')
                                 <div class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -85,11 +88,14 @@
                     </div>
 
                 
-
+                  
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label form-control-label">Provinsi</label>
                         <div class="col-lg-9">
                             <select class="form-control @error('provinsi') is-invalid @enderror" id="provinsi" name="provinsi" data-placeholder="Pilih Provinsi" style="width: 100%" >
+                                @isset($provinces)
+                                    <option value="{{ $provinces->code }}" selected="selected"> {{ $provinces->name }}</option>
+                                @endisset
                             </select>
                             @error('provinsi')
                                 <div class="invalid-feedback" role="alert">
@@ -103,6 +109,18 @@
                     <label class="col-lg-3 col-form-label form-control-label">Kabupaten/Kota</label>
                     <div class="col-lg-9">
                         <select class="form-control @error('kabupaten_kota') is-invalid @enderror" id="kabupaten_kota" name="kabupaten_kota" data-placeholder="Pilih Kabupaten/Kota" style="width: 100%" >
+                        @isset($kabupatenKotaCreate)
+                            @foreach ( $kabupatenKotaCreate as $kabupatenKota)
+                                @if ($pmksData->kabupaten_kota == $kabupatenKota->name)
+                                    <option value="{{ $kabupatenKota->code }}" selected="selected">
+                                        {{ $kabupatenKota->name }}
+                                    </option>
+                                @endif
+                                <option value="{{ $kabupatenKota->code }}">
+                                    {{ $kabupatenKota->name }}
+                                </option>
+                            @endforeach
+                        @endisset
                         </select>
                         @error('kabupaten_kota')
                             <div class="invalid-feedback" role="alert">
@@ -116,6 +134,18 @@
                         <label class="col-lg-3 col-form-label form-control-label">Kecamatan</label>
                         <div class="col-lg-9">
                             <select class="form-control @error('kecamatan') is-invalid @enderror" id="kecamatan" name="kecamatan" data-placeholder="Pilih Kecamatan" style="width: 100%" >
+                                @isset($kecamatanCreate)
+                                    @foreach ( $kecamatanCreate as $kecamatan)
+                                        @if ($pmksData->kecamatan == $kecamatan->name)
+                                            <option value="{{ $kecamatan->code }}" selected="selected">
+                                                {{ $kecamatan->name }}
+                                            </option>
+                                        @endif
+                                        <option value="{{ $kecamatan->code }}">
+                                            {{ $kecamatan->name }}
+                                        </option>
+                                    @endforeach
+                                @endisset
                             </select>
                             @error('kecamatan')
                                 <div class="invalid-feedback" role="alert">
@@ -128,6 +158,18 @@
                         <label class="col-lg-3 col-form-label form-control-label">Desa/kelurahan</label>
                         <div class="col-lg-9">
                             <select  class="form-control @error('desa_kelurahan') is-invalid @enderror" id="desa_kelurahan" name="desa_kelurahan" data-placeholder="Pilih Desa/kelurahan" style="width: 100%" >
+                                @isset($desaKelurahanCreate)
+                                @foreach ( $desaKelurahanCreate as $desaKelurahan)
+                                    @if ($pmksData->desa_kelurahan == $desaKelurahan->name)
+                                        <option value="{{ $desaKelurahan->code }}" selected="selected">
+                                            {{ $desaKelurahan->name }}
+                                        </option>
+                                    @endif
+                                    <option value="{{ $desaKelurahan->code }}">
+                                        {{ $desaKelurahan->name }}
+                                    </option>
+                                @endforeach
+                            @endisset
                             </select>
                             @error('desa_kelurahan')
                                 <div class="invalid-feedback" role="alert">
@@ -139,7 +181,7 @@
                     <div class="form-group row">
                     <label class="col-lg-3 col-form-label form-control-label">Alamat</label>
                     <div class="col-lg-9">
-                        <input name="alamat" class="form-control @error('alamat') is-invalid @enderror" type="text" value="{{ old('alamat') }}">
+                        <input name="alamat" class="form-control @error('alamat') is-invalid @enderror" type="text" value="{{ $pmksData->alamat }}">
                         @error('alamat')
                             <div class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -150,7 +192,7 @@
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label form-control-label">Dusun</label>
                         <div class="col-lg-9">
-                            <input name="dusun" class="form-control @error('dusun') is-invalid @enderror" type="text" value="{{ old('dusun') }}">
+                            <input name="dusun" class="form-control @error('dusun') is-invalid @enderror" type="text" value="{{ $pmksData->dusun }}">
                             @error('dusun')
                                 <div class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -167,7 +209,7 @@
                             </option>
                             
                             @for ($i = 0; $i < 21; $i++)
-                                @if (old('rt') == $i && $i != "-" )
+                                @if ($pmksData->rt == $i && $i != "-" )
                                         <option value="{{ $i }}" selected="selected">
                                             {{ $i }}
                                         </option>
@@ -196,7 +238,7 @@
                             </option>
                             
                             @for ($i = 0; $i < 21; $i++)
-                                @if (old('rw') == $i && $i != "-" )
+                                @if ($pmksData->rw == $i && $i != "-" )
                                         <option value="{{ $i }}" selected="selected">
                                             {{ $i }}
                                         </option>
@@ -205,7 +247,6 @@
                                         {{ $i }}
                                     </option>
                                 @endif
-
                             @endfor
                             </select>
 
@@ -223,7 +264,7 @@
                     <div class="form-group row">
                     <label class="col-lg-3 col-form-label form-control-label">Nomor KK</label>
                     <div class="col-lg-9">
-                        <input name="nomor_kk" class="form-control @error('nomor_kk') is-invalid @enderror" type="text" value="{{ old('nomor_kk') }}"> 
+                        <input name="nomor_kk" class="form-control @error('nomor_kk') is-invalid @enderror" type="text" value="{{ $pmksData->nomor_kk }}"> 
                         <small class="form-text text-muted " id="passwordHelpBlock"></small>
                         @error('nomor_kk')
                             <div class="invalid-feedback" role="alert">
@@ -232,11 +273,13 @@
                         @enderror
                     </div>
                     </div>
-
+                    @php
+                        $pmksData->nomor_nik;
+                    @endphp
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label form-control-label">Nomor NIK</label>
                         <div class="col-lg-9">
-                            <input name="nomor_nik" class="form-control  @error('nomor_nik') is-invalid @enderror" type="text" value="{{ old('nomor_nik') }}"> 
+                            <input name="nomor_nik" class="form-control  @error('nomor_nik') is-invalid @enderror" type="text" value="{{ $pmksData->nomor_nik }}"> 
                             <small class="form-text text-muted" id="passwordHelpBlock"></small>
                             @error('nomor_nik')
                             <div class="invalid-feedback" role="alert">
@@ -249,7 +292,7 @@
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label form-control-label">Nama</label>
                         <div class="col-lg-9">
-                            <input name="nama" class="form-control @error('nama') is-invalid @enderror" type="text" value="{{ old('nama') }}"> 
+                            <input name="nama" class="form-control @error('nama') is-invalid @enderror" type="text" value="{{ $pmksData->nama }}"> 
                             <small class="form-text text-muted" id="passwordHelpBlock"></small>
                             @error('nama')
                                 <div class="invalid-feedback" role="alert">
@@ -263,7 +306,7 @@
                         <label class="col-lg-3 col-form-label form-control-label">Tanggal Lahir</label>
                         <div class="col-lg-5">
                             
-                                <input  type="date" class="form-control bg-light @error('tanggal_lahir') is-invalid @enderror" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}">
+                                <input  type="date" class="form-control bg-light @error('tanggal_lahir') is-invalid @enderror" name="tanggal_lahir" value="{{ $pmksData->tanggal_lahir }}">
                                 @error('tanggal_lahir')
                                     <div class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
@@ -275,7 +318,7 @@
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label form-control-label">Tempat Lahir</label>
                         <div class="col-lg-9">
-                            <input name="tempat_lahir" class="form-control @error('tempat_lahir') is-invalid @enderror" type="text" value="{{ old('tempat_lahir') }}"> 
+                            <input name="tempat_lahir" class="form-control @error('tempat_lahir') is-invalid @enderror" type="text" value="{{ $pmksData->tempat_lahir  }}"> 
                             @error('tempat_lahir')
                                 <div class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -289,9 +332,9 @@
                         <label class="col-lg-3 col-form-label form-control-label">Jenis Kelamin</label>
                         <div class="col-lg-5">
                             <select name="jenis_kelamin" class="form-control select2 @error('jenis_kelamin') is-invalid @enderror" id="jenis_kelamin" size="0">
-
-                                <option value="PRIA" {{ old('jenis_kelamin') == "PRIA" ? "selected='selected'" : '' }}> PRIA </option> 
-                                <option value="WANITA" {{ old('jenis_kelamin') == "WANITA" ? "selected='selected'" : '' }}> WANITA </option>  
+                                
+                                <option value="PRIA" {{ $pmksData->jenis_kelamin == "PRIA" ? "selected='selected'" : '' }}> PRIA </option> 
+                                <option value="WANITA" {{ $pmksData->jenis_kelamin == "WANITA" ? "selected='selected'" : '' }}> WANITA </option>  
                                 
                                                       
                             </select>
@@ -306,7 +349,7 @@
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label form-control-label">Nama Ibu Kandung</label>
                         <div class="col-lg-9">
-                            <input name="nama_ibu_kandung" class="form-control @error('nama_ibu_kandung') is-invalid @enderror" type="text" value="{{ old('nama_ibu_kandung') }}"> 
+                            <input name="nama_ibu_kandung" class="form-control @error('nama_ibu_kandung') is-invalid @enderror" type="text" value="{{ $pmksData->nama_ibu_kandung }}"> 
                             @error('nama_ibu_kandung')
                                 <div class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -319,10 +362,10 @@
                         <label class="col-lg-3 col-form-label form-control-label"> Hubungan Keluarga</label>
                         <div class="col-lg-5">
                             <select name="hubungan_keluarga" class="form-control select2 @error('hubungan_keluarga') is-invalid @enderror" id="hubungan_keluarga" >
-                                <option value="ANAK" {{ old('hubungan_keluarga') == "ANAK" ? "selected='selected'" : '' }}> ANAK </option> 
-                                <option value="ISTRI" {{ old('hubungan_keluarga') == "ISTRI" ? "selected='selected'" : '' }}> ISTRI </option> 
-                                <option value="KEPALA KELUARGA" {{ old('hubungan_keluarga') == "KEPALA KELUARGA" ? "selected='selected'" : '' }}> KEPALA KELUARGA </option>   
-                                <option value="blm ditentukan" {{ old('hubungan_keluarga') == "blm ditentukan" ? "selected='selected'" : '' }}> blm ditentukan </option>                       
+                                <option value="ANAK" {{ $pmksData->hubungan_keluarga == "ANAK" ? "selected='selected'" : '' }}> ANAK </option> 
+                                <option value="ISTRI" {{ $pmksData->hubungan_keluarga == "ISTRI" ? "selected='selected'" : '' }}> ISTRI </option> 
+                                <option value="KEPALA KELUARGA" {{ $pmksData->hubungan_keluarga == "KEPALA KELUARGA" ? "selected='selected'" : '' }}> KEPALA KELUARGA </option>   
+                                <option value="blm ditentukan" {{ $pmksData->hubungan_keluarga == "blm ditentukan" ? "selected='selected'" : '' }}> blm ditentukan </option>                       
                             </select>
                             @error('hubungan_keluarga')
                                 <div class="invalid-feedback" role="alert">
@@ -337,8 +380,9 @@
                     <div class="form-group row">
                     <label class="col-lg-3 col-form-label form-control-label"></label>
                     <div class="col-lg-9">
-                        <a href="{{ route('pmks.data')}}" class="btn btn-secondary">Batal </a>
-                        <input class="btn btn-primary" type="submit" value="Rekam">
+                        <a href="{{ route('pmks.data') }}" class="btn btn-secondary">Batal </a>
+                        
+                        <input class="btn btn-primary" type="submit" value="Update">
                     </div>
                     </div>
 

@@ -18,12 +18,12 @@
 
             <div class="row">
                 <div class="col">
-                <h5>
-                    <strong>POSTING DATA </strong>
-                </h5>
-                
-                <hr>
-            </div>
+                    <h5>
+                        <strong>POSTING DATA </strong>
+                    </h5>
+                    
+                    <hr>
+                </div>
             </div>
             <div class="m-4 d-flex justify-content-center">
                 <form class="form-inline" action="/pmks/store-posting" method="POST"  id="postingForm" >
@@ -44,15 +44,23 @@
             </div>
         
         </div>
+
+        
+
+        
+
     </section>
+
+    
  @endsection
 
 
  @section('file-pond-data-import')
  <script>
+     
     
-
     $('#selectDtksImport').select2({
+            theme: "bootstrap",
             allowClear: true,
             ajax: {
                url: "{{ route('dtks.selectdtksimport') }}",
