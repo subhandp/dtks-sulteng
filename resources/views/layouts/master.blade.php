@@ -316,7 +316,7 @@
                             {{ $class_menu_pengaturan }}
                         @endisset 
                         ">
-                            <a href="#" class="nav-link">
+                            {{-- <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-cogs"></i>
                                 <p>
                                     Master
@@ -344,7 +344,7 @@
                                         <p>Master pengguna </p>
                                     </a>
                                 </li>
-                            </ul>
+                            </ul> --}}
                         </li>
                         @endif
                     </ul>
@@ -407,7 +407,7 @@
     {{-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script> --}}
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
-
+{{-- 
     <script src="https://unpkg.com/echarts/dist/echarts.min.js"></script>
     <!-- Chartisan -->
     <script src="https://unpkg.com/@chartisan/echarts/dist/chartisan_echarts.js"></script>
@@ -419,7 +419,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+ --}}
 
 
     <script>

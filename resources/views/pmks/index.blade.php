@@ -183,7 +183,29 @@
                                 <div class="form-group row">
                                     <label for="jenis_pmks" class="col-sm-3 col-form-label">Jenis PMKS</label>
                                     <div class="input-group col-sm-9">
-                                        <select class="form-control" id="jenis_pmks" name="jenis_pmks">
+
+                                        <select class="@error('jenis_pmks') is-invalid @enderror" id="jenis_pmks" name="jenis_pmks"  data-placeholder="Pilih Jenis PMKS" style="width: 100%"  >
+                                            @foreach ($jenisPmks as $pmks)
+                                            @if (old('jenis_pmks') == $pmks->jenis )
+                                                <option value="{{ $pmks->jenis }}" selected="selected">
+                                                    {{ $pmks->jenis }}
+                                                </option>
+                                            @elseif ($pmks->jenis == 'KELUARGA FAKIR MISKIN' && empty(old('jenis_pmks')))
+                                                <option value="{{ $pmks->jenis }}" selected="selected">
+                                                    {{ $pmks->jenis }}
+                                                </option>
+                                            @else
+                                            
+                                                <option value="{{ $pmks->jenis }}">
+                                                    {{ $pmks->jenis }}
+                                                </option>
+                                            @endif
+                                            
+                                            @endforeach
+                                        </select>
+
+
+                                        {{-- <select class="form-control" id="jenis_pmks" name="jenis_pmks">
                                             <option value="KELUARGA FAKIR MISKIN">KELUARGA FAKIR MISKIN</option>
                                             <option value="KORBAN BENCANA ALAM">KORBAN BENCANA ALAM</option>
                                             <option value="KORBAN BENCANA SOSIAL">KORBAN BENCANA SOSIAL</option>
@@ -192,7 +214,7 @@
                                             <option value="BEKAS WARGA BINAAN LEMBAGA PEMASYARAKATAN  (BWBLP)">BEKAS WARGA BINAAN LEMBAGA PEMASYARAKATAN  (BWBLP)</option>
                                             <option value="KORBAN BENCANA SOSIAL">ORANG DENGAN HIV AIDS</option>
                                        
-                                        </select>
+                                        </select> --}}
                                     </div>
                                 </div>
 
@@ -250,6 +272,13 @@
  @section('file-pond-import')
  <script>
 
+    $.fn.select2.defaults.set( "theme", "bootstrap" );
+
+    
+    $("#jenis_pmks").select2();
+    $("#tahun_data").select2();
+
+    
     var tableErrros = $('#table-errors').DataTable();
     
     

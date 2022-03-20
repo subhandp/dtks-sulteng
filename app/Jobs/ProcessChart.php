@@ -40,7 +40,6 @@ class ProcessChart implements ShouldQueue
                                         ->select('kabupaten_kota')
                                         ->where('kabupaten_kota', $kk->name)
                                         ->count();
-                // $totalPmks[] = [$kk->name => $totalKabupatenKota];
                 
                 DB::table('charts')
                 ->updateOrInsert(

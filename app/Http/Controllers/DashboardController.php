@@ -53,8 +53,9 @@ class DashboardController extends Controller
         
         // dd($pmksDataGroup);
 
+        $chartData =  DB::table('charts')->select('*')->get();
+
         $pmksDataGroup = [];
-        $chartData = [];
 
         $class_menu_data_dashboard = "menu-open";
 

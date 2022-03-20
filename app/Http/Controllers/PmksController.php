@@ -31,12 +31,14 @@ class PmksController extends Controller
         ->orderBy('updated_at', 'desc')
         ->get();
         
+        $jenisPmks = DB::table('jenis_pmks')->select('jenis','detail')->get();
+
         $class_menu_pmks = "menu-open";
         $class_menu_pmks_import = "sub-menu-open";
         $class_menu_pmks_daftar = "";
         
 
-        return view('pmks.index', compact('data_pmks_import','class_menu_pmks','class_menu_pmks_import','class_menu_pmks_daftar'));
+        return view('pmks.index', compact('jenisPmks','data_pmks_import','class_menu_pmks','class_menu_pmks_import','class_menu_pmks_daftar'));
 
     }
 
@@ -86,12 +88,17 @@ class PmksController extends Controller
 
     public function data(){
         $class_menu_data_pmks = "menu-open";
-       
-        return view('pmks.daftar', compact('class_menu_data_pmks'));
+
+        $kabupatenKota = DB::table('indonesia_cities')
+        ->select('id', 'name')
+        ->Where('province_id', '72')
+        ->get();
+
+        return view('pmks.daftar', compact('kabupatenKota','class_menu_data_pmks'));
 
     }
 
-    public function datapmks(){
+    public function datapmks(Request $request){
 
         $data = PmksData::select('*');
         return DataTables::of($data)
@@ -102,6 +109,33 @@ class PmksController extends Controller
                     $btn = '<a href="'.route('pmks.edit-create',['q' => $id]).'" class="edit btn btn-default btn-sm" data-toggle="tooltip" data-placement="left" title="Edit"><i class="fas fa-edit"></i></a> <a href="'.route('pmks.delete',['q' => $id]).'" onclick="return confirm(\'Hapus Data ?\')" class="delete btn btn-default btn-sm data-toggle="tooltip" data-placement="left" title="Delete"><i class="fas fa-trash"></i></a>';
 
                         return $btn;
+                })
+                ->filter(function ($instance) use ($request) {
+                    if ($request->has('kabupaten_kota')) {
+                        if($request->get('kabupaten_kota') != 'SEMUA KAB/KOTA'){
+                            $instance->where('kabupaten_kota', $request->get('kabupaten_kota'));
+                        }
+
+                        
+                    }
+                    if (!empty($request->get('search'))) {
+                         $instance->where(function($w) use($request){
+                            $search = $request->get('search');
+                            $w->orWhere('kabupaten_kota', 'LIKE', "%$search%")
+                            ->orWhere('jenis_pmks', 'LIKE', "%$search%")
+                            ->orWhere('iddtks', 'LIKE', "%$search%")
+                            ->orWhere('nomor_nik', 'LIKE', "%$search%")
+                            ->orWhere('nama', 'LIKE', "%$search%")
+                            ->orWhere('tahun_data', 'LIKE', "%$search%")
+                            ->orWhere('kecamatan', 'LIKE', "%$search%")
+                            ->orWhere('desa_kelurahan', 'LIKE', "%$search%")
+                            ->orWhere('alamat', 'LIKE', "%$search%")
+                            ->orWhere('nomor_kk', 'LIKE', "%$search%")
+                            ->orWhere('jenis_kelamin', 'LIKE', "%$search%")
+                            ->orWhere('dusun', 'LIKE', "%$search%");
+
+                        });
+                    }
                 })
                 ->rawColumns(['action'])
                 ->make(true);

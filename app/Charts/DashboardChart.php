@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 class DashboardChart
 {
     protected $chart;
+    public $chartData;
 
     public function __construct(LarapexChart $chart)
     {
@@ -24,13 +25,16 @@ class DashboardChart
         foreach ($charts as $key => $chart) {
             if($chart->total >0){
                 $kabupaten_kota[] = $chart->kabupaten_kota;
-                $totalDtks[] = $chart->total;
+                $totalDtks[] = (int)$chart->total;
             }
 
         }
 
+        // dd($totalDtks);
+        
+
         return $this->chart->pieChart()
-            ->setTitle('Data Keseluruhan PMKS tiap Kabupaten')
+            ->setTitle('Data Total Keseluruhan Penduduk kategori PMKS tiap Kabupaten')
             ->addData($totalDtks)
             ->setLabels($kabupaten_kota)
             ->setDataLabels();
