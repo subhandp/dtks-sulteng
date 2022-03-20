@@ -31,14 +31,23 @@
             <div class="row table-responsive">
                 <div class="col">
                 
-                <table id="tabel-data-pmks" class="table table-bordered data-table">
+                <table id="tabel-data-pmks" class="table table-bordered data-table display compact">
                     <thead>
                         <tr>
                             <th>No</th>
                             <th>ID DTKS</th>
+                            <th>JENIS PMKS</th>
                             <th>KABUPATEN/KOTA</th>
+                            <th>KECAMATAN</th>
+                            <th>DESA/KELURAHAN</th>
+                            <th>ALAMAT</th>
+                            <th>NOMOR KK</th>
                             <th>NOMOR NIK</th>
                             <th>NAMA</th>
+                            <th>TANGGAL LAHIR</th>
+                            <th>JENIS KELAMIN</th>
+                            <th>TAHUN DATA</th>
+                            
                             <th width="100px">Action</th>
                         </tr>
                     </thead>
@@ -65,13 +74,22 @@
         columns: [
             {data: 'id', name: 'id'},
             {data: 'iddtks', name: 'iddtks'},
+            {data: 'jenis_pmks', name: 'jenis_pmks'},
             {data: 'kabupaten_kota', name: 'kabupaten_kota'},
+            {data: 'kecamatan', name: 'kecamatan'},
+            {data: 'desa_kelurahan', name: 'desa_kelurahan'},
+            {data: 'alamat', name: 'alamat'},
+            {data: 'nomor_kk', name: 'nomor_kk'},
             {data: 'nomor_nik', name: 'nomor_nik'},
             {data: 'nama', name: 'nama'},
+            {data: 'tanggal_lahir', name: 'tanggal_lahir'},
+            {data: 'jenis_kelamin', name: 'jenis_kelamin'},
+            {data: 'tahun_data', name: 'tahun_data'},
+           
+
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });
-    
 
  </script>
  @endsection

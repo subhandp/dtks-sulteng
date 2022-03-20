@@ -17,7 +17,54 @@
                 <!-- Small boxes (Stat box) -->
                 <div class="filter-container p-0 row">
                 
+                    <div class="container px-4 mx-auto">
 
+                        <div class="p-6 m-20 bg-white">
+                            
+                            <div>
+                                <form action="">
+                                    <select class="form-control" id="jenis_pmks" name="jenis_pmks" data-placeholder="Pilih Jenis PMKS" style="width: 100%" >
+                                        @if (!empty($jenisPmksSelect))
+                                            <option value="{{ $jenisPmksSelect->id }}" selected="selected">{{ $jenisPmksSelect->jenis }}</option>
+                                        @endif
+                                    </select>
+                                </form><br>
+                                
+                            </div>
+
+                            {!! $chart->container() !!}
+                        </div>
+                        @php
+                            // dd($chartData);
+                        @endphp
+                        <table class="table table-bordered">
+                            <thead>
+                              <tr>
+                                  <th>NO</th>
+                                <th>KABUPATEN/KOTA</th>
+                                <th>TOTAL</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                    $no = 1;
+                                @endphp
+                                @foreach ($chartData as $k => $data)
+                                    
+                                    <tr>
+                                        <td>{{ $no }}</td>
+                                        <td>{{ $data['kab_kota'] }}</td>
+                                        <td>{{ $data['total'] }}</td>
+                                    </tr>
+                                    @php
+                                        $no++;
+                                    @endphp
+                                @endforeach
+                              
+                            </tbody>
+                          </table>
+                    
+                    </div>
                     
                     <!-- ./col -->
                 </div>
@@ -25,4 +72,62 @@
         </div>
     </div>
 </section>
+@endsection
+
+@section('js-create-pmks')
+
+
+<script src="{{ $chart->cdn() }}"></script>
+
+{{ $chart->script() }}
+
+<script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    $.fn.select2.defaults.set( "theme", "bootstrap" );
+    $('#jenis_pmks').select2({
+            allowClear: true,
+            ajax: {
+               url: "{{ route('dashboard.get-jenis-pmks') }}",
+               dataType: 'json',
+               processResults: function(data) {
+                  return {
+                     results: $.map(data, function(item) {
+                        return {
+                           text: item.jenis,
+                           id: item.id
+                        }
+                     })
+                  };
+               }
+            }
+        });
+
+        $('#jenis_pmks').change(function() {
+            
+            let jenisPmksIdSelect2 = $(this).val();
+
+            $.ajax({
+                type: 'POST',
+                url: "{{ route('dashboard.set-session') }}",
+                data: {jenisPmksId: jenisPmksIdSelect2},
+                dataType: 'json',
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+         
+            
+            
+         });
+
+</script>
+
 @endsection

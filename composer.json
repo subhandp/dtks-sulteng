@@ -9,12 +9,12 @@
     "license": "MIT",
     "require": {
         "php": "^7.3",
+        "arielmejiadev/larapex-charts": "^2.1",
         "consoletvs/charts": "^6.5",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "hashids/hashids": "^4.1",
-        "khill/lavacharts": "3.1.*",
         "laravel/framework": "^8.0",
         "laravel/tinker": "^2.0",
         "laravolt/indonesia": "^0.31.0",

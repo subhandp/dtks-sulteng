@@ -14,14 +14,14 @@ class DependentDropdownController extends Controller
         if ($request->has('q')) {
             $search = $request->q;
             $provinces = DB::table('indonesia_provinces')
-                ->select('code', 'name')
+                ->select('id', 'name')
                 ->Where('name', 'LIKE', "%$search%")
                 ->get();
         } else {
             // 72 kode sulawesi tengah
             $provinces = DB::table('indonesia_provinces')
-                ->Where('code', '72')
-                ->select('code', 'name')
+                ->Where('id', '72')
+                ->select('id', 'name')
                 ->get();
         }
 
@@ -36,14 +36,14 @@ class DependentDropdownController extends Controller
         if ($request->has('q')) {
             $search = $request->q;
             $cities = DB::table('indonesia_cities')
-                ->select('code', 'name')
-                ->Where('province_code', $provinceID)
+                ->select('id', 'name')
+                ->Where('province_id', $provinceID)
                 ->Where('name', 'LIKE', "%$search%")
                 ->get();
         } else {
             $cities = DB::table('indonesia_cities')
-                ->select('code', 'name')
-                ->Where('province_code', $provinceID)
+                ->select('id', 'name')
+                ->Where('province_id', $provinceID)
                 ->get();
         }
         return response()->json($cities);
@@ -56,15 +56,15 @@ class DependentDropdownController extends Controller
         if ($request->has('q')) {
             $search = $request->q;
             $districts = DB::table('indonesia_districts')
-                ->select('code', 'name')
-                ->Where('city_code', $cityID)
+                ->select('id', 'name')
+                ->Where('regency_id', $cityID)
                 ->Where('name', 'LIKE', "%$search%")
                 ->get();
 
         } else {
             $districts = DB::table('indonesia_districts')
-                ->select('code', 'name')
-                ->Where('city_code', $cityID)
+                ->select('id', 'name')
+                ->Where('regency_id', $cityID)
                 ->get();
         }
         return response()->json($districts);
@@ -77,14 +77,14 @@ class DependentDropdownController extends Controller
         if ($request->has('q')) {
             $search = $request->q;
             $villages = DB::table('indonesia_villages')
-                ->select('code', 'name')
-                ->Where('district_code', $districtID)
+                ->select('id', 'name')
+                ->Where('district_id', $districtID)
                 ->Where('name', 'LIKE', "%$search%")
                 ->get();
         } else {
             $villages = DB::table('indonesia_villages')
-                ->select('code', 'name')
-                ->Where('district_code', $districtID)
+                ->select('id', 'name')
+                ->Where('district_id', $districtID)
                 ->get();
 
         }

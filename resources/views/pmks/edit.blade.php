@@ -54,10 +54,7 @@
                                     <option value="{{ $pmks->jenis }}" selected="selected">
                                         {{ $pmks->jenis }}
                                     </option>
-                                @elseif ($pmks->jenis == 'KELUARGA FAKIR MISKIN' && empty(old('jenis_pmks')))
-                                    <option value="{{ $pmks->jenis }}" selected="selected">
-                                        {{ $pmks->jenis }}
-                                    </option>
+        
                                 @else
                                 
                                     <option value="{{ $pmks->jenis }}">
@@ -94,7 +91,7 @@
                         <div class="col-lg-9">
                             <select class="form-control @error('provinsi') is-invalid @enderror" id="provinsi" name="provinsi" data-placeholder="Pilih Provinsi" style="width: 100%" >
                                 @isset($provinces)
-                                    <option value="{{ $provinces->code }}" selected="selected"> {{ $provinces->name }}</option>
+                                    <option value="{{ $provinces->id }}" selected="selected"> {{ $provinces->name }}</option>
                                 @endisset
                             </select>
                             @error('provinsi')
@@ -112,11 +109,11 @@
                         @isset($kabupatenKotaCreate)
                             @foreach ( $kabupatenKotaCreate as $kabupatenKota)
                                 @if ($pmksData->kabupaten_kota == $kabupatenKota->name)
-                                    <option value="{{ $kabupatenKota->code }}" selected="selected">
+                                    <option value="{{ $kabupatenKota->id }}" selected="selected">
                                         {{ $kabupatenKota->name }}
                                     </option>
                                 @endif
-                                <option value="{{ $kabupatenKota->code }}">
+                                <option value="{{ $kabupatenKota->id }}">
                                     {{ $kabupatenKota->name }}
                                 </option>
                             @endforeach
@@ -137,11 +134,11 @@
                                 @isset($kecamatanCreate)
                                     @foreach ( $kecamatanCreate as $kecamatan)
                                         @if ($pmksData->kecamatan == $kecamatan->name)
-                                            <option value="{{ $kecamatan->code }}" selected="selected">
+                                            <option value="{{ $kecamatan->id }}" selected="selected">
                                                 {{ $kecamatan->name }}
                                             </option>
                                         @endif
-                                        <option value="{{ $kecamatan->code }}">
+                                        <option value="{{ $kecamatan->id }}">
                                             {{ $kecamatan->name }}
                                         </option>
                                     @endforeach
@@ -161,11 +158,11 @@
                                 @isset($desaKelurahanCreate)
                                 @foreach ( $desaKelurahanCreate as $desaKelurahan)
                                     @if ($pmksData->desa_kelurahan == $desaKelurahan->name)
-                                        <option value="{{ $desaKelurahan->code }}" selected="selected">
+                                        <option value="{{ $desaKelurahan->id }}" selected="selected">
                                             {{ $desaKelurahan->name }}
                                         </option>
                                     @endif
-                                    <option value="{{ $desaKelurahan->code }}">
+                                    <option value="{{ $desaKelurahan->id }}">
                                         {{ $desaKelurahan->name }}
                                     </option>
                                 @endforeach
@@ -438,7 +435,7 @@
                      results: $.map(data, function(item) {
                         return {
                            text: item.name,
-                           id: item.code
+                           id: item.id
                         }
                      })
                   };
@@ -466,7 +463,7 @@
                            results: $.map(data, function(item) {
                               return {
                                  text: item.name,
-                                 id: item.code
+                                 id: item.id
                               }
                            })
                         };
@@ -499,7 +496,7 @@
                            results: $.map(data, function(item) {
                               return {
                                  text: item.name,
-                                 id: item.code
+                                 id: item.id
                               }
                            })
                         };
@@ -531,7 +528,7 @@
                            results: $.map(data, function(item) {
                               return {
                                  text: item.name,
-                                 id: item.code
+                                 id: item.id
                               }
                            })
                         };

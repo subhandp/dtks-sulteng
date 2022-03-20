@@ -19,12 +19,12 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(UserSeeder::class);
         $this->call(JenisPmksSeeder::class);
-        $this->call([
-            ProvincesSeeder::class,
-            CitiesSeeder::class,
-            DistrictsSeeder::class,
-            VillagesSeeder::class,
-        ]);
+        // $this->call([
+        //     ProvincesSeeder::class,
+        //     CitiesSeeder::class,
+        //     DistrictsSeeder::class,
+        //     VillagesSeeder::class,
+        // ]);
         // User::factory(10)->create();
     }
 }

@@ -6,6 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>DTKS - Sulteng</title>
     
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Font Awesome -->
@@ -33,7 +35,8 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-
+    
+    
 #wrapper-table-errors {
   overflow-x: auto;
 
@@ -295,52 +298,16 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item has-treeview 
-                        @isset($class_menu_pmks)
-                            {{ $class_menu_pmks }}
-                        @endisset
-                        ">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-mail-bulk"></i>
-                                <p>
-                                    Import Data PMKS
-                                    <i class="fas fa-angle-left right"></i>
-                                </p>
+
+                        <li class="nav-item">
+                            <a href="/pmks/import-data" class="nav-link 
+                            @isset($class_menu_pmks_import)
+                                {{ $class_menu_pmks_import }}
+                            @endisset
+                            ">
+                                <i class="far fa-envelope nav-icon"></i>
+                                <p>Import Data</p>
                             </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="/pmks/import-data" class="nav-link 
-                                    @isset($class_menu_pmks_import)
-                                        {{ $class_menu_pmks_import }}
-                                    @endisset
-                                    ">
-                                        <i class="far fa-envelope nav-icon"></i>
-                                        <p>Import Data</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/pmks/daftar-pmks" class="nav-link 
-                                    @isset($class_menu_daftar_pmks)
-                                        {{ $class_menu_daftar_pmks }}
-                                    @endisset
-                                    ">
-                                        <i class="far fa-envelope-open nav-icon"></i>
-                                        <p>Daftar Data</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a href="/dtks/posting" class="nav-link 
-                                    @isset($class_menu_posting)
-                                        {{ $class_menu_posting }}
-                                    @endisset
-                                    ">
-                                        <i class="fas fa-plane"></i>
-                                        <p>Posting</p>
-                                    </a>
-                                </li>
-
-                            </ul>
                         </li>
                         
                         @if (auth()->user()->role == 'admin')
@@ -476,27 +443,8 @@
             maxTotalFileSize: '50MB'
         });
 
-        
-        // const modal = document.getElementById("myModalimage");
-        // const modalImg = document.getElementById("img01");
-        // const captionText = document.getElementById("caption");
-
-        // pond.on('activatefile', (file) => {
-        //     const urlCreator = window.URL || window.webkitURL;
-        //     const imageUrl = urlCreator.createObjectURL(file.file);
-        //     modal.style.display = "block";
-        //     modalImg.src = imageUrl;
-        //     captionText.innerHTML = file.filename;
-            
-        // });
-
-         // Get the <span> element that closes the modal
+    
          const span = document.getElementsByClassName("close")[0];
-
-        // When the user clicks on <span> (x), close the modal
-        // span.onclick = function() {
-        //     modal.style.display = "none";
-        // }
 
 
     </script>

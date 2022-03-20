@@ -37,14 +37,10 @@ Route::group(['middleware' => ['auth','checkRole:admin']], function () {
     Route::get('/pmks/daftar-pmks',[PmksController::class, 'daftarpmks']);
     Route::post('/pmks/store-import',[PmksController::class, 'store']);
     
-    Route::get('/pmks/import-status', [PmksController::class, 'status']);
-    Route::get('/pmks/impor-data-pmks', [PmksController::class, 'dataimportpmks'])->name('pmks.dataimport');
 
     Route::get('/pmks/data',[PmksController::class, 'data'])->name('pmks.data');
     Route::get('/pmks/data-pmks',[PmksController::class, 'datapmks'])->name('pmks.datapmks');
     Route::get('/pmks/data-errors',[PmksController::class, 'dataerrors'])->name('pmks.dataerrors');
-
-    Route::post('/pmks/store-posting',[PmksController::class, 'posting']);
 
     Route::get('/pmks/create',[PmksController::class, 'create'])->name('pmks.create');
     Route::post('/pmks/store-create',[PmksController::class, 'storeCreate'])->name('pmks.store-create');
@@ -52,9 +48,6 @@ Route::group(['middleware' => ['auth','checkRole:admin']], function () {
     Route::post('/pmks/store-edit',[PmksController::class, 'storeEdit'])->name('pmks.store-edit');
     Route::get('/pmks/delete',[PmksController::class, 'delete'])->name('pmks.delete');
 
-
-
-    Route::get('/dtks/posting',[DtksController::class, 'posting'])->name('dtks.posting');
     Route::get('/dtks/select-dtksimport',[DtksController::class, 'selectdtksimport'])->name('dtks.selectdtksimport');
 
 
@@ -62,6 +55,9 @@ Route::group(['middleware' => ['auth','checkRole:admin']], function () {
     Route::get('/cities', [DependentDropdownController::class,'cities'])->name('cities');
     Route::get('/districts', [DependentDropdownController::class, 'districts'])->name('districts');
     Route::get('/villages', [DependentDropdownController::class, 'villages'])->name('villages');
+
+    Route::post('/set-session-pmks', [DashboardController::class, 'set_session_pmks'])->name('dashboard.set-session');
+    Route::get('/get-jenis-pmks', [DashboardController::class, 'get_jenis_pmks'])->name('dashboard.get-jenis-pmks');
 
 
 });

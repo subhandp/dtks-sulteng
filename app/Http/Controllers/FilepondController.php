@@ -91,6 +91,7 @@ class FilepondController extends Controller
                 $filename = $this->filter_filename($file->getClientOriginalName());
                 $allowed = array('csv');
                 $ext = $file->getClientOriginalExtension();
+                $size = $file->getSize();
                 $mimetypes = $file->getClientMimeType();
                 if (!in_array($ext, $allowed)) {
                     $filename = $filename.'.csv';
@@ -104,7 +105,8 @@ class FilepondController extends Controller
                 'extension' => $ext,
                 'disk' => 'public',
                 'filepath' => 'tmp/'.$folder,
-                'mimetypes' => $mimetypes
+                'mimetypes' => $mimetypes,
+                'size' => $size
               ];
             return json_encode($data);
         }

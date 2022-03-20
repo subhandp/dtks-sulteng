@@ -6,59 +6,77 @@ namespace App\Http\Controllers;
 // use App\Klasifikasi;
 // use App\User;
 use Illuminate\Support\Facades\Auth;
-
+use App\Charts\DashboardChart;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
    
-    public function index()
+    public function index(DashboardChart $chart)
     {
-        // $suratkeluar = SuratKeluar::where('users_id', Auth::id())->count();
-        // $suratmasuk = SuratMasuk::where('users_id', Auth::id())->count();
-        // $klasifikasi = Klasifikasi::where('users_id', Auth::id())->count();
-        // $pengguna = User::count();
-        // return view('dashboard', compact('suratkeluar','suratmasuk','klasifikasi','pengguna'));
-       
-       
-        // $lava = new Lavacharts; // See note below for Laravel
+        $chart = $chart->build();
 
-        // $votes  = \Lava::DataTable();
+        $jenisPmksSelect = session('pmks');
+        if(!empty($jenisPmksSelect)){
+            // $jenisPmksSelect = DB::table('jenis_pmks')->select('id','jenis')->where('id',$jenisPmksSelect)->first();
+            // $kabupaten_kota = DB::table('indonesia_cities')->select('id', 'name')->where('province_id','72')->get();
+            // $chartData = [];
+            // foreach ($kabupaten_kota as $key => $kk) {
+            //     $totalJenis = DB::table('pmks_data')
+            //                 ->select('iddtks')
+            //                 ->where('kabupaten_kota', $kk->name)
+            //                 ->where('jenis_pmks', $jenisPmksSelect->jenis)
+            //                 ->count();
+            //     $chartData[] = ['kab_kota' => $kk->name, 'total' => $totalJenis];
+            // }
+            
+            // $pmksDataGroup = DB::table('pmks_data')
+            //      ->where('jenis_pmks', '=', $jenisPmksSelect->jenis)
+            //     //  ->select('kabupaten_kota', DB::raw('count(*) as total'))
+            //      ->groupBy('kabupaten_kota')
+            //      ->get(array(DB::raw('COUNT(id) as total'),'kabupaten_kota'));
 
-        // $votes->addStringColumn('Food Poll')
-        //     ->addNumberColumn('Votes')
-        //     ->addRow(['Tacos',  rand(1000,5000)])
-        //     ->addRow(['Salad',  rand(1000,5000)])
-        //     ->addRow(['Pizza',  rand(1000,5000)])
-        //     ->addRow(['Apples', rand(1000,5000)])
-        //     ->addRow(['Fish',   rand(1000,5000)]);
+            // dd($jenisPmksSelect->jenis);
+        }
+        else{
+            // $pmksDataGroup = DB::table('pmks_data')
+            //      ->select('kabupaten_kota', DB::raw('count(*) as total'))
+            //      ->groupBy('kabupaten_kota')
+            //      ->get();
+        }
 
-        // \Lava::BarChart('Votes', $votes);
+        // $pmksDataGroup = DB::table('pmks_data')
+        //          ->select('kabupaten_kota', DB::raw('count(*) as total'))
+        //          ->groupBy('kabupaten_kota')
+        //          ->get();
+        
+        // dd($pmksDataGroup);
 
-        // $population = \Lava::DataTable();
-
-        // $population->addDateColumn('Year')
-        //         ->addNumberColumn('Number of People')
-        //         ->addRow(['2006', 623452])
-        //         ->addRow(['2007', 685034])
-        //         ->addRow(['2008', 716845])
-        //         ->addRow(['2009', 757254])
-        //         ->addRow(['2010', 778034])
-        //         ->addRow(['2011', 792353])
-        //         ->addRow(['2012', 839657])
-        //         ->addRow(['2013', 842367])
-        //         ->addRow(['2014', 873490]);
-
-        // \Lava::AreaChart('Population', $population, [
-        //     'title' => 'Population Growth',
-        //     'legend' => [
-        //         'position' => 'in'
-        //     ]
-        //     ]);
+        $pmksDataGroup = [];
+        $chartData = [];
 
         $class_menu_data_dashboard = "menu-open";
-        return view('dashboard', compact('class_menu_data_dashboard'));
+
+        $jenisPmksSelect = session('pmks');
+        if(!empty($jenisPmksSelect)){
+            $jenisPmksSelect = DB::table('jenis_pmks')->select('id','jenis')->where('id',$jenisPmksSelect)->first();
+        }
+        
+        
+        return view('dashboard', compact('class_menu_data_dashboard', 'chart', 'pmksDataGroup', 'jenisPmksSelect', 'chartData'));
 
 
 
+    }
+
+    public function set_session_pmks(Request $request){
+        session(['pmks' => $request->input('jenisPmksId')]);
+        return response()->json([session('pmks')]);
+    }
+
+    public function get_jenis_pmks(Request $request){
+        $jenisPmks = DB::table('jenis_pmks')->select('id','jenis')->get();
+        return response()->json($jenisPmks);
     }
 }

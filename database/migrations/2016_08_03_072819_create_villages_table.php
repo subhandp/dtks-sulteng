@@ -13,18 +13,25 @@ class CreateVillagesTable extends Migration
      */
     public function up()
     {
-        Schema::create(config('laravolt.indonesia.table_prefix').'villages', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->char('code', 10)->unique();
-            $table->char('district_code', 7);
-            $table->string('name', 255);
-            $table->text('meta')->nullable();
-            $table->timestamps();
+        // Schema::create(config('laravolt.indonesia.table_prefix').'villages', function (Blueprint $table) {
+        //     $table->bigIncrements('id');
+        //     $table->char('code', 10)->unique();
+        //     $table->char('district_code', 7);
+        //     $table->string('name', 255);
+        //     $table->text('meta')->nullable();
+        //     $table->timestamps();
 
-            $table->foreign('district_code')
-                ->references('code')
-                ->on(config('laravolt.indonesia.table_prefix').'districts')
-                ->onUpdate('cascade')->onDelete('restrict');
+        //     $table->foreign('district_code')
+        //         ->references('code')
+        //         ->on(config('laravolt.indonesia.table_prefix').'districts')
+        //         ->onUpdate('cascade')->onDelete('restrict');
+        // });
+
+        Schema::create('charts', function (Blueprint $table) {
+            $table->id();
+            $table->string('kabupaten_kota');
+            $table->integer('total');
+            $table->timestamps();
         });
     }
 
@@ -35,6 +42,7 @@ class CreateVillagesTable extends Migration
      */
     public function down()
     {
-        Schema::drop(config('laravolt.indonesia.table_prefix').'villages');
+        // Schema::drop(config('laravolt.indonesia.table_prefix').'villages');
+        Schema::dropIfExists('charts');
     }
 }

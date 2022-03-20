@@ -86,10 +86,10 @@
                         <th>NO.</th>
                         <th>NO TIKET</th>
                         <th>NAMA FILE</th>
+                        <th>UKURAN</th>
+                        <th>JUMLAH BARIS</th>
                         <th>TANGGAL UPLOAD</th>
                         <th>STATUS IMPORT</th>
-                        {{-- <th>STATUS POSTING</th> --}}
-                        <th>POSTING (%)</th>
                         <th>AKSI</th>
                         </tr>
                     </thead>
@@ -100,18 +100,24 @@
                        
                         @foreach($data_pmks_import as $key => $import)
                         @php
-                             $no++ ;
+                             $no++;
 
-                             if ($import->baris_selesai !== '-') {
-                                $total_rows = $import->jumlah_baris;
-                                $current_rows = $import->baris_selesai;
-                                $persentase =  ceil(($current_rows/$total_rows)*100).' %';
-                            }
-                            else{
-                                $total_rows = 0;
-                                $current_rows = 0;
-                                $persentase =  '-';
-                            }
+                             $precision = 2;
+                             $size = '-';
+                            if (is_numeric($import->keterangan)) {
+                                $units = array('B', 'KB', 'MB', 'GB', 'TB'); 
+
+                                $bytes = max($import->keterangan, 0); 
+                                $pow = floor(($bytes ? log($bytes) : 0) / log(1024)); 
+                                $pow = min($pow, count($units) - 1); 
+
+                                // Uncomment one of the following alternatives
+                                $bytes /= pow(1024, $pow);
+                                // $bytes /= (1 << (10 * $pow)); 
+
+                                $size = round($bytes, $precision) . ' ' . $units[$pow]; 
+                                 
+                            } 
 
                         @endphp
                         <tr>
@@ -119,27 +125,11 @@
                             <td>{{$no}}</td>
                             <td>{{ $import->no_tiket }}</td>
                             <td>{{ $import->filename }}</td>
+                            <td>{{ $size }}</td>
+                            <td>{{ $import->jumlah_baris }}</td>
                             <td>{{ $import->updated_at }}</td>
                             <td>
-                                @if ($import->status_import == 'SUKSES POSTING')
-                                    <strong> {{ $import->status_import }}</strong>
-                                @else
-                                    {{ $import->status_import }}
-                                @endif
-
-                                
-                                @if ($import->status_import === 'SUKSES IMPORT' && $import->keterangan !== 'SUKSES POSTING')
-                                    @if ($import->baris_selesai !== '-' )
-                                        <span class="badge badge-info">{{ $import->keterangan }}</span>
-                                    @else
-                                        <span class="badge badge-warning">Belum Posting</span>
-                                        {{-- <br><a href="/pmks/store-posting?id={{ $import->id }}" class="btn btn-default btn-sm my-1 mr-sm-1 btn-block">Posting</a> --}}
-                                    @endif
-                                @endif
-                            </td>
-                            {{-- <td> <strong>{{ $total_rows }}</strong> (Total)  => <strong>{{ $current_rows }} </strong> (selesai)</td> --}}
-                            <td>                          
-                                <strong>{{ $persentase }} </strong>
+                                {{ $import->status_import }}
                             </td>
                             <td>
                             
@@ -149,9 +139,6 @@
                                 
                                 <i class="fas fa-eye"></i>
                             </a>
-
-                            {{-- <a href="#" class="btn btn-default btn-sm my-1 mr-sm-1 btn-block" data-toggle="tooltip" data-placement="left" title="Detail"><i class="fas fa-eye"></i></a> --}}
-                                
                                 
                             </td>
                         </tr>
