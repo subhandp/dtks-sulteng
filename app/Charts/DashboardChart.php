@@ -18,44 +18,59 @@ class DashboardChart
     public function build()
     {
        
-        $charts = DB::table('charts')->select('*')->get();
-
-        $kabupaten_kota = [];
+        $charts = DB::table('charts')->select('*')->where('jenis_pmks_id', null)->get();
+       
+        $kabupatenKotaChart = [];
         $totalDtks = [];
-        foreach ($charts as $key => $chart) {
-            if($chart->total >0){
-                $kabupaten_kota[] = $chart->kabupaten_kota;
-                $totalDtks[] = (int)$chart->total;
+        foreach ($charts as $key => $crt) {
+            if($crt->total > 0){
+                $kabupatenKota = DB::table('indonesia_cities')->select('id','name')->where('id', $crt->indonesia_cities_id)->first();
+                
+                $kabupatenKotaChart[] = $kabupatenKota->name;
+                $totalDtks[] = (int)$crt->total;
             }
 
         }
 
-        // dd($totalDtks);
+     
+        // $kabupatenKotaList = DB::table('indonesia_cities')->select('id','name')->where('province_id', '72')->get();
+        // $jenisPmksList = DB::table('jenis_pmks')->select('id','jenis')->get();
+        // $jenisPmksListGroupBy = DB::table('charts')
+        //     ->select('jenis_pmks_id')
+        //     ->groupBy('jenis_pmks_id')
+        //     ->get();
+
+        // $pmksLists = [];
+        // foreach ($jenisPmksListGroupBy as $key => $jpl) {
+        //     if($jpl->jenis_pmks_id){
+        //         $pmksJenisFromId = DB::table('jenis_pmks')->select('jenis')->where('id', $jpl->jenis_pmks_id)->first();
+        //         $pmksLists[] = $pmksJenisFromId->jenis;
+        //     }
+            
+        // }
+
+        // foreach ($kabupatenKotaList as $k1 => $kabupatenKota) {
+        //     $totalJenisPmksKabKota = [];
+        //     foreach ($jenisPmksList as $k2 => $pmks) {
+        //         $chartSelect = DB::table('charts')->select('id','total')
+        //             ->where('indonesia_cities_id', $kabupatenKota->id)
+        //             ->where('jenis_pmks_id', $pmks->id)->first();
+                 
+        //         if(!empty($chartSelect)){
+        //             $totalJenisPmksKabKota[] = (int)$chartSelect->total;
+        //         }
+                
+        //     }
+
+        //     $kabupatenKotaListChart[] = ['name' => $kabupatenKota->name, 'data' => $totalJenisPmksKabKota];
+        // }
         
+        // dd($kabupatenKotaListChart);
 
         return $this->chart->pieChart()
-            ->setTitle('Data Total Keseluruhan Penduduk kategori PMKS tiap Kabupaten')
+            ->setTitle('Penduduk kategori PMKS tiap Kabupaten')
             ->addData($totalDtks)
-            ->setLabels($kabupaten_kota)
+            ->setLabels($kabupatenKotaChart)
             ->setDataLabels();
     }
 }
-
-   //     return $this->chart->barChart()
-    //     ->setTitle('San Francisco vs Boston.')
-    //     ->setSubtitle('Wins during season 2021.')
-    //     ->addData('San Francisco', [6, 9, 3, 4, 10, 8])
-    //     ->addData('banggai', [7, 3, 8, 2, 6, 4])
-    //     ->addData('poso', [7, 3, 8, 2, 6, 4])
-    //     ->addData('luwuk', [7, 3, 8, 2, 6, 4])
-    //     ->addData('toli-toli', [7, 3, 8, 2, 6, 4])
-    //     ->addData('a', [7, 3, 8, 2, 6, 4])
-    //     ->addData('Boston', [7, 3, 8, 2, 6, 4])
-    //     ->addData('Boston', [7, 3, 8, 2, 6, 4])
-    //     ->addData('Boston', [7, 3, 8, 2, 6, 4])
-    //     ->addData('Boston', [7, 3, 8, 2, 6, 4])
-    //     ->addData('Boston', [7, 3, 8, 2, 6, 4])
-    //     ->addData('Boston', [7, 3, 8, 2, 6, 4])
-
-
-    //     ->setXAxis(['January', 'February', 'March', 'April', 'May', 'June']);

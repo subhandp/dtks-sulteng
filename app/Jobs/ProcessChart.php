@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
+use App\Models\DtksErrorsImport;
 
 class ProcessChart implements ShouldQueue
 {
@@ -52,8 +53,7 @@ class ProcessChart implements ShouldQueue
 
         } catch (\Illuminate\Database\QueryException $e) {
             // $e->getMessage();
-            DB::table('dtks_errors_imports')
-            ->create([
+            DtksErrorsImport::create([
                 'dtks_import_id' => $this->importId,
                 'row' => 0,
                 'attribute' => 'line: ',

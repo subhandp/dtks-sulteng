@@ -27,11 +27,20 @@ class CreateVillagesTable extends Migration
         //         ->onUpdate('cascade')->onDelete('restrict');
         // });
 
+        // Schema::create('charts', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->string('kabupaten_kota');
+        //     $table->integer('total');
+        //     $table->timestamps();
+        // });
+
         Schema::create('charts', function (Blueprint $table) {
             $table->id();
-            $table->string('kabupaten_kota');
+            $table->char('indonesia_cities_id',5);
+            $table->bigInteger('jenis_pmks_id')->nullable();
             $table->integer('total');
             $table->timestamps();
+            $table->index(['indonesia_cities_id', 'jenis_pmks_id']);
         });
     }
 

@@ -1,3 +1,4 @@
+<div id="info-box"></div>
 <!DOCTYPE html>
 <html>
 
@@ -36,7 +37,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
     
-    
+.colour0 {fill: #b9b9b9;}
+.colour1 {fill: #ffa4a9;}
+.colour2 {fill: #cc6674;}
+.colour3 {fill: #993341;}
+.colour4 {fill: #66000e;}
+
+path:hover, circle:hover {
+    stroke: #002868 !important;
+    stroke-linejoin: round;
+    /* fill: #002868 !important; */
+    cursor: pointer;
+  }
+
+  #info-box {
+    display: none;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+    background-color: #ffffff;
+    border: 2px solid #BF0A30;
+    border-radius: 5px;
+    padding: 5px;
+    font-family: arial;
+  }
+
 #wrapper-table-errors {
   overflow-x: auto;
 
@@ -57,7 +83,7 @@
 
         .logo {
             max-width: 100%;
-            width: 120px;
+            width: 90px;
         }
         .hide {
             display: none;
@@ -407,7 +433,6 @@
     {{-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script> --}}
     <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 
-{{-- 
     <script src="https://unpkg.com/echarts/dist/echarts.min.js"></script>
     <!-- Chartisan -->
     <script src="https://unpkg.com/@chartisan/echarts/dist/chartisan_echarts.js"></script>
@@ -419,7 +444,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
- --}}
+
 
 
     <script>
@@ -440,7 +465,7 @@
         {
             labelMaxTotalFileSizeExceeded: 'Ukuran total keseluruhan file terlampaui',
             labelMaxTotalFileSize: 'Total maksimum seluruh file adalah {filesize}',
-            maxTotalFileSize: '50MB'
+            maxTotalFileSize: '100MB'
         });
 
     

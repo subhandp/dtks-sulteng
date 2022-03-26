@@ -11,6 +11,8 @@ use  App\Models\PmksData;
 // use Maatwebsite\Excel\Facades\Excel;
 // use App\Imports\PmksDataImport;
 use App\Jobs\ProcessImport;
+use App\Jobs\ProcessDataChart;
+
 // use App\Jobs\PostingImport;
 use App\Models\DtksImport;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +21,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Hashids\Hashids;
 use Illuminate\Support\Facades\File;
 use stdClass;
+use Illuminate\Support\Facades\Bus;
 
 class PmksController extends Controller
 {
@@ -177,6 +180,18 @@ class PmksController extends Controller
         }
         else{
             ProcessImport::dispatch(['upload' => $request->input('upload'), 'tahun_data' => $request->input('tahun_data'), 'jenis_pmks' => $request->input('jenis_pmks')]);
+
+            $batch = Bus::batch([])->dispatch();
+
+            $kabupatenKota = DB::table('indonesia_cities')->select('id','name')->where('province_id','72')->get();
+            $jenisPmks = DB::table('jenis_pmks')->select('id', 'jenis')->where('jenis',$request->input('jenis_pmks'))->first();
+            // DB::table('charts')->truncate();
+            foreach ($kabupatenKota as $kk) {
+                // foreach ($jenisPmks as $pmks) {
+                    $batch->add(new ProcessDataChart($kk,$jenisPmks));
+                // }
+            }
+
             return redirect('/pmks/import-data')->with("sukses", 1);
         }
         

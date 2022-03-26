@@ -58,7 +58,7 @@ Route::group(['middleware' => ['auth','checkRole:admin']], function () {
 
     Route::post('/set-session-pmks', [DashboardController::class, 'set_session_pmks'])->name('dashboard.set-session');
     Route::get('/get-jenis-pmks', [DashboardController::class, 'get_jenis_pmks'])->name('dashboard.get-jenis-pmks');
-
+    Route::get('/get-pmks-kab', [DashboardController::class, 'get_pmks_kab'])->name('dashboard.get-pmks-kab');
 
 });
 
