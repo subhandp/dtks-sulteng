@@ -34,16 +34,79 @@
             </div>
             </div>
 
-            <div class="form-group">
-                <label><strong>Kabupaten/Kota :</strong></label>
-                <select class="form-control" id="kabupaten_kota" name="kabupaten_kota" data-placeholder="Pilih Kabupaten/Kota" style="width: 40%" >
-                    <option value="SEMUA KAB/KOTA"> SEMUA KAB/KOTA</option>
-                    @foreach ($kabupatenKota as $kk)
-                        <option value="{{ $kk->name }}"> {{ $kk->name }} </option>
-                    @endforeach
-                </select>
-            </div>
-        
+            
+            
+            <form role="form"  id="form_tambah_kriteria" class="margin-bottom-0">
+                <div class="form-row d-flex align-items-end">
+
+                    <div class="form-group col-md-4">
+                        <label><strong>Kabupaten/Kota :</strong></label>
+                        <select class="form-control" id="kabupaten_kota" name="kabupaten_kota" data-placeholder="Semua Kabupaten/Kota" style="width: 100%" >
+                            {{-- <option value="">Semua Kab/Kota</option>
+                            @foreach ($kabupatenKota as $kk)
+                                <option value="{{ $kk->name }}"> {{ $kk->name }} </option>
+                            @endforeach --}}
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label><strong>Kecamatan :</strong></label>
+                        <select class="form-control" id="kecamatan" name="kecamatan" data-placeholder="Semua Kecamatan" style="width: 100%" >
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label><strong>Desa/Kelurahan :</strong></label>
+                        <select  class="form-control" id="desa_kelurahan" name="desa_kelurahan" data-placeholder="Semua Desa/kelurahan" style="width: 100%" >
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label><strong>Jenis PMKS :</strong></label>
+                        
+                        <select class="@error('jenis_pmks') is-invalid @enderror" id="jenis_pmks" name="jenis_pmks"  data-placeholder="Pilih Jenis PMKS" style="width: 100%"  >
+                            <option value="">
+                                Semua Jenis PMKS
+                            </option>
+                            @foreach ($jenisPmks as $pmks)
+                            @if (old('jenis_pmks') == $pmks->jenis )
+                                <option value="{{ $pmks->jenis }}" selected="selected">
+                                    {{ $pmks->jenis }}
+                                </option>
+                            @else
+                            
+                                <option value="{{ $pmks->jenis }}">
+                                    {{ $pmks->jenis }}
+                                </option>
+                            @endif
+                            
+                            @endforeach
+                        </select>
+                        
+                    </div>
+
+                    <div class="form-group col-md-4">
+                        <label><strong>Tahun data :</strong></label>
+                        <select class="form-control" id="tahun_data" name="tahun_data" data-placeholder="Semua Tahun Data" style="width: 100%" >
+                            <option value=""></option>
+
+
+                            @for ($i = date('Y'); $i >= 2010; $i--)
+                                <option value="{{ $i }}"> {{ $i }} </option>
+                            @endfor
+
+                                
+                        </select>
+                    </div>
+
+                   
+                    <div class="form-group col-md-4">
+                      <button class="btn btn-warning " id="btn-search"><i class="fas fa-search"></i></button>
+                    </div>
+
+                </div>
+            </form>
+
             <div class="row table-responsive">
                 <div class="col">
                 
@@ -83,7 +146,31 @@
     //  $("#tabel-import-data").DataTable();
     $.fn.select2.defaults.set( "theme", "bootstrap" );
 
-    $("#kabupaten_kota").select2();
+    $("#tahun_data").select2();
+    $("#kecamatan").select2();
+    $("#desa_kelurahan").select2();
+    $("#jenis_pmks").select2();
+
+    $('#kabupaten_kota').select2({
+            allowClear: true,
+            ajax: {
+               url: "{{ route('cities') }}",
+               dataType: 'json',
+               processResults: function(data) {
+                   console.log(data);
+                  return {
+                     results: $.map(data, function(item) {
+                        return {
+                           text: item.name,
+                           id: item.id
+                        }
+                     })
+                  };
+               }
+            }
+        });
+
+    // $("#kabupaten_kota").select2();
      var table = $('#tabel-data-pmks').DataTable({
         processing: true,
         serverSide: true,
@@ -91,6 +178,10 @@
             url: "{{ route('pmks.datapmks') }}",
             data: function (d) {
                 d.kabupaten_kota = $('#kabupaten_kota').val(),
+                d.kecamatan = $('#kecamatan').val(),
+                d.desa_kelurahan = $('#desa_kelurahan').val(),
+                d.jenis_pmks = $('#jenis_pmks').val(),
+                d.tahun_data = $('#tahun_data').val(),
                 d.search = $('input[type="search"]').val()
             }
             
@@ -115,9 +206,85 @@
         ]
     });
 
-    $('#kabupaten_kota').change(function(){
+  
+    $('#btn-search').click(function($event){
+        event.preventDefault();
         table.draw();
     });
+
+    
+
+
+         $('#kabupaten_kota').change(function() {
+            //clear select
+            $("#kecamatan").empty();
+            $("#desa_kelurahan").empty();
+            //set id
+            let regencyID = $(this).val();
+            if (regencyID) {
+               $('#kecamatan').select2({
+                  allowClear: true,
+                  ajax: {
+                     url: "{{ route('districts') }}?regencyID=" + regencyID,
+                     dataType: 'json',
+                     processResults: function(data) {
+                        return {
+                           results: $.map(data, function(item) {
+                              return {
+                                 text: item.name,
+                                 id: item.id
+                              }
+                           })
+                        };
+                     }
+                  }
+               });
+            } else {
+               $("#kecamatan").empty();
+               $("#desa_kelurahan").empty();
+            }
+         });
+
+
+         $('#kecamatan').change(function() {
+            //clear select
+            $("#desa_kelurahan").empty();
+            //set id
+            let districtID = $(this).val();
+            if (districtID) {
+               $('#desa_kelurahan').select2({
+                  allowClear: true,
+                  ajax: {
+                     url: "{{ route('villages') }}?districtID=" + districtID,
+                     dataType: 'json',
+                     delay: 250,
+                     processResults: function(data) {
+                        return {
+                           results: $.map(data, function(item) {
+                              return {
+                                 text: item.name,
+                                 id: item.id
+                              }
+                           })
+                        };
+                     }
+                  }
+               });
+            }
+         });
+         //  Event on change select district:End
+
+         // EVENT ON CLEAR
+
+         $('#kabupaten_kota').on('select2:clear', function(e) {
+            $("#kecamatan").select2();
+            $("#desa_kelurahan").select2();
+         });
+
+         $('#kecamatan').on('select2:clear', function(e) {
+            $("#desa_kelurahan").select2();
+         });
+
 
  </script>
  @endsection

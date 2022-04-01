@@ -43,8 +43,9 @@ class DependentDropdownController extends Controller
         } else {
             $cities = DB::table('indonesia_cities')
                 ->select('id', 'name')
-                ->Where('province_id', $provinceID)
+                ->Where('province_id', '72')
                 ->get();
+            // dd($cities);
         }
         return response()->json($cities);
     }

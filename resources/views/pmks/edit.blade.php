@@ -108,7 +108,7 @@
                         <select class="form-control @error('kabupaten_kota') is-invalid @enderror" id="kabupaten_kota" name="kabupaten_kota" data-placeholder="Pilih Kabupaten/Kota" style="width: 100%" >
                         @isset($kabupatenKotaCreate)
                             @foreach ( $kabupatenKotaCreate as $kabupatenKota)
-                                @if ($pmksData->kabupaten_kota == $kabupatenKota->name)
+                                @if (strtolower($pmksData->kabupaten_kota) == strtolower($kabupatenKota->name))
                                     <option value="{{ $kabupatenKota->id }}" selected="selected">
                                         {{ $kabupatenKota->name }}
                                     </option>
@@ -127,17 +127,21 @@
                     </div>
                     </div>
 
+                    
+
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label form-control-label">Kecamatan</label>
                         <div class="col-lg-9">
                             <select class="form-control @error('kecamatan') is-invalid @enderror" id="kecamatan" name="kecamatan" data-placeholder="Pilih Kecamatan" style="width: 100%" >
+                              
                                 @isset($kecamatanCreate)
                                     @foreach ( $kecamatanCreate as $kecamatan)
-                                        @if ($pmksData->kecamatan == $kecamatan->name)
+                                        @if (strtolower($pmksData->kecamatan) == strtolower($kecamatan->name))
                                             <option value="{{ $kecamatan->id }}" selected="selected">
                                                 {{ $kecamatan->name }}
                                             </option>
                                         @endif
+                                       
                                         <option value="{{ $kecamatan->id }}">
                                             {{ $kecamatan->name }}
                                         </option>
@@ -157,7 +161,7 @@
                             <select  class="form-control @error('desa_kelurahan') is-invalid @enderror" id="desa_kelurahan" name="desa_kelurahan" data-placeholder="Pilih Desa/kelurahan" style="width: 100%" >
                                 @isset($desaKelurahanCreate)
                                 @foreach ( $desaKelurahanCreate as $desaKelurahan)
-                                    @if ($pmksData->desa_kelurahan == $desaKelurahan->name)
+                                    @if (strtolower($pmksData->desa_kelurahan) == strtolower($desaKelurahan->name))
                                         <option value="{{ $desaKelurahan->id }}" selected="selected">
                                             {{ $desaKelurahan->name }}
                                         </option>

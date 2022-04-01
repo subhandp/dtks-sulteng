@@ -97,15 +97,19 @@ class PmksController extends Controller
         ->Where('province_id', '72')
         ->get();
 
-        return view('pmks.daftar', compact('kabupatenKota','class_menu_data_pmks'));
+        $jenisPmks = DB::table('jenis_pmks')->select('jenis','detail')->get();
+
+        return view('pmks.daftar', compact('kabupatenKota','class_menu_data_pmks','jenisPmks'));
 
     }
 
     public function datapmks(Request $request){
 
-        $data = PmksData::select('*');
+        $data = PmksData::query();
         return DataTables::of($data)
+            
             ->addIndexColumn()
+            
                 ->addColumn('action', function($row){
                     $hashids = new Hashids('dtks', 15); 
                     $id = $hashids->encode($row->id);
@@ -114,10 +118,46 @@ class PmksController extends Controller
                         return $btn;
                 })
                 ->filter(function ($instance) use ($request) {
+                    // $query = $instance->query();
+
+                   
+
                     if ($request->has('kabupaten_kota')) {
-                        if($request->get('kabupaten_kota') != 'SEMUA KAB/KOTA'){
-                            $instance->where('kabupaten_kota', $request->get('kabupaten_kota'));
-                        }
+                        // if(!empty($request->get('kabupaten_kota'))){
+                        //     $instance->where('kabupaten_kota', $request->get('kabupaten_kota'));
+                        // }
+
+                        $instance->when(!empty($request->get('kabupaten_kota')), function ($q) use($request){
+                            // dd($request->get('kabupaten_kota'));
+                            $kabupatenKotaSelect = DB::table('indonesia_cities')->select('name')->where('id',$request->get('kabupaten_kota'))->first();
+                            return $q->where('kabupaten_kota', $kabupatenKotaSelect->name);
+                        });
+
+                        $instance->when(!empty($request->get('kecamatan')), function ($q) use($request){
+                            
+                            $kecamatanSelect = DB::table('indonesia_districts')->select('name')->where('id',$request->get('kecamatan'))->first();
+        
+                            return $q->where('kecamatan', $kecamatanSelect->name);
+                        });
+
+                        $instance->when(!empty($request->get('desa_kelurahan')), function ($q) use($request){
+                            
+                            $desaKelurahanSelect = DB::table('indonesia_villages')->select('name')->where('id',$request->get('desa_kelurahan'))->first();
+        
+                            return $q->where('desa_kelurahan', $desaKelurahanSelect->name);
+                        });
+
+                        $instance->when(!empty($request->get('jenis_pmks')), function ($q) use($request){
+                                    
+                            return $q->where('jenis_pmks', $request->get('jenis_pmks'));
+                        });
+
+                        $instance->when(!empty($request->get('tahun_data')), function ($q) use($request){
+                                    
+                            return $q->where('tahun_data', $request->get('tahun_data'));
+                        });
+
+                        // return($request);
 
                         
                     }
