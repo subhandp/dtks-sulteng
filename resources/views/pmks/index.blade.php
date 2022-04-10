@@ -260,6 +260,20 @@
                             </tbody>
                           </table>
                     </div>
+                    <div id="wrapper-table-pmks">
+                        <table class="table table-bordered" id="table-pmks">
+                            <thead>
+                              <tr>
+                                <th>IDDTKS</th>
+                                <th>Kabupaten/Kota</th>
+                                <th>Kecamatan</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+                          </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -280,6 +294,8 @@
 
     
     var tableErrros = $('#table-errors').DataTable();
+    var tablePmks = $('#table-pmks').DataTable();
+
     
     
      FilePond.setOptions({

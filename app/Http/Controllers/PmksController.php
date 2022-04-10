@@ -23,6 +23,11 @@ use Illuminate\Support\Facades\File;
 use stdClass;
 use Illuminate\Support\Facades\Bus;
 
+use App\Exports\PmksExport;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Core\XLSXWriter;
+use Illuminate\Support\Facades\Log;
+use Storage;
 class PmksController extends Controller
 {
     
@@ -51,6 +56,182 @@ class PmksController extends Controller
         return json_encode($importErrors);
         // return Datatables::of(DtksErrorsImport::where('dtks_import_id', $id)->select())->make(true);
     }
+
+    public function getExportExcel(Request $request){
+        $class_menu_data_pmks = "menu-open";
+
+        $pmksDataInstance = DB::table('pmks_data')->orderBy('id');
+        $pmksDataInstance->when(!empty($request->get('kabupaten_kota')), function ($q) use($request){
+            return $q->where('kabupaten_kota', $request->get('kabupaten_kota'));
+        });
+
+        $pmksDataInstance->when(!empty($request->get('kecamatan')), function ($q) use($request){
+
+            return $q->where('kecamatan', $request->get('kecamatan'));
+        });
+
+        $pmksDataInstance->when(!empty($request->get('desa_kelurahan')), function ($q) use($request){
+            
+            return $q->where('desa_kelurahan', $request->get('desa_kelurahan'));
+        });
+
+        $pmksDataInstance->when(!empty($request->get('jenis_pmks')), function ($q) use($request){
+                    
+            return $q->where('jenis_pmks', $request->get('jenis_pmks'));
+        });
+
+        $pmksDataInstance->when(!empty($request->get('tahun_data')), function ($q) use($request){
+                    
+            return $q->where('tahun_data', $request->get('tahun_data'));
+        });
+
+        $pmksData = $pmksDataInstance->paginate(50000);
+        
+        return $pmksData;
+    }
+
+    public function exportExcel(Request $request){
+
+
+        $header = [
+            "iddtks",
+            "provinsi",
+            "kabupaten_kota",
+            "kecamatan",
+            "desa_kelurahan",
+            "alamat",
+            "dusun",
+            "rt",
+            "rw",
+            "nomor_kk",
+            "nomor_nik",
+            "nama",
+            "tanggal_lahir",
+            "tempat_lahir",
+            "jenis_kelamin",
+            "nama_ibu_kandung",
+            "hubungan_keluarga",
+            "tahun_data",
+            "jenis_pmks"
+
+        ];
+        $time_start = microtime(true);
+        $writer = new XLSXWriter();
+        // $writer->writeSheetHeader('Sheet1', array('c1'=>'string','c2'=>'string','c3'=>'string','c4'=>'string') );//optional
+
+        // $pmksData = DB::table('pmks_data')
+        //         ->orderBy('id')
+        //         ->limit(50000)
+        //         ->get();
+
+        $pmksDataInstance = DB::table('pmks_data')->orderBy('id');
+        $pmksDataInstance->when(!empty($request->get('kabupaten_kota')), function ($q) use($request){
+            // dd($request->get('kabupaten_kota'));
+            $kabupatenKotaSelect = DB::table('indonesia_cities')->select('name')->where('id',$request->get('kabupaten_kota'))->first();
+            return $q->where('kabupaten_kota', $kabupatenKotaSelect->name);
+        });
+
+        $pmksDataInstance->when(!empty($request->get('kecamatan')), function ($q) use($request){
+            
+            $kecamatanSelect = DB::table('indonesia_districts')->select('name')->where('id',$request->get('kecamatan'))->first();
+
+            return $q->where('kecamatan', $kecamatanSelect->name);
+        });
+
+        $pmksDataInstance->when(!empty($request->get('desa_kelurahan')), function ($q) use($request){
+            
+            $desaKelurahanSelect = DB::table('indonesia_villages')->select('name')->where('id',$request->get('desa_kelurahan'))->first();
+
+            return $q->where('desa_kelurahan', $desaKelurahanSelect->name);
+        });
+
+        $pmksDataInstance->when(!empty($request->get('jenis_pmks')), function ($q) use($request){
+                    
+            return $q->where('jenis_pmks', $request->get('jenis_pmks'));
+        });
+
+        $pmksDataInstance->when(!empty($request->get('tahun_data')), function ($q) use($request){
+                    
+            return $q->where('tahun_data', $request->get('tahun_data'));
+        });
+
+        $pmksData = $pmksDataInstance->paginate(50000)->items();
+
+        $styles1 = array( 'font'=>'Arial','font-size'=>10,'font-style'=>'bold', 'halign'=>'center', 'border'=>'left,right,top,bottom', 'border-style' => 'medium');
+$styles2 = array( ['font-size'=>6],['font-size'=>8],['font-size'=>10],['font-size'=>16] );
+$styles3 = array( ['font'=>'Arial'],['font'=>'Courier New'],['font'=>'Times New Roman'],['font'=>'Comic Sans MS']);
+$styles4 = array( ['font-style'=>'bold'],['font-style'=>'italic'],['font-style'=>'underline'],['font-style'=>'strikethrough']);
+$styles5 = array( ['color'=>'#f00'],['color'=>'#0f0'],['color'=>'#00f'],['color'=>'#666']);
+$styles6 = array( ['fill'=>'#ffc'],['fill'=>'#fcf'],['fill'=>'#ccf'],['fill'=>'#cff']);
+$styles7 = array( 'border'=>'left,right,top,bottom');
+$styles8 = array( ['halign'=>'left'],['halign'=>'right'],['halign'=>'center'],['halign'=>'none']);
+$styles9 = array( array(),['border'=>'left,top,bottom'],['border'=>'top,bottom'],['border'=>'top,bottom,right']);
+
+
+$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles1 );
+$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles2 );
+$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles3 );
+$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles4 );
+$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles5 );
+$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles6 );
+$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles7 );
+$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles8 );
+$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles9 );
+$writer->writeToFile('xlsx-styles.xlsx');
+
+        // $filename = "example.xlsx";
+        // header('Content-disposition: attachment; filename="'.XLSXWriter::sanitize_filename($filename).'"');
+        // header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        // header('Content-Transfer-Encoding: binary');
+        // header('Cache-Control: must-revalidate');
+        // header('Pragma: public');
+        // ob_clean();
+        // flush();
+        // $writer->writeToStdOut();
+        $fileName = $request->get('page').".xlsx";
+        $writer->writeToFile($fileName);
+
+        return url($fileName);
+        // $filecontent=$writer->writeToString();
+        
+        // return $filecontent;
+        // $writer->writeToFile('pmks-data.xlsx');
+//         $headers = [
+//             'Content-Type' => 'application/pdf',
+//          ];
+
+// return response()->download($file, 'filename.pdf', $headers);
+        // response()->download(public_path($fileName));
+        // Display Script End time
+        // $time_end = microtime(true);
+
+        //dividing with 60 will give the execution time in minutes other wise seconds
+        // $execution_time = ($time_end - $time_start)/60;
+
+        //execution time of the script
+        // echo '<b>Total Execution Time:</b> '.$execution_time.' Mins'."\n";
+
+        // echo '#'.floor((memory_get_peak_usage())/1024/1024)."MB"."\n";
+
+        // exit(0);
+
+        // return json_encode(['status' => 'sukses']);
+
+
+        // (new PmksExport)->queue('invoices.xlsx');
+        // return (new PmksExport)->download('invoices.xlsx');
+
+        // $name = 'test.csv';
+        // (new PmksExport())->queue('public/exports/' . $name)->chain([
+        //     new NotifyUserOfExport($request->user(), $name),
+        // ]);
+    
+        // return back()->with('message', 'This export will take some time. You will receive an email when it is ready to download.');
+    }
+
+    // public function exportExcel(){
+    //     return Excel::download(new PmksExport, 'pmks.xlsx');
+    // }
 
     // public function dataimportpmks(){
         
@@ -91,7 +272,7 @@ class PmksController extends Controller
 
     public function data(){
         $class_menu_data_pmks = "menu-open";
-
+        
         $kabupatenKota = DB::table('indonesia_cities')
         ->select('id', 'name')
         ->Where('province_id', '72')
@@ -105,8 +286,9 @@ class PmksController extends Controller
 
     public function datapmks(Request $request){
 
+
         $data = PmksData::query();
-        return DataTables::of($data)
+        $dataTable = DataTables::of($data)
             
             ->addIndexColumn()
             
@@ -180,31 +362,42 @@ class PmksController extends Controller
                         });
                     }
                 })
-                ->rawColumns(['action'])
-                ->make(true);
+                ->rawColumns(['action']);
+
+                
+                $response = $dataTable->make(true);
+                $query = $dataTable->getQuery()->toSql();
+                // Storage::put('file.txt', $query);
+                // Log::info($query);
+                // dd($query);
+                return $response;
+                
+
+                
+
 
     }
 
     
-    private function rrmdir($dir)
-    {
-        if (is_dir($dir))
-        {
-        $objects = scandir($dir);
+    // private function rrmdir($dir)
+    // {
+    //     if (is_dir($dir))
+    //     {
+    //     $objects = scandir($dir);
 
-        foreach ($objects as $object)
-        {
-            if ($object != '.' && $object != '..')
-            {
-                if (filetype($dir.'/'.$object) == 'dir') {rrmdir($dir.'/'.$object);}
-                else {unlink($dir.'/'.$object);}
-            }
-        }
+    //     foreach ($objects as $object)
+    //     {
+    //         if ($object != '.' && $object != '..')
+    //         {
+    //             if (filetype($dir.'/'.$object) == 'dir') {rrmdir($dir.'/'.$object);}
+    //             else {unlink($dir.'/'.$object);}
+    //         }
+    //     }
 
-        reset($objects);
-        rmdir($dir);
-        }
-    }
+    //     reset($objects);
+    //     rmdir($dir);
+    //     }
+    // }
     
     public function store (Request $request)
     {

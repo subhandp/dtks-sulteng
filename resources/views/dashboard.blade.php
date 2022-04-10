@@ -122,7 +122,7 @@
                                             <tr>
                                                 <td>{{ $no }}</td>
                                                 <td>{{ $data }}</td>
-                                                <td>{{ $chartDatatotalDtks[$k] }} </td>
+                                                <td>{{ number_format($chartDatatotalDtks[$k],0,',','.') }} </td>
                                             </tr>
                                             @php
                                                 $no++;
@@ -206,7 +206,6 @@ colourCountries(data1);
   $('.detail-chart').click(function(){
       let selectedId = $(this).attr('id');
       var kabupatenKotaId = chartMapDatatotalDtks[selectedId];
-      console.log(kabupatenKotaId);
       let kabupatenName = $(this).data('info');
       let tablePmksKab = $('#tabel-pmks-kab').DataTable(
           {

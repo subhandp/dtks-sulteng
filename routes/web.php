@@ -60,6 +60,9 @@ Route::group(['middleware' => ['auth','checkRole:admin']], function () {
     Route::get('/get-jenis-pmks', [DashboardController::class, 'get_jenis_pmks'])->name('dashboard.get-jenis-pmks');
     Route::get('/get-pmks-kab', [DashboardController::class, 'get_pmks_kab'])->name('dashboard.get-pmks-kab');
 
+    Route::post('/pmks/get-export-excel', [PmksController::class, 'getExportExcel'])->name('get-download-excel');
+    Route::get('/pmks/export-excel', [PmksController::class, 'exportExcel'])->name('download-excel');
+
 });
 
 Route::group(['middleware' => ['auth','checkRole:admin']], function () {

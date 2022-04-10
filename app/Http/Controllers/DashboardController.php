@@ -29,6 +29,7 @@ class DashboardController extends Controller
         $chartMapDataId = [];
         $grandTotal = 0;
         $percentages = [];
+        $chartMapDatatotalDtks = [];
         foreach ($charts as $key => $chart) {
             if($chart->total > 0){
                 
@@ -118,7 +119,7 @@ class DashboardController extends Controller
             $pmksKabupatenList = [];
             $no = 1;
             foreach ($pmksKabupaten as $key => $pmks) {
-                $pmksKabupatenList[] = ['no' => $no,'jenis_pmks' => $pmks->jenis_pmks->jenis, 'total' => $pmks->total];
+                $pmksKabupatenList[] = ['no' => $no,'jenis_pmks' => $pmks->jenis_pmks->jenis, 'total' => number_format($pmks->total,0,',','.')];
                 $no++;
             }
             return response()->json($pmksKabupatenList);
