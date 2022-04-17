@@ -124,6 +124,7 @@ class ProcessImport implements ShouldQueue
                         $jenis_pmks = $this->request['jenis_pmks'];
                         $tahun_data = $this->request['tahun_data'];
 
+
                         DtksImport::find($this->dtksimportId)
                             ->update(['jumlah_baris' => $rowTotalCsv]);
 

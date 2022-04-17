@@ -19,7 +19,7 @@ class CreateDtksErrorsImportsTable extends Migration
             $table->string('attribute')->nullable();
             $table->unsignedInteger('row')->nullable();
             $table->string('values')->nullable();
-            $table->string('errors')->nullable();
+            $table->text('errors')->nullable();
             $table->foreign('dtks_import_id')->references('id')->on('dtks_imports');
             $table->timestamps();
         });

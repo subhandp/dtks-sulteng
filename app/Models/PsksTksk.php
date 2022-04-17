@@ -9,8 +9,12 @@ class PsksTksk extends Model
 {
     use HasFactory;
 
+    public $table = "psks_tksks";
+
     protected $fillable = [
-        'nama_psm',
+        'dtks_import_id',
+        'nama_tksk',
+        'kabupaten_kota',
         'jenis_kelamin',
         'pendidikan_terakhir',
         'nik_no_ktp',
@@ -20,6 +24,7 @@ class PsksTksk extends Model
         'mulai_aktif',
         'legalitas_sertifikat',
         'jenis_diklat_yg_diikuti',
-        'pendampingan'
+        'pendampingan',
+        'created_at', 'updated_at'
     ];
 }

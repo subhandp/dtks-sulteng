@@ -19,6 +19,13 @@ class CreateJenisPmksTable extends Migration
             $table->text('detail')->nullable();
             $table->timestamps();
         });
+
+        Schema::create('jenis_psks', function (Blueprint $table) {
+            $table->id();
+            $table->string('jenis')->unique();
+            $table->text('detail')->nullable();
+            $table->timestamps();
+        });
     }
 
     /**
@@ -29,5 +36,7 @@ class CreateJenisPmksTable extends Migration
     public function down()
     {
         Schema::dropIfExists('jenis_pmks');
+        Schema::dropIfExists('jenis_psks');
+
     }
 }

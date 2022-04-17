@@ -157,27 +157,30 @@ class PmksController extends Controller
 
         $pmksData = $pmksDataInstance->paginate(50000)->items();
 
-        $styles1 = array( 'font'=>'Arial','font-size'=>10,'font-style'=>'bold', 'halign'=>'center', 'border'=>'left,right,top,bottom', 'border-style' => 'medium');
-$styles2 = array( ['font-size'=>6],['font-size'=>8],['font-size'=>10],['font-size'=>16] );
-$styles3 = array( ['font'=>'Arial'],['font'=>'Courier New'],['font'=>'Times New Roman'],['font'=>'Comic Sans MS']);
-$styles4 = array( ['font-style'=>'bold'],['font-style'=>'italic'],['font-style'=>'underline'],['font-style'=>'strikethrough']);
-$styles5 = array( ['color'=>'#f00'],['color'=>'#0f0'],['color'=>'#00f'],['color'=>'#666']);
-$styles6 = array( ['fill'=>'#ffc'],['fill'=>'#fcf'],['fill'=>'#ccf'],['fill'=>'#cff']);
-$styles7 = array( 'border'=>'left,right,top,bottom');
-$styles8 = array( ['halign'=>'left'],['halign'=>'right'],['halign'=>'center'],['halign'=>'none']);
-$styles9 = array( array(),['border'=>'left,top,bottom'],['border'=>'top,bottom'],['border'=>'top,bottom,right']);
-
-
-$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles1 );
-$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles2 );
-$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles3 );
-$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles4 );
-$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles5 );
-$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles6 );
-$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles7 );
-$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles8 );
-$writer->writeSheetRow('Sheet1', $rowdata = array(300,234,456,789), $styles9 );
-$writer->writeToFile('xlsx-styles.xlsx');
+        $writer->writeSheetHeader('Sheet1', array($header[0] =>'string', $header[1]=>'string',$header[2]=>'string',$header[3]=>'string',$header[4]=>'string',$header[5]=>'string',$header[6]=>'string',$header[7]=>'string',$header[8]=>'string',$header[9]=>'string',$header[10]=>'string',$header[11]=>'string',$header[12]=>'string',$header[13]=>'string',$header[14]=>'string',$header[15]=>'string',$header[16]=>'string',$header[17]=>'string',$header[18]=>'string') );//optional
+        
+        foreach ($pmksData as $key => $pmks) {
+            $s1 = $pmks->iddtks;
+            $s2 = $pmks->provinsi;
+            $s3 = $pmks->kabupaten_kota;
+            $s4 = $pmks->kecamatan;
+            $s5 = $pmks->desa_kelurahan;
+            $s6 = $pmks->alamat;
+            $s7 = $pmks->dusun;
+            $s8 = $pmks->rt;
+            $s9 = $pmks->rw;
+            $s10 = $pmks->nomor_kk;
+            $s11 = $pmks->nomor_nik;
+            $s12 = $pmks->nama;
+            $s13 = $pmks->tanggal_lahir;
+            $s14 = $pmks->tempat_lahir;
+            $s15 = $pmks->jenis_kelamin;
+            $s16 = $pmks->nama_ibu_kandung;
+            $s17 = $pmks->hubungan_keluarga;
+            $s18 = $pmks->tahun_data;
+            $s19 = $pmks->jenis_pmks;
+            $writer->writeSheetRow('Sheet1', array($s1, $s2, $s3, $s4, $s5, $s6, $s7, $s8, $s9, $s10, $s11, $s12, $s13, $s14, $s15, $s16, $s17, $s18, $s19) );
+        }
 
         // $filename = "example.xlsx";
         // header('Content-disposition: attachment; filename="'.XLSXWriter::sanitize_filename($filename).'"');
@@ -412,7 +415,7 @@ $writer->writeToFile('xlsx-styles.xlsx');
             return redirect('/pmks/import-data')->with("gagal-jobs", 1);
         }
         else{
-            ProcessImport::dispatch(['upload' => $request->input('upload'), 'tahun_data' => $request->input('tahun_data'), 'jenis_pmks' => $request->input('jenis_pmks')]);
+            ProcessImport::dispatch(['upload' => $request->input('upload'), 'tahun_data' => $request->input('tahun_data'), 'jenis_pmks' => $request->input('jenis_pmks'), 'jenis_dtks' => 'pmks']);
 
             $batch = Bus::batch([])->dispatch();
 

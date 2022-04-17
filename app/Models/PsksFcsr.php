@@ -5,25 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PskWksb extends Model
+class PsksFcsr extends Model
 {
     use HasFactory;
-
-    public $table = "psks_wksbs";
+    
+    public $table = "psks_fcsrs";
 
     protected $fillable = [
         'dtks_import_id',
-        'nama_wksb',
+        'nama_fcsr',
         'kabupaten_kota',
         'desa_kelurahan',
         'kecamatan',
         'no_hp',
-        'email', 
-        'nama_ketua_wksbm',
-        'legalitas_wksbm',
+        'email',
+        'legalitas_fcsr',
         'jumlah_pengurus',
         'jumlah_anggota',
-        'jenis_kegiatan',
+        'jumlah_csr_kesos_perusahaan',
         'created_at', 'updated_at'
     ];
+
 }

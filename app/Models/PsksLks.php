@@ -9,8 +9,12 @@ class PsksLks extends Model
 {
     use HasFactory;
 
+    public $table = "psks_lks";
+
     protected $fillable = [
+        'dtks_import_id',
         'nama_lks',
+        'kabupaten_kota',
         'desa_kelurahan',
         'kecamatan',
         'no_hp',
@@ -20,5 +24,6 @@ class PsksLks extends Model
         'posisi_lks',
         'ruang_lingkup',
         'jenis_kegiatan',
+        'created_at', 'updated_at'
     ];
 }

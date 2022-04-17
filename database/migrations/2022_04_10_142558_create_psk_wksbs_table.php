@@ -13,18 +13,20 @@ class CreatePskWksbsTable extends Migration
      */
     public function up()
     {
-        Schema::create('psk_wksbs', function (Blueprint $table) {
+        Schema::create('psks_wksbs', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_wksmb');
-            $table->string('desa_kelurahan');
-            $table->string('kecamatan');
-            $table->string('no_hp',20);
-            $table->string('email',50);
-            $table->string('nama_ketua_wksbm');
-            $table->string('legalitas_wksbm');
-            $table->integer('jumlah_pengurus');
-            $table->integer('jumlah_anggota');
-            $table->string('jenis_kegiatan');
+            $table->unsignedBigInteger('dtks_import_id')->nullable();
+            $table->string('nama_wksb')->unique();
+            $table->string('desa_kelurahan')->nullable();
+            $table->string('kecamatan')->nullable();
+            $table->string('no_hp',20)->nullable();
+            $table->string('email',50)->nullable();
+            $table->string('nama_ketua_wksbm')->nullable();
+            $table->string('legalitas_wksbm')->nullable();
+            $table->integer('jumlah_pengurus')->nullable();
+            $table->integer('jumlah_anggota')->nullable();
+            $table->string('jenis_kegiatan')->nullable();
+            $table->string('kabupaten_kota')->nullable();
             $table->timestamps();
         });
     }
@@ -36,6 +38,6 @@ class CreatePskWksbsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('psk_wksbs');
+        Schema::dropIfExists('psks_wksbs');
     }
 }

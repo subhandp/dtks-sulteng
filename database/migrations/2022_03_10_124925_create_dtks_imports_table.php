@@ -22,6 +22,7 @@ class CreateDtksImportsTable extends Migration
             $table->string('baris_selesai',100)->default(0);
             $table->string('status_import',100);
             $table->mediumText('keterangan');
+            $table->mediumText('jenis_dtks')->nullable();
             $table->timestamps();
         });
     }

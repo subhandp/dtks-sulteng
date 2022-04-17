@@ -15,18 +15,21 @@ class CreatePsksKtsTable extends Migration
     {
         Schema::create('psks_kts', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_kt');
-            $table->string('desa_kelurahan');
-            $table->string('kecamatan');
-            $table->string('no_hp',20);
-            $table->string('email',50);
-            $table->string('nama_ketua_kt');
-            $table->string('legalitas_kt');
-            $table->string('klasifikasi_kt');
-            $table->integer('jumlah_pengurus');
-            $table->string('jenis_kegiatan');
+            $table->unsignedBigInteger('dtks_import_id')->nullable();
+            $table->string('nama_kt')->unique();
+            $table->string('desa_kelurahan')->nullable();
+            $table->string('kecamatan')->nullable();
+            $table->string('no_hp',20)->nullable();
+            $table->string('email',50)->nullable();
+            $table->string('nama_ketua_kt')->nullable();
+            $table->string('legalitas_kt')->nullable();
+            $table->string('klasifikasi_kt')->nullable();
+            $table->integer('jumlah_pengurus')->nullable();
+            $table->string('jenis_kegiatan')->nullable();
+            $table->string('kabupaten_kota')->nullable();
             $table->timestamps();
         });
+
     }
 
     /**

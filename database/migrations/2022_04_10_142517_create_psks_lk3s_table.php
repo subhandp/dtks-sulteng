@@ -15,16 +15,18 @@ class CreatePsksLk3sTable extends Migration
     {
         Schema::create('psks_lk3s', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_lk3');
-            $table->string('alamat_kantor');
-            $table->string('email',50);
-            $table->string('nama_ketua_lk3');
-            $table->string('no_hp_ketua_lk3',20);
-            $table->string('jenis_lk3');
-            $table->string('legalitas_lk3');
-            $table->integer('jumlah_tenaga_professional');
-            $table->integer('jumlah_klien');
-            $table->integer('jumlah_masalah_kasus');
+            $table->unsignedBigInteger('dtks_import_id')->nullable();
+            $table->string('nama_lk3')->unique();
+            $table->string('alamat_kantor')->nullable();
+            $table->string('email',50)->nullable();
+            $table->string('nama_ketua_lk3')->nullable();
+            $table->string('no_hp_ketua_lk3',20)->nullable();
+            $table->string('jenis_lk3')->nullable();
+            $table->string('legalitas_lk3')->nullable();
+            $table->integer('jumlah_tenaga_professional')->nullable();
+            $table->integer('jumlah_klien')->nullable();
+            $table->integer('jumlah_masalah_kasus')->nullable();
+            $table->string('kabupaten_kota')->nullable();
             $table->timestamps();
         });
     }

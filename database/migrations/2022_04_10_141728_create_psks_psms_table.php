@@ -15,17 +15,19 @@ class CreatePsksPsmsTable extends Migration
     {
         Schema::create('psks_psms', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_psm');
-            $table->string('jenis_kelamin',2);
-            $table->string('pendidikan_terakhir',50);
-            $table->string('nik_no_ktp',50);
-            $table->string('alamat_rumah');
-            $table->string('no_hp',20);
-            $table->string('email',50);
-            $table->string('mulai_aktif',5);
-            $table->string('legalitas_sertifikat',5);
-            $table->string('jenis_diklat_yg_diikuti',5);
-            $table->string('pendampingan', 20);
+            $table->unsignedBigInteger('dtks_import_id')->nullable();
+            $table->string('nama_psm')->unique();
+            $table->string('jenis_kelamin',2)->nullable();
+            $table->string('pendidikan_terakhir',50)->nullable();
+            $table->string('nik_no_ktp',50)->nullable();
+            $table->string('alamat_rumah')->nullable();
+            $table->string('no_hp',20)->nullable();
+            $table->string('email',50)->nullable();
+            $table->string('mulai_aktif',5)->nullable();
+            $table->string('legalitas_sertifikat',5)->nullable();
+            $table->string('jenis_diklat_yg_diikuti',5)->nullable();
+            $table->string('pendampingan', 20)->nullable();
+            $table->string('kabupaten_kota')->nullable();
             $table->timestamps();
         });
     }

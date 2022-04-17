@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PmksController;
-use App\Http\Controllers\PsksController;
 use App\Http\Controllers\FilepondController;
 use App\Http\Controllers\DtksController;
 use App\Http\Controllers\DependentDropdownController;
@@ -63,19 +62,19 @@ Route::group(['middleware' => ['auth','checkRole:admin']], function () {
     Route::get('/districts', [DependentDropdownController::class, 'districts'])->name('districts');
     Route::get('/villages', [DependentDropdownController::class, 'villages'])->name('villages');
 
-    Route::get('/psks/import-data',[PsksController::class, 'index']);
-    Route::get('/psks/daftar-psks',[PsksController::class, 'daftarpsks']);
-    Route::post('/psks/store-import',[PsksController::class, 'store']);
+    Route::get('/psks/import-data',[psksController::class, 'index']);
+    Route::get('/psks/daftar-psks',[psksController::class, 'daftarpsks']);
+    Route::post('/psks/store-import',[psksController::class, 'store']);
 
-    Route::get('/psks/data',[PsksController::class, 'data'])->name('psks.data');
-    Route::get('/psks/data-psks',[PsksController::class, 'datapsks'])->name('psks.datapsks');
-    Route::get('/psks/data-errors',[PsksController::class, 'dataerrors'])->name('psks.dataerrors');
+    Route::get('/psks/data',[psksController::class, 'data'])->name('psks.data');
+    Route::get('/psks/data-psks',[psksController::class, 'datapsks'])->name('psks.datapsks');
+    Route::get('/psks/data-errors',[psksController::class, 'dataerrors'])->name('psks.dataerrors');
 
-    Route::get('/psks/create',[PsksController::class, 'create'])->name('psks.create');
-    Route::post('/psks/store-create',[PsksController::class, 'storeCreate'])->name('psks.store-create');
-    Route::get('/psks/create/edit',[PsksController::class, 'editCreate'])->name('psks.edit-create');
-    Route::post('/psks/store-edit',[PsksController::class, 'storeEdit'])->name('psks.store-edit');
-    Route::get('/psks/delete',[PsksController::class, 'delete'])->name('psks.delete');
+    Route::get('/psks/create',[psksController::class, 'create'])->name('psks.create');
+    Route::post('/psks/store-create',[psksController::class, 'storeCreate'])->name('psks.store-create');
+    Route::get('/psks/create/edit',[psksController::class, 'editCreate'])->name('psks.edit-create');
+    Route::post('/psks/store-edit',[psksController::class, 'storeEdit'])->name('psks.store-edit');
+    Route::get('/psks/delete',[psksController::class, 'delete'])->name('psks.delete');
 
 });
 
