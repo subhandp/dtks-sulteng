@@ -321,18 +321,92 @@ path:hover, circle:hover {
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item
-                        @isset($class_menu_data_pmks)
-                            {{ $class_menu_data_pmks }}
-                        @endisset 
-                        ">
-                            <a href="/pmks/data" class="nav-link">
-                                <i class="nav-icon fas fa-book"></i>
-                                <p>
-                                    Data PMKS
-                                </p>
-                            </a>
-                        </li>
+
+                        @if (auth()->user()->role == 'operator_pmks')
+                            <li class="nav-item
+                            @isset($class_menu_data_pmks)
+                                {{ $class_menu_data_pmks }}
+                            @endisset 
+                            ">
+                                <a href="/pmks/data" class="nav-link">
+                                    <i class="nav-icon fas fa-book"></i>
+                                    <p>
+                                        Data PMKS
+                                    </p>
+                                </a>
+                            </li>
+                        @endif
+
+                        
+                        
+                        @if (auth()->user()->role == 'operator_psks')
+                            <li class="nav-item has-treeview 
+                            @isset($class_menu_data_psks)
+                                {{ $class_menu_data_psks }}
+                            @endisset 
+                            ">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon fas fa-mail-bulk"></i>
+                                    <p>
+                                        Data PSKS
+                                        <i class="fas fa-angle-left right"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item" data-toggle="tooltip" title="Pekerja Sosial Masyarakat" data-offset="50%, 3">
+                                        <a href="{{ route('psks.psm.index') }}" class="nav-link
+                                        @isset($class_menu_data_psm)
+                                            {{ $class_menu_data_psm }}
+                                        @endisset
+                                        " >
+                                            <i class="far fa-envelope nav-icon"></i>
+                                            <p>PSM</p>
+                                        </a>
+                                    </li>
+                                
+                                </ul>
+
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item" data-toggle="tooltip" title="Tenaga Kesejahteraan Sosial Masyarakat " data-offset="50%, 3">
+                                        <a href="{{ route('psks.psm.index') }}" class="nav-link
+                                        @isset($class_menu_data_tksk)
+                                            {{ $class_menu_data_tksk }}
+                                        @endisset
+                                        " >
+                                            <i class="far fa-envelope nav-icon"></i>
+                                            <p>TKSK</p>
+                                        </a>
+                                    </li>
+                                </ul>
+
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item" data-toggle="tooltip" title="Lembaga Konsultasi Kesejahteraan Keluarga" data-offset="50%, 3">
+                                        <a href="{{ route('psks.psm.index') }}" class="nav-link
+                                        @isset($class_menu_data_lk3)
+                                            {{ $class_menu_data_lk3 }}
+                                        @endisset
+                                        " >
+                                            <i class="far fa-envelope nav-icon"></i>
+                                            <p>LK3</p>
+                                        </a>
+                                    </li>
+                                </ul>
+
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item" data-toggle="tooltip" title="Lembaga Kesejahteraan Sosial" data-offset="50%, 3">
+                                        <a href="{{ route('psks.psm.index') }}" class="nav-link
+                                        @isset($class_menu_data_lks)
+                                            {{ $class_menu_data_lks }}
+                                        @endisset
+                                        " >
+                                            <i class="far fa-envelope nav-icon"></i>
+                                            <p >LKS</p>
+                                        </a>
+                                    </li>
+                                </ul>
+
+                            </li>
+                        @endif
 
                         <li class="nav-item">
                             <a href="/pmks/import-data" class="nav-link 
@@ -340,7 +414,7 @@ path:hover, circle:hover {
                                 {{ $class_menu_pmks_import }}
                             @endisset
                             ">
-                                <i class="far fa-envelope nav-icon"></i>
+                                <i class="far fa-envelope nav-icon" ></i>
                                 <p>Import Data</p>
                             </a>
                         </li>
@@ -394,7 +468,7 @@ path:hover, circle:hover {
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper" style="background: #192192192; padding: 15px 15px 15px 15px ">
-
+            
             @yield('content')
 
 
@@ -460,10 +534,12 @@ path:hover, circle:hover {
     <script>
 
         $(function () {
+        
+        $('[data-toggle="tooltip"]').tooltip();
 
         $.fn.select2.defaults.set( "theme", "bootstrap" );
 
-        $('[data-toggle="tooltip"]').tooltip()
+        // $('[data-toggle="tooltip"]').tooltip()
         })
 
         FilePond.registerPlugin(

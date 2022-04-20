@@ -12,7 +12,27 @@ class AuthController extends Controller
         return view('auth');
     }
 
-    public function postlogin(Request $request)
+    public function loginPmks()
+    {
+        return view('authPmks');
+    }
+
+    public function loginPsks()
+    {
+        return view('authPsks');
+    }
+
+    public function postloginPmks(Request $request)
+    {
+        $cre = $request->only('username','password');
+        if (Auth::attempt($cre)) {
+            return redirect('/dashboard');
+            // return redirect()->back()->with('sukses','Email atau Password BENAR!');
+        }
+        return redirect()->back()->with('sukses','Username atau Password Salah!');
+    }
+
+    public function postloginPsks(Request $request)
     {
         $cre = $request->only('username','password');
         if (Auth::attempt($cre)) {

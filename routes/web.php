@@ -26,7 +26,11 @@ use App\Http\Controllers\DependentDropdownController;
 */
 
 Route::get('/login',[AuthController::class, 'login'])->name('login');
-Route::post('/postlogin',[AuthController::class, 'postlogin']);
+Route::get('/login/pmks',[AuthController::class, 'loginPmks'])->name('login.pmks');
+Route::get('/login/psks',[AuthController::class, 'loginPsks'])->name('login.psks');
+Route::post('/postlogin-pmks',[AuthController::class, 'postloginPmks'])->name('post.login.pmks');
+Route::post('/postlogin-psks',[AuthController::class, 'postloginPsks'])->name('post.login.psks');
+
 Route::get('/logout',[AuthController::class ,'logout']);
 
 Route::group(['middleware' => ['auth','checkRole:admin']], function () {
@@ -67,15 +71,27 @@ Route::group(['middleware' => ['auth','checkRole:admin']], function () {
     Route::get('/psks/daftar-psks',[PsksController::class, 'daftarpsks']);
     Route::post('/psks/store-import',[PsksController::class, 'store']);
 
-    Route::get('/psks/data',[PsksController::class, 'data'])->name('psks.data');
+    Route::get('/psks/data',[PsksController::class, 'datapsm'])->name('psks.data');
     Route::get('/psks/data-psks',[PsksController::class, 'datapsks'])->name('psks.datapsks');
     Route::get('/psks/data-errors',[PsksController::class, 'dataerrors'])->name('psks.dataerrors');
 
     Route::get('/psks/create',[PsksController::class, 'create'])->name('psks.create');
-    Route::post('/psks/store-create',[PsksController::class, 'storeCreate'])->name('psks.store-create');
+    
     Route::get('/psks/create/edit',[PsksController::class, 'editCreate'])->name('psks.edit-create');
     Route::post('/psks/store-edit',[PsksController::class, 'storeEdit'])->name('psks.store-edit');
     Route::get('/psks/delete',[PsksController::class, 'delete'])->name('psks.delete');
+
+    Route::get('/psks/psm',[PsksController::class, 'indexPsm'])->name('psks.psm.index');
+    Route::get('/psks/psm/datatatables',[PsksController::class, 'datatablesPsm'])->name('psks.psm.datatables');
+
+
+    Route::get('/psks/psm/create',[PsksController::class, 'psmEditCreate'])->name('psks.psm.create');
+    Route::get('/psks/psm/edit',[PsksController::class, 'psmEditCreate'])->name('psks.psm.edit');
+    Route::get('/psks/psm/delete',[PsksController::class, 'psmDelete'])->name('psks.psm.delete');
+    Route::post('/psks/psm/store-create',[PsksController::class, 'psmStore'])->name('psks.psm.store-create');
+    Route::post('/psks/psm/store-edit',[PsksController::class, 'psmStore'])->name('psks.psm.store-edit');
+    
+    
 
 });
 
