@@ -259,8 +259,8 @@ form .create-account:hover {
         <div class="content">
             <div class="flex-div">
               <div class="name-content" style="text-align: justify;text-justify:inter-word">
-                <h1 class="logo">PMKS</h1>
-                <p><strong>Penyandang Masalah Kesejahteraan Sosial </strong>adalah seseorang, keluarga atau kelompok masyarakat yang karena suatu hambatan, kesulitan atau gangguan, tidak dapat melaks. fungsi sosialnya, sehing. tidak dapat terpenuhi kebutuhan hidupnya(jasmani, rohani, dan sosial) secara memadai dan wajar.</p>
+                <h1 class="logo">SIMAKS</h1>
+                <p><strong>Sistem Infomasi Pemerlu Pelayanan Kesejahteraan Sosial </strong>adalah seseorang, keluarga atau kelompok masyarakat yang karena suatu hambatan, kesulitan atau gangguan, tidak dapat melaks. fungsi sosialnya, sehing. tidak dapat terpenuhi kebutuhan hidupnya(jasmani, rohani, dan sosial) secara memadai dan wajar.</p>
               </div>
               <form method="POST" action="{{ route('post.login.pmks') }}">
                 @csrf

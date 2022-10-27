@@ -2,8 +2,24 @@
 @section('content')
 <div class="row">
     @php
-        // dd($kabupatenKotaTotalPerJenisPmks);
+       
+        
+        $tooltipPoso = isset($chartDataForTooltip['KAB. POSO']) ? $chartDataForTooltip['KAB. POSO'] : 0;
+        $tooltipDonggala = isset($chartDataForTooltip['KAB. DONGGALA']) ? $chartDataForTooltip['KAB. DONGGALA'] : 0;
+        $tooltipTolis = isset($chartDataForTooltip['KAB. TOLI TOLI']) ? $chartDataForTooltip['KAB. TOLI TOLI'] : 0;
+        $tooltipBuol = isset($chartDataForTooltip['KAB. BUOL']) ? $chartDataForTooltip['KAB. BUOL'] : 0;
+        $tooltipParimo = isset($chartDataForTooltip['KAB. PARIGI MOUTONG']) ? $chartDataForTooltip['KAB. PARIGI MOUTONG'] : 0;
+        $tooltipTouna = isset($chartDataForTooltip['KAB. TOJO UNA UNA']) ? $chartDataForTooltip['KAB. TOJO UNA UNA'] : 0;
+        $tooltipSigi = isset($chartDataForTooltip['KAB. SIGI']) ? $chartDataForTooltip['KAB. SIGI'] : 0;
+        $tooltipPalu = isset($chartDataForTooltip['KAB. PALU']) ? $chartDataForTooltip['KAB. PALU'] : 0;
+        $tooltipBanggai = isset($chartDataForTooltip['KAB. BANGGAI']) ? $chartDataForTooltip['KAB. BANGGAI'] : 0;
+        $tooltipMorut = isset($chartDataForTooltip['KAB. MOROWALI UTARA']) ? $chartDataForTooltip['KAB. MOROWALI UTARA'] : 0;
+        $tooltipMorowali= isset($chartDataForTooltip['KAB. MOROWALI']) ? $chartDataForTooltip['KAB. MOROWALI'] : 0;
+        $tooltipBalut = isset($chartDataForTooltip['KAB. BANGGAI LAUT']) ? $chartDataForTooltip['KAB. BANGGAI LAUT'] : 0;
+        $tooltipBangkep = isset($chartDataForTooltip['KAB. BANGGAI KEPULAUAN']) ? $chartDataForTooltip['KAB. BANGGAI KEPULAUAN'] : 0;
+        
     @endphp
+    
     <div class="col col-md-12">
         <section class="content card" style="padding: 10px 10px 10px 10px ">
             
@@ -11,14 +27,14 @@
                 <div class="row">
                     <div class="col">
                         <center>
-                            <h3 class="font-weight-bold">CHART TOTAL JENIS PMKS PER KABUPATEN/KOTA</h3>
+                            <h3 class="font-weight-bold">CHART TOTAL JENIS PSKS PER KABUPATEN/KOTA</h3>
                             <hr />
                         </center>
                         <br>
                     </div>
                 </div>
         
-                <div class="row table-responsive">
+                <div class="row">
                     <div class="card-body">
                         <!-- Small boxes (Stat box) -->
                         <div class="filter-container p-0 row">
@@ -33,8 +49,8 @@
                                         <th>NO</th>
                                         <th>KABUPATEN/KOTA</th>
                                         @php
-                                            foreach ($jenisPmks as $key => $pmks) {
-                                                echo "<th>".strtoupper($pmks->jenis)."</th>";
+                                            foreach ($jenisPsks as $key => $psks) {
+                                                echo "<th>".strtoupper($psks->jenis)."</th>";
                                             }
                                         @endphp
                          
@@ -52,17 +68,17 @@
                                             $no = 1;
                                         @endphp
                                        
-                                        @foreach ($kabupatenKotaTotalPerJenisPmks as $k => $data)
+                                       @foreach ($kabupatenKotaTotalPerJenisPsks as $k => $data)
                                             
                                             <tr>
                                                 <td>{{ $no }}</td>
                                                 <td>{{ $data[0]->name }}</td>
                                                 @php
-                                                    foreach ($jenisPmks as $key => $pmks) {
+                                                    foreach ($jenisPsks as $key => $psks) {
                                                         $totalJenis = 0;
-                                                        foreach ($data[1] as $key => $totalJenisPmks) {
-                                                            if($pmks->id == $totalJenisPmks->jenis_pmks_id){
-                                                                $totalJenis = $totalJenisPmks->total;
+                                                        foreach ($data[1] as $key => $totalJenisPsks) {
+                                                            if($psks->id == $totalJenisPsks->jenis_psks_id){
+                                                                $totalJenis = $totalJenisPsks->total;
                                                             }
                                                         }
                                                         echo "<td>".$totalJenis."</td>";
@@ -75,6 +91,28 @@
                                                 $no++;
                                             @endphp
                                         @endforeach
+{{--                                         
+                                        @foreach ($chartsKabJenis as $k => $data)
+                                            
+                                            <tr>
+                                                <td>{{ $no }}</td>
+                                                <td>{{ $data->kabupaten_kota->name }}</td>
+                                                @php
+                                                    foreach ($jenisPsks as $key => $psks) {
+                                                        if($psks->id == $data->jenis_psks->id){
+                                                            echo "<td>".$data->total."</td>";
+                                                        }
+                                                        else{
+                                                            echo "<td>0</td>";
+                                                        }
+                                                    }
+                                                @endphp
+                                               
+                                            </tr>
+                                            @php
+                                                $no++;
+                                            @endphp
+                                        @endforeach --}}
                                       
                                     </tbody>
                                   </table>
@@ -124,22 +162,7 @@
 
                                     chartData
                                      --}}
-                                     @php
-                                            $tooltipPoso = isset($chartDataForTooltip['KAB. POSO']) ? $chartDataForTooltip['KAB. POSO'] : 0;
-                                            $tooltipDonggala = isset($chartDataForTooltip['KAB. DONGGALA']) ? $chartDataForTooltip['KAB. DONGGALA'] : 0;
-                                            $tooltipTolis = isset($chartDataForTooltip['KAB. TOLI TOLI']) ? $chartDataForTooltip['KAB. TOLI TOLI'] : 0;
-                                            $tooltipBuol = isset($chartDataForTooltip['KAB. BUOL']) ? $chartDataForTooltip['KAB. BUOL'] : 0;
-                                            $tooltipParimo = isset($chartDataForTooltip['KAB. PARIGI MOUTONG']) ? $chartDataForTooltip['KAB. PARIGI MOUTONG'] : 0;
-                                            $tooltipTouna = isset($chartDataForTooltip['KAB. TOJO UNA UNA']) ? $chartDataForTooltip['KAB. TOJO UNA UNA'] : 0;
-                                            $tooltipSigi = isset($chartDataForTooltip['KAB. SIGI']) ? $chartDataForTooltip['KAB. SIGI'] : 0;
-                                            $tooltipPalu = isset($chartDataForTooltip['KAB. PALU']) ? $chartDataForTooltip['KAB. PALU'] : 0;
-                                            $tooltipBanggai = isset($chartDataForTooltip['KAB. BANGGAI']) ? $chartDataForTooltip['KAB. BANGGAI'] : 0;
-                                            $tooltipMorut = isset($chartDataForTooltip['KAB. MOROWALI UTARA']) ? $chartDataForTooltip['KAB. MOROWALI UTARA'] : 0;
-                                            $tooltipMorowali= isset($chartDataForTooltip['KAB. MOROWALI']) ? $chartDataForTooltip['KAB. MOROWALI'] : 0;
-                                            $tooltipBalut = isset($chartDataForTooltip['KAB. BANGGAI LAUT']) ? $chartDataForTooltip['KAB. BANGGAI LAUT'] : 0;
-                                            $tooltipBangkep = isset($chartDataForTooltip['KAB. BANGGAI KEPULAUAN']) ? $chartDataForTooltip['KAB. BANGGAI KEPULAUAN'] : 0;
-
-                                     @endphp
+                                     
                                     <path class="detail-chart" id="KAB. POSO"  data-info="<div>Kabupaten Poso</div></div>Total :{{ $tooltipPoso }}</div>" d="M56.26903 107.56222L56.269333 108.775116L56.687035 110.29632L57.506733 111.21292L56.12583 111.233925L55.69533 112.212326L55.28023 113.46193L55.81013 114.71943L55.78353 114.95473L56.23603 115.28953L56.46933 115.83423L56.908928 116.08763L56.69933 116.624535L55.45523 118.27873L55.21563 119.38443L55.36953 120.45073L55.42823 121.53383L54.78503 121.65343L54.54083 121.881325L53.944828 121.89033L52.70823 121.307625L51.48953 120.462425L49.862328 118.628426L49.212128 117.78033L48.980827 117.099724L48.08233 116.259125L47.904327 115.96102L47.561928 115.96602L47.40173 116.79332L46.62783 118.81272L45.51133 118.23452L44.00793 118.35902L42.81143 117.90092L42.533333 117.49612L42.664032 117.137215L42.518932 116.530815L42.596134 116.045715L42.966633 116.10751L43.326633 115.760216L42.915333 114.923515L42.561234 114.68352L42.750233 114.22912L43.847733 113.99802L43.728832 113.200615L43.442932 112.90452L43.446934 112.24522L43.173233 111.666016L43.34323 111.12911L43.312332 110.366615L43.08523 110.04262L42.57883 110.085014L42.77703 109.37672L43.16843 109.13652L43.94583 108.16902L44.69693 108.26452L45.22013 107.53692L45.47863 107.59162L45.81183 106.71572L45.293327 105.98902L44.54273 105.39432L44.039627 105.13692L44.718826 104.748314L44.842026 104.28781L45.506927 104.40941L45.84533 103.891205L46.64343 103.67081L48.22903 102.98991L48.89513 102.959305L50.01403 102.64471L50.898632 102.273705L51.104233 102.965805L51.086433 103.463905L50.730633 103.84621L50.620533 104.41421L50.727432 104.83691L51.07643 104.99901L51.880333 105.73271L52.037132 106.11081L51.98833 106.72901L52.36293 107.04661L52.53333 107.59051L52.86613 107.659004L53.44503 107.0528L53.78503 107.1325L54.05613 106.7216L54.43213 106.8488L54.51453 106.6029L55.39733 106.6049L55.412533 107.359795L56.26903 107.56222z" stroke="#FFFFFF" stroke-width="0.26666668" fill="#b9b9b9" fill-rule="nonzero" />
                                     <path class="detail-chart" id="KAB. DONGGALA" data-info="<div>Kabupaten Donggala</div></div>Total :{{ $tooltipDonggala }}</div>" d="M37.43893 96.966324L37.28653 97.22063L36.68573 97.487724L36.83263 97.98273L36.797432 98.538124L37.022533 98.613525L36.50593 98.82773L36.14873 98.66443L35.70373 99.26973L34.81663 99.54333L34.70673 99.86233L35.31263 100.64192L36.13273 100.68762L36.48393 100.51672L36.99003 101.12643L37.07953 101.56273L37.417328 101.92763L37.119026 103.60833L36.824326 103.82623L36.783424 104.43633L36.353725 104.96703L36.485924 105.435234L36.095924 106.42143L36.714325 107.740234L36.093723 107.68404L35.55802 108.24323L35.10442 108.070435L34.97002 107.71834L34.27872 107.28164L33.73912 107.27064L33.310722 107.712135L32.51462 107.743835L32.221024 107.24323L31.765524 107.30283L31.306524 106.75753L31.250824 106.28323L31.822824 105.76013L31.676224 105.558235L32.265224 105.12933L32.871723 104.25993L32.869724 103.87023L33.253426 103.89523L33.391327 102.976135L33.92893 103.15214L34.03273 102.480835L33.75353 102.547134L33.48793 101.53613L33.44833 100.714035L33.12573 100.55653L33.173527 100.00304L33.061527 99.31794L33.38593 98.09894L33.20583 97.812836L34.11873 97.514435L34.34823 96.868935L35.29763 96.37683L35.35973 95.91433L35.09023 95.23083L35.78223 94.913826L36.08453 94.24293L36.68773 94.92853L37.13713 96.39543L37.43893 96.966324zM43.19723 70.11022L43.466133 70.475525L44.222034 70.874825L44.266933 71.51972L44.167133 72.35362L44.214832 72.90702L43.611134 73.94842L43.534332 74.910416L43.07373 75.084816L42.79143 75.63281L43.04843 75.82861L42.79063 76.18151L42.27073 76.32601L42.12563 77.00171L41.79873 77.23391L41.76893 78.08611L42.146927 78.260414L42.497326 79.208115L42.415226 79.582016L41.596928 80.039116L41.61313 80.48541L41.39813 80.83051L40.84173 80.90102L40.568527 81.38702L40.145226 81.57332L40.087425 82.42362L39.868725 82.781525L39.775425 83.483025L39.906326 84.28203L39.701626 84.78903L39.079525 85.47213L39.494324 86.02823L39.652824 86.63743L39.297325 87.14943L39.469524 87.52843L39.167225 87.724525L39.575325 88.29662L39.585625 88.87152L39.328526 89.14322L39.518425 89.84172L39.399124 90.208824L39.495125 90.77902L39.794323 91.02512L39.624123 91.80132L40.609123 93.186325L40.841225 93.29613L40.858025 94.02713L41.161125 94.18033L41.372726 95.20723L41.171127 95.32963L41.150528 96.00363L41.58753 97.436134L41.45353 97.753334L41.26263 97.07004L41.04333 96.813835L40.36563 97.063736L39.36703 96.73044L39.29493 96.47914L38.85843 96.53874L38.687428 96.31784L38.99883 96.07424L38.82353 95.65094L39.80813 95.44084L40.13043 95.15184L40.03093 94.85044L39.29613 95.17354L38.59253 95.09994L38.64223 94.869835L39.534832 94.18774L39.15773 94.05304L38.30043 94.53794L38.102932 95.12954L37.73513 94.98334L37.45083 94.19244L37.53803 93.93574L37.21153 93.55054L37.168327 92.99624L36.750927 91.77614L36.553326 90.62984L36.726227 90.00153L36.512028 89.36723L36.71943 89.09033L36.97973 87.84243L37.26223 87.46953L37.43423 86.73433L37.664433 86.37853L37.36973 85.89813L37.523533 85.40973L37.23783 85.15113L35.980232 85.54493L35.120533 85.03453L34.140034 83.591034L33.985435 83.11163L34.989136 83.35143L35.112434 82.828835L36.000233 83.206635L36.300934 83.55794L36.282433 84.10174L36.81753 84.389435L36.86563 84.841835L37.733433 85.05974L38.070633 84.74174L38.74763 83.514435L38.83223 83.05843L38.644928 82.289635L38.72173 81.94583L38.56713 81.29563L37.85683 80.48013L36.96013 79.72583L36.83263 79.34743L37.49943 78.93693L37.93923 79.28973L38.856033 79.37682L39.180534 78.993126L38.962334 78.05443L38.591534 77.92663L38.129833 77.220726L38.182533 76.934326L38.891335 76.14953L38.669834 75.46033L39.093834 74.726524L39.964134 74.80972L40.796135 74.65222L41.627636 74.124825L41.391735 72.461525L41.061535 71.72793L41.521534 70.72123L41.873333 70.58663L42.144833 70.160034z" stroke="#FFFFFF" stroke-width="0.26666668" fill="#b9b9b9" fill-rule="nonzero" />
                                     <path class="detail-chart" id="KAB. TOLI TOLI" data-info="<div>Kabupaten Toli-Toli</div></div>Total :{{ $tooltipTolis }}</div>" d="M51.58733 64.54292L52.36353 64.985825L52.35233 65.25783L51.66563 64.87233L51.58733 64.54292zM47.73303 65.011925L47.628128 65.506325L47.336327 65.53133L47.162926 65.18123L47.369625 64.40993L47.761124 64.45073zM61.23523 61.165024L60.79813 61.482525L60.56063 62.061024L59.873432 62.495823L59.559334 63.055523L59.775833 63.819523L59.712234 64.108025L59.141933 64.32932L58.858334 64.84473L58.286835 65.13913L58.627434 65.70093L58.259834 67.56013L58.279434 68.07573L58.006733 68.42713L57.002834 68.82173L56.279335 69.48203L56.083736 70.00943L55.56534 70.88063L54.95144 71.310234L54.39304 71.27254L53.90464 71.550735L53.07404 71.436935L52.08694 72.33514L51.684242 72.84244L50.81134 72.46914L50.27584 72.66994L50.15424 72.017334L48.60534 71.88364L48.42474 71.52034L46.98814 71.27034L46.03394 71.72564L45.76614 72.08664L44.62174 72.54154L44.167137 72.353645L44.266937 71.519745L44.22204 70.87485L43.466137 70.47555L43.197235 70.110245L43.902435 69.90935L44.814236 69.29465L45.060837 68.82085L44.98604 67.049446L45.10574 66.45025L45.59844 66.22425L45.754436 65.92645L46.372135 65.935455L46.829235 66.13656L46.721836 67.43696L46.519836 68.26636L47.321335 68.65236L47.538433 69.14196L49.038834 69.53896L49.413734 69.27536L50.087234 69.28996L50.774033 69.68376L51.178234 69.07366L51.185234 68.539764L51.570835 67.45146L51.888535 67.09226L51.829834 66.84726L52.833836 66.43526L53.086136 66.13086L53.570335 66.13486L53.820236 65.66166L54.439335 65.16036L54.711536 64.38366L54.297638 63.80796L54.65114 62.94576L55.07974 62.70406L55.15424 62.11686L54.88124 61.90116L55.04454 61.23146L54.842842 61.12986L54.829742 60.03966L55.365944 60.261063L56.112244 60.087364L56.491444 59.495865L56.684242 59.732666L56.284542 60.028667L56.311443 60.260067L56.924442 60.157665L57.16424 59.606464L57.70684 59.710766L58.324642 60.012367L58.83494 60.100967L59.256042 60.430866L59.54964 60.141068L59.90424 60.19547L60.86884 60.744667z" stroke="#FFFFFF" stroke-width="0.26666668" fill="#b9b9b9" fill-rule="nonzero" />
@@ -274,7 +297,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>JENIS PMKS</th>
+                            <th>JENIS PSKS</th>
                             <th>TOTAL</th>
                         </tr>
                     </thead>
@@ -295,6 +318,7 @@
 
 <script src="{{ $myChart1->cdn() }}"></script>
 <script src="{{ $myChart2->cdn() }}"></script>
+
 
 {{ $myChart1->script() }}
 {{ $myChart2->script() }}
@@ -326,7 +350,7 @@ colourCountries(data1);
           {
             columns: [
                     { data: 'no' },
-                    { data: 'jenis_pmks' },
+                    { data: 'jenis_psks' },
                     { data: 'total' },
                 ],
                 "bDestroy": true
@@ -334,7 +358,7 @@ colourCountries(data1);
       );
    
       $.ajax({
-                url: "{{ route('dashboard.get-pmks-kab') }}",
+                url: "{{ route('dashboard.get-psks-kab') }}",
                 dataType: 'json',
                 data : {
                     q : kabupatenKotaId

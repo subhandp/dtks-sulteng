@@ -24,9 +24,10 @@ class AuthController extends Controller
 
     public function postloginPmks(Request $request)
     {
-        $cre = $request->only('username','password');
+        // $cre = $request->only('username','password');
+        $cre = ['username' => $request->input('username'), 'password' => $request->input('password'), 'role' => 'operator_pmks'];
         if (Auth::attempt($cre)) {
-            return redirect('/dashboard');
+            return redirect('/pmks/dashboard');
             // return redirect()->back()->with('sukses','Email atau Password BENAR!');
         }
         return redirect()->back()->with('sukses','Username atau Password Salah!');
@@ -34,9 +35,11 @@ class AuthController extends Controller
 
     public function postloginPsks(Request $request)
     {
-        $cre = $request->only('username','password');
+        // $cre = $request->only('username','password');
+        $cre = ['username' => $request->input('username'), 'password' => $request->input('password'), 'role' => 'operator_psks'];
+
         if (Auth::attempt($cre)) {
-            return redirect('/dashboard');
+            return redirect('/psks/dashboard');
             // return redirect()->back()->with('sukses','Email atau Password BENAR!');
         }
         return redirect()->back()->with('sukses','Username atau Password Salah!');

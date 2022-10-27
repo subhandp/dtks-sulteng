@@ -69,6 +69,10 @@ path:hover, circle:hover {
     font-family: arial;
   }
 
+.overflow-table {
+    overflow-x: auto;
+}
+
 #modal-filter {
     overflow-x: auto;
 }
@@ -308,13 +312,30 @@ path:hover, circle:hover {
                         data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-
+                    
+             
+                
+                        @php
+                            if(auth()->user()->role == 'operator_pmks'){
+                                $dashboardUrl = "/pmks/dashboard";
+                                $importUrl = "/pmks/import-data";
+                            }
+                            else if(auth()->user()->role == 'operator_psks'){
+                                $dashboardUrl = "/psks/dashboard";
+                                $importUrl = "/psks/import-data";
+                            }
+                            else{
+                                $dashboardUrl = "/dashboard";
+                                $importUrl = "/import-data";
+                            }
+                        @endphp
+                        
                         <li class="nav-item 
                         @isset($class_menu_data_dashboard)
                             {{ $class_menu_data_dashboard}}
                         @endisset 
                         ">
-                            <a href="/dashboard" class="nav-link">
+                            <a href="{{ $dashboardUrl }}" class="nav-link">
                                 <i class="nav-icon fas fa-home"></i>
                                 <p>
                                     Beranda
@@ -368,7 +389,7 @@ path:hover, circle:hover {
 
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item" data-toggle="tooltip" title="Tenaga Kesejahteraan Sosial Masyarakat " data-offset="50%, 3">
-                                        <a href="{{ route('psks.psm.index') }}" class="nav-link
+                                        <a href="{{ route('psks.tksk.index') }}" class="nav-link
                                         @isset($class_menu_data_tksk)
                                             {{ $class_menu_data_tksk }}
                                         @endisset
@@ -381,7 +402,7 @@ path:hover, circle:hover {
 
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item" data-toggle="tooltip" title="Lembaga Konsultasi Kesejahteraan Keluarga" data-offset="50%, 3">
-                                        <a href="{{ route('psks.psm.index') }}" class="nav-link
+                                        <a href="#" class="nav-link
                                         @isset($class_menu_data_lk3)
                                             {{ $class_menu_data_lk3 }}
                                         @endisset
@@ -394,7 +415,7 @@ path:hover, circle:hover {
 
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item" data-toggle="tooltip" title="Lembaga Kesejahteraan Sosial" data-offset="50%, 3">
-                                        <a href="{{ route('psks.psm.index') }}" class="nav-link
+                                        <a href="#" class="nav-link
                                         @isset($class_menu_data_lks)
                                             {{ $class_menu_data_lks }}
                                         @endisset
@@ -405,11 +426,64 @@ path:hover, circle:hover {
                                     </li>
                                 </ul>
 
+
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item" data-toggle="tooltip" title="Karang Taruna" data-offset="50%, 3">
+                                        <a href="#" class="nav-link
+                                        @isset($class_menu_data_lks)
+                                            {{ $class_menu_data_lks }}
+                                        @endisset
+                                        " >
+                                            <i class="far fa-envelope nav-icon"></i>
+                                            <p >KT</p>
+                                        </a>
+                                    </li>
+                                </ul>
+
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item" data-toggle="tooltip" title="Wahana Kesejahteraan Sosial Berbasis Masyarakat" data-offset="50%, 3">
+                                        <a href="#" class="nav-link
+                                        @isset($class_menu_data_lks)
+                                            {{ $class_menu_data_lks }}
+                                        @endisset
+                                        " >
+                                            <i class="far fa-envelope nav-icon"></i>
+                                            <p >WKSBM</p>
+                                        </a>
+                                    </li>
+                                </ul>
+
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item" data-toggle="tooltip" title="Forum CSR Kesejahteraan Sosial" data-offset="50%, 3">
+                                        <a href="#" class="nav-link
+                                        @isset($class_menu_data_lks)
+                                            {{ $class_menu_data_lks }}
+                                        @endisset
+                                        " >
+                                            <i class="far fa-envelope nav-icon"></i>
+                                            <p >FCSR</p>
+                                        </a>
+                                    </li>
+                                </ul>
+
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item" data-toggle="tooltip" title="Family Care Unit" data-offset="50%, 3">
+                                        <a href="#" class="nav-link
+                                        @isset($class_menu_data_lks)
+                                            {{ $class_menu_data_lks }}
+                                        @endisset
+                                        " >
+                                            <i class="far fa-envelope nav-icon"></i>
+                                            <p >FCU</p>
+                                        </a>
+                                    </li>
+                                </ul>
+
                             </li>
                         @endif
 
                         <li class="nav-item">
-                            <a href="/pmks/import-data" class="nav-link 
+                            <a href="{{ $importUrl }}" class="nav-link 
                             @isset($class_menu_pmks_import)
                                 {{ $class_menu_pmks_import }}
                             @endisset

@@ -11,9 +11,9 @@ class Charts extends Model
 
     protected $fillable = ['indonesia_cities_id','jenis_pmks_id','total', 'created_at', 'updated_at'];
 
-    public function indonesiaCities()
+    public function kabupaten_kota()
     {
-        // return $this->belongsTo(DtksImport::class,'indonesia_cities_id','id');
+        return $this->belongsTo(KabupatenKota::class,'indonesia_cities_id','id');
     }
 
     public function jenis_pmks()

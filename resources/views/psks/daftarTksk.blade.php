@@ -26,10 +26,10 @@
                 <div class="col">
                 <h5>
                    
-                    <strong>Daftar PSM</strong>
+                    <strong>Daftar TKSK</strong>
                     <span class="float-right">
                         
-                        <a class="btn btn-warning btn-sm my-1 mr-sm-1" href="{{ route('psks.psm.create') }}" role="button" data-toggle="tooltip" title="Rekam data baru" data-offset="50%, 3"><i class="fas fa-edit"></i> Rekam</a>
+                        <a class="btn btn-warning btn-sm my-1 mr-sm-1" href="{{ route('psks.tksk.create') }}" role="button" data-toggle="tooltip" title="Rekam data baru" data-offset="50%, 3"><i class="fas fa-edit"></i> Rekam</a>
                     </span>
                 </h5>
                 
@@ -68,7 +68,7 @@
                             <th>No</th>
                             <th width="100px">Action</th>
                             <th>KAB/KOTA</th>
-                            <th>NAMA PSM</th>
+                            <th>NAMA TKSK</th>
                             <th>JENIS KELAMIN</th>
                             <th>PENDI. TERAKHIR</th>
                             <th>NIK</th>
@@ -174,7 +174,7 @@
         processing: true,
         serverSide: true,
         ajax: {
-            url: "{{ route('psks.psm.datatables') }}",
+            url: "{{ route('psks.tksk.datatables') }}",
             data: function (d) {
                 d.kabupaten_kota = $('#kabupaten_kota').val(),
                 d.search = $('input[type="search"]').val()
@@ -186,7 +186,7 @@
             {data: 'id', name: 'id'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
             {data: 'kabupaten_kota', name: 'kabupaten_kota'},
-            {data: 'nama_psm', name: 'nama_psm'},
+            {data: 'nama_tksk', name: 'nama_tksk'},
             {data: 'jenis_kelamin', name: 'jenis_kelamin'},
             {data: 'pendidikan_terakhir', name: 'pendidikan_terakhir'},
             {data: 'nik_no_ktp', name: 'nik_no_ktp'},
@@ -225,7 +225,7 @@
             data: {
                 _token: $('#csrf-token')[0].content,
                 kabupaten_kota: $('#kabupaten_kota').text(),
-                jenis_psks: 'psm',
+                jenis_psks: 'tksk',
                 
             },
             beforeSend: function() {
@@ -235,7 +235,7 @@
                 downloadLinkContainer.innerHTML = "";
 
                 tdKabupatenKota.innerHTML = $('#kabupaten_kota').text();
-                tdJenisPsks.innerHTML = 'Pekerja Sosial Masyarakat(PSM)',
+                tdJenisPsks.innerHTML = 'TKSK',
                 loadingSpinner.style.display = "block";
             },
             success: function(data){

@@ -28,6 +28,9 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Core\XLSXWriter;
 use Illuminate\Support\Facades\Log;
 use Storage;
+
+use Carbon\Carbon;
+
 class PmksController extends Controller
 {
     
@@ -337,9 +340,33 @@ class PmksController extends Controller
                             return $q->where('jenis_pmks', $request->get('jenis_pmks'));
                         });
 
+                        $instance->when(!empty($request->get('umur')), function ($q) use($request){
+                            // $age = "15-6";
+                            $age =  $request->get('umur');
+                            $range = explode('-', $age);
+                            // return $q->where('tanggal_lahir', '>', now()->subYears($range[1]));
+                            return $q->whereBetween('tanggal_lahir', [now()->subYears($range[0]), now()->subYears($range[1])]);
+                        });
+
                         $instance->when(!empty($request->get('tahun_data')), function ($q) use($request){
                                     
                             return $q->where('tahun_data', $request->get('tahun_data'));
+                            
+                            // $age = "15-6";
+                            // $range = explode('-', $age);
+                            // return $q->where('tanggal_lahir', '>', now()->subYears($range[1]));
+                            // return $q->whereBetween('tanggal_lahir', [now()->subYears($range[0]), now()->subYears($range[1])]);
+
+                            // if (!empty($age) && $age !== 'All') {
+                            //     $range = explode('-', $age);
+                            
+                            //     if (count($range) > 1) {
+                            //         return $q->whereBetween('tanggal_lahir', [now()->subYears($range[0]), now()->subYears($range[1])]);
+                            //     } else {
+                            //         return $q->where('tanggal_lahir', '<', now()->subYears($range[0]));
+                            //     }
+                            // }
+
                         });
 
                         // return($request);
@@ -553,6 +580,8 @@ class PmksController extends Controller
                 $kabupatenKota = DB::table('indonesia_cities')->where('id', $request->input('kabupaten_kota'))->first();
                 $kecamatan = DB::table('indonesia_districts')->where('id', $request->input('kecamatan'))->first();
                 $desaKelurahan = DB::table('indonesia_villages')->where('id', $request->input('desa_kelurahan'))->first();
+                $jenisPmks = DB::table('jenis_pmks')->where('jenis', $request->input('jenis_pmks'))->first();
+
                 // $id = $request->all()['id'];
             
                 $storeData = request()->except(['_token','id']);
@@ -565,7 +594,19 @@ class PmksController extends Controller
                 DB::table('pmks_data')
                 ->where('id', $id)
                 ->update($storeData);
-                    
+                
+                // $batch = Bus::batch([])->dispatch();
+
+                // $batch->add(new ProcessDataChart($kabupatenKota,$jenisPmks));
+
+
+                $batch = Bus::batch([])->dispatch();
+
+                $kabupatenKota = DB::table('indonesia_cities')->select('id','name')->where('province_id','72')->get();
+                $jenisPmks = DB::table('jenis_pmks')->select('id', 'jenis')->where('jenis',$request->input('jenis_pmks'))->first();
+                foreach ($kabupatenKota as $kk) {
+                        $batch->add(new ProcessDataChart($kk,$jenisPmks));
+                }
 
                 // PmksData::create($storeData);
                 return back()->with('success', 'Data berhasil di update');
@@ -624,6 +665,18 @@ class PmksController extends Controller
         $storeData['desa_kelurahan'] = $desaKelurahan->name;
 
         PmksData::create($storeData);
+
+        $batch = Bus::batch([])->dispatch();
+
+        $kabupatenKota = DB::table('indonesia_cities')->select('id','name')->where('province_id','72')->get();
+        $jenisPmks = DB::table('jenis_pmks')->select('id', 'jenis')->where('jenis',$request->input('jenis_pmks'))->first();
+        // DB::table('charts')->truncate();
+        foreach ($kabupatenKota as $kk) {
+            // foreach ($jenisPmks as $pmks) {
+                $batch->add(new ProcessDataChart($kk,$jenisPmks));
+            // }
+        }
+        
         return back()->with('success', 'Data berhasil di rekam.');
     }
 

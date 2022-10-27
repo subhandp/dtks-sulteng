@@ -48,12 +48,12 @@ class ProcessDataChartPsks implements ShouldQueue
                 'lk3' => 'psks_lk3s',
                 'lks' => 'psks_lks',
                 'kt' => 'psks_kts',
-                'wksb' => 'psks_wksbs',
+                'wkskbm' => 'psks_wksbs',
                 'fcsr' => 'psks_fcsrs',
                 'fcu' => 'psks_fcus'
             ];
 
-            $totalPsksJenisKabupatenKota = DB::table($tablePsks['psm'])
+            $totalPsksJenisKabupatenKota = DB::table($tablePsks[$this->jenisPsks->jenis])
                                         ->select('id')
                                         ->where('kabupaten_kota', $this->kabupatenKota->name)
                                         ->count();

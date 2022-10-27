@@ -6,25 +6,29 @@ namespace App\Http\Controllers;
 // use App\Klasifikasi;
 // use App\User;
 use Illuminate\Support\Facades\Auth;
-use App\Charts\DashboardChart;
+use App\Charts\DashboardChart1;
+use App\Charts\DashboardChart2;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Charts;
 use Yajra\DataTables\Facades\DataTables;
 
-
 class DashboardController extends Controller
 {
    
-    public function index(DashboardChart $myChart)
+    public function index(DashboardChart1 $myChart1,DashboardChart2 $myChart2)
     {
-        $myChart = $myChart->build();
+        $myChart1 = $myChart1->build();
+        $myChart2 = $myChart2->build();
+
 
         $jenisPmksSelect = session('pmks');
 
-        $charts = DB::table('charts')->select('*')->where('jenis_pmks_id', null)->orderBy('total','desc')->get();
+        $charts = DB::table('charts')->select('*')->where('jenis_pmks_id','=', null)->orderBy('total','desc')->get();
        
         $chartData = [];
+        $chartDataForTooltip = [];
         $chartDatatotalDtks = [];
         $chartMapDataId = [];
         $grandTotal = 0;
@@ -39,8 +43,27 @@ class DashboardController extends Controller
             $chartDatatotalDtks[] = (int)$chart->total;
             $chartMapDatatotalDtks[$kabupatenKota->name] = $kabupatenKota->id;
             $grandTotal += (int)$chart->total;
+            $chartDataForTooltip[$kabupatenKota->name] = number_format($chart->total,0,',','.');
 
         }
+
+        
+        $kabupatenKota = DB::table('indonesia_cities')
+        ->select('id', 'name')
+        ->Where('province_id', '72')
+        ->get();
+
+        $kabupatenKotaTotalPerJenisPmks = [];
+        
+        foreach ($kabupatenKota as $key => $kk) {
+            $totalPerJenisPmks = DB::table('charts')
+            ->where('indonesia_cities_id',$kk->id)
+            ->where('jenis_pmks_id','<>',null)
+            ->get();
+            $kabupatenKotaTotalPerJenisPmks[] = [$kk,$totalPerJenisPmks];
+        }
+        $chartsKabJenis = Charts::with('jenis_pmks')->with('kabupaten_kota')->where('jenis_pmks_id', '<>', null)->orderBy('total','desc')->get();
+        $jenisPmks = DB::table('jenis_pmks')->get();
 
         // dd($chartMapDatatotalDtks);
 
@@ -48,7 +71,10 @@ class DashboardController extends Controller
 
         $dataGroupColour = [[],[],[]];
         foreach($chartDatatotalDtks as $index => $item){
-            $percentages = round($item / ($grandTotal /100),0,PHP_ROUND_HALF_UP);
+            if ($grandTotal != 0) {
+               $percentages = round($item / ($grandTotal /100),0,PHP_ROUND_HALF_UP);
+            }
+            
             
             if($percentages > 90){
                 $dataGroupColour[3][] = $chartData[$index];
@@ -74,16 +100,12 @@ class DashboardController extends Controller
             $jenisPmksSelect = DB::table('jenis_pmks')->select('id','jenis')->where('id',$jenisPmksSelect)->first();
         }
         
-        
-        return view('dashboard', compact('class_menu_data_dashboard', 'myChart', 'pmksDataGroup', 'jenisPmksSelect', 'chartData', 'chartDatatotalDtks','dataGroupColour','chartMapDatatotalDtks'));
+        return view('dashboard', compact('kabupatenKotaTotalPerJenisPmks','chartsKabJenis','jenisPmks','chartDataForTooltip','class_menu_data_dashboard', 'myChart1','myChart2', 'pmksDataGroup', 'jenisPmksSelect', 'chartData', 'chartDatatotalDtks','dataGroupColour','chartMapDatatotalDtks'));
 
 
 
     }
 
-    function get_chart_data_map(){
-
-    }
 
     public function set_session_pmks(Request $request){
         session(['pmks' => $request->input('jenisPmksId')]);

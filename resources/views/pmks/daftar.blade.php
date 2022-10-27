@@ -90,18 +90,38 @@
                     </div>
 
                     <div class="form-group col-md-4">
+                        <label><strong>Umur</strong></label>
+                        <select class="form-control" id="umur" name="umur" data-placeholder="Semua Umur" style="width: 100%" >
+                            <option value=""> Semua Umur</option>
+                            <option value="5-0"> < 5</option>
+                            <option value="18-0"> < 18</option>
+                            <option value="18-6"> 6 - 18</option>
+                            <option value="17-12"> 12 - 17</option>
+                            <option value="59-18"> 18 - 59</option>
+
+
+                            {{-- 18 >
+                            18-59
+                            6-18
+                            12 - 17 --}}
+                        </select>
+                    </div>
+
+                    <div class="form-group col-md-4">
                         <label><strong>Tahun data :</strong></label>
                         <select class="form-control" id="tahun_data" name="tahun_data" data-placeholder="Semua Tahun Data" style="width: 100%" >
                             <option value=""></option>
 
 
-                            @for ($i = date('Y'); $i >= 2010; $i--)
+                            @for ($i = date('Y'); $i >= 2000; $i--)
                                 <option value="{{ $i }}"> {{ $i }} </option>
                             @endfor
 
                                 
                         </select>
                     </div>
+
+                    
 
                    
                     <div class="form-group col-md-4">
@@ -128,7 +148,7 @@
                             {{-- <th>NOMOR KK</th> --}}
                             <th>NOMOR NIK</th>
                             <th>NAMA</th>
-                            {{-- <th>TANGGAL LAHIR</th> --}}
+                            <th>TANGGAL LAHIR</th>
                             {{-- <th>JENIS KELAMIN</th> --}}
                             <th>TAHUN DATA</th>
                             
@@ -270,6 +290,8 @@
     $("#kecamatan").select2();
     $("#desa_kelurahan").select2();
     $("#jenis_pmks").select2();
+    $("#umur").select2();
+
 
     $('#kabupaten_kota').select2({
             allowClear: true,
@@ -303,6 +325,7 @@
                 d.desa_kelurahan = $('#desa_kelurahan').val(),
                 d.jenis_pmks = $('#jenis_pmks').val(),
                 d.tahun_data = $('#tahun_data').val(),
+                d.umur = $('#umur').val(),
                 d.search = $('input[type="search"]').val()
             }
             
@@ -318,7 +341,7 @@
             // {data: 'nomor_kk', name: 'nomor_kk'},
             {data: 'nomor_nik', name: 'nomor_nik'},
             {data: 'nama', name: 'nama'},
-            // {data: 'tanggal_lahir', name: 'tanggal_lahir'},
+            {data: 'tanggal_lahir', name: 'tanggal_lahir'},
             // {data: 'jenis_kelamin', name: 'jenis_kelamin'},
             {data: 'tahun_data', name: 'tahun_data'},
            

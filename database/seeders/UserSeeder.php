@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
                 'name' => 'Operator PSKS',
                 'email' => 'admin.psks@gmail.com',
                 'role' => 'operator_psks',
-                'username' => 'opr_pmks',
+                'username' => 'opr_psks',
                 'password' => Hash::make('123456'),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),

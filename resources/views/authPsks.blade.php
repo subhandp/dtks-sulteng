@@ -46,7 +46,7 @@ body {
 
 .name-content .logo {
   font-size: 3.5rem;
-  color: #1877f2;
+  color: #FC913A;
 }
 
 .name-content p {
@@ -80,7 +80,7 @@ form input:focus {
 form .login {
   outline: none;
   border: none;
-  background: #1877f2;
+  background: #FC913A;
   padding: 0.8rem 1rem;
   border-radius: 0.4rem;
   font-size: 1.1rem;
@@ -259,8 +259,8 @@ form .create-account:hover {
         <div class="content">
             <div class="flex-div">
               <div class="name-content" style="text-align: justify;text-justify:inter-word">
-                <h1 class="logo">PSKS</h1>
-                <p><strong> Potensi dan Sumber Kesejahteraan Sosial </strong> adalah perseorangan, keluarga, kelompok, dan/atau masyarakat yang dapat berperan serta untuk menjaga, menciptakan, mendukung, memperkuat penyel. kesejahteraan sosial.</p>
+                <h1 class="logo">SIMPOTEN</h1>
+                <p><strong> Sistem Informasi Potensi Sumber Kesejahteraan Sosial</strong> adalah perseorangan, keluarga, kelompok, dan/atau masyarakat yang dapat berperan serta untuk menjaga, menciptakan, mendukung, mmprkuat, penyelenggaran kesejahteraan sosial.</p>
               </div>
               <form method="POST" action="{{ route('post.login.psks') }}">
                 @csrf

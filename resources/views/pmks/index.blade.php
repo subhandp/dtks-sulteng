@@ -78,9 +78,9 @@
             </div>
             </div>
         
-            <div class="row table-responsive">
-                <div class="col">
-                <table class="table table-hover table-head-fixed" id="tabel-import-data" style="width:100%">
+            <div class="row table-responsive ">
+            <div class="col">
+                <table class="table table-hover table-head-fixed " id="tabel-import-data" style="width:100%">
                     <thead>
                         <tr class="bg-light">
                         <th>NO.</th>
@@ -245,6 +245,32 @@
                     </button>
                 </div>
                 <div class="modal-body" id="smallBody">
+                    
+                    <div id="wrapper-table-pmks">
+                        <table id="tabel-data-pmks" class="table table-bordered data-table display compact">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>ID DTKS</th>
+                                    <th>KABUPATEN/KOTA</th>
+                                    {{-- <th>KECAMATAN</th> --}}
+                                    {{-- <th>DESA/KELURAHAN</th> --}}
+                                    {{-- <th>ALAMAT</th> --}}
+                                    {{-- <th>NOMOR KK</th> --}}
+                                    <th>NOMOR NIK</th>
+                                    <th>NAMA</th>
+                                    <th>TANGGAL LAHIR</th>
+                                    {{-- <th>JENIS KELAMIN</th> --}}
+                                    <th>TAHUN DATA</th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                       
+                    </div>
+
                     <div id="wrapper-table-errors">
                         <table class="table table-bordered" id="table-errors">
                             <thead>
@@ -260,20 +286,7 @@
                             </tbody>
                           </table>
                     </div>
-                    <div id="wrapper-table-pmks">
-                        <table class="table table-bordered" id="table-pmks">
-                            <thead>
-                              <tr>
-                                <th>IDDTKS</th>
-                                <th>Kabupaten/Kota</th>
-                                <th>Kecamatan</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                                
-                            </tbody>
-                          </table>
-                    </div>
+
                 </div>
             </div>
         </div>
