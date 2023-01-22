@@ -24,9 +24,13 @@
                         <div class="filter-container p-0 row">
                         
                             <div class="container px-4 mx-auto">
-        
+                                
+                                @isset($myChart1)
+                                    
+                                
                                
-                                {!! $myChart1->container() !!}
+                                {!! $myChart1->container() ?? '' !!}
+                                @endisset
                                 <table class="table table-bordered table-chart">
                                     <thead>
                                       <tr>

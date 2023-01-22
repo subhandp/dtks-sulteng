@@ -12,7 +12,9 @@ use  App\Models\DtksImport;
 // use  App\Models\PmksData;
 // use  App\Models\PmksDataTemp;
 // use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;  
+// use Illuminate\Support\Facades\File;  
+use Illuminate\Filesystem\Filesystem;
+
 // use Maatwebsite\Excel\Facades\Excel;
 // use App\Imports\PmksDataImport;
 use App\Models\DtksErrorsImport;
@@ -20,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 // use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 // use Hashids\Hashids;
+use Illuminate\Support\Facades\Storage;
 
 
 class ProcessImport implements ShouldQueue
@@ -64,7 +67,10 @@ class ProcessImport implements ShouldQueue
                     $dtksimport->keterangan = $upload['size'];
                     $dtksimport->save();
                     $this->dtksimportId = $dtksimport->id;
-                    File::moveDirectory(storage_path('app/'.$upload['filepath']), storage_path('app/'.$finalpath));
+                    // File::moveDirectory(storage_path('app/'.$upload['filepath']), storage_path('app/'.$finalpath));
+                    Storage::move($upload['filepath'], $finalpath);
+
+
                 }
 
                 $path = storage_path('app/'.$finalpath).'/'.$upload['filename'];
@@ -96,12 +102,13 @@ class ProcessImport implements ShouldQueue
                     $header = ["ID DTKS","PROVINSI","KABUPATEN/KOTA","KECAMATAN","DESA/KELUARAHAN","ALAMAT","DUSUN","RT","RW","NOMOR KK","NOMOR NIK","NAMA","TANGGAL LAHIR","TEMPAT LAHIR","JENIS KELAMIN","NAMA IBU KANDUNG","HUBUNGAN KELUARGA"];
                    
                     $validHeader = true;
+                    $listHeaderError = [];
                     foreach ($header as $key => $h) {
                         $h = Str::slug($h);
                         $hCompare = Str::slug($headerCsv[$key]);
                         if( $h != $hCompare ){
                             $validHeader = false;
-                            break;
+                            $listHeaderError[] = $h;
                         }
                     }
 
@@ -110,7 +117,7 @@ class ProcessImport implements ShouldQueue
                         DtksErrorsImport::create([
                             'dtks_import_id' => $this->dtksimportId,
                             'row' => 0,
-                            'attribute' => 'Format CSV',
+                            'attribute' => 'Header error:'.implode(',',$listHeaderError),
                             'values' => 'Format CSV Tidak Valid.',
                             'errors' => "GAGAL IMPORT"
                         ]);

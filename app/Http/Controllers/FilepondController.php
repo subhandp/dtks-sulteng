@@ -83,38 +83,40 @@ class FilepondController extends Controller
 
      public function process (Request $request)
      {
-        //  return $request->post();
-        if($request->hasFile('upload')){
-            $files = $request->file('upload');
-            $folder = uniqid().'-'.now()->timestamp;
-            foreach($files as $file){
-                $filename = $this->filter_filename($file->getClientOriginalName());
-                $allowed = array('csv');
-                $ext = $file->getClientOriginalExtension();
-                $size = $file->getSize();
-                $mimetypes = $file->getClientMimeType();
-                if (!in_array($ext, $allowed)) {
-                    $filename = $filename.'.csv';
+        try {
+            //  return $request->post();
+            if($request->hasFile('upload')){
+                $files = $request->file('upload');
+                $folder = uniqid().'-'.now()->timestamp;
+                foreach($files as $file){
+                    $filename = $this->filter_filename($file->getClientOriginalName());
+                    $allowed = array('csv');
+                    $ext = $file->getClientOriginalExtension();
+                    $size = $file->getSize();
+                    $mimetypes = $file->getClientMimeType();
+                    if (!in_array($ext, $allowed)) {
+                        $filename = $filename.'.csv';
+                    }
+                    $file->storeAs('tmp/'.$folder,$filename);
+                    // return 'tes';
                 }
-                $file->storeAs('tmp/'.$folder,$filename);
-                // return 'tes';
+
+                $data = [
+                    'filename' => $filename,
+                    'extension' => $ext,
+                    'disk' => 'public',
+                    'filepath' => 'tmp/'.$folder,
+                    'mimetypes' => $mimetypes,
+                    'size' => $size
+                ];
+                return json_encode($data);
             }
+                return json_encode(['status' => 'file tdk ada']);
+         } catch (\Exception $e) {
+            return response($e->getMessage(), 500);
+         }
 
-            $data = [
-                'filename' => $filename,
-                'extension' => $ext,
-                'disk' => 'public',
-                'filepath' => 'tmp/'.$folder,
-                'mimetypes' => $mimetypes,
-                'size' => $size
-              ];
-            return json_encode($data);
-        }
-
-        
-        // return response('gagal', 200);
-        return 'gagal';
-
+    
      }
 
     
