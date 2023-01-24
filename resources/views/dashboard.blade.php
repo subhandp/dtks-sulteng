@@ -31,57 +31,58 @@
                                
                                 {!! $myChart1->container() ?? '' !!}
                                 @endisset
-                                <table class="table table-bordered table-chart">
-                                    <thead>
-                                      <tr>
-                                        <th>NO</th>
-                                        <th>KABUPATEN/KOTA</th>
-                                        @php
-                                            foreach ($jenisPmks as $key => $pmks) {
-                                                echo "<th>".strtoupper($pmks->jenis)."</th>";
-                                            }
-                                        @endphp
-                         
-                                        {{-- <th>PSM</th>
-                                        <th>TKSK</th>
-                                        <th>LK3</th>
-                                        <th>LKS</th>
-                                        <th>WKSKBM</th>
-                                        <th>FCSR</th>
-                                        <th>FCU</th> --}}
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                        @php
-                                            $no = 1;
-                                        @endphp
-                                       
-                                        @foreach ($kabupatenKotaTotalPerJenisPmks as $k => $data)
-                                            
+                                
+                                
+                                <div class="table-responsive" data-pattern="priority-columns">
+                                    <table class="table table-small-font table-tighten table-bordered table-striped">
+                                        <thead>
                                             <tr>
-                                                <td>{{ $no }}</td>
-                                                <td>{{ $data[0]->name }}</td>
-                                                @php
-                                                    foreach ($jenisPmks as $key => $pmks) {
-                                                        $totalJenis = 0;
-                                                        foreach ($data[1] as $key => $totalJenisPmks) {
-                                                            if($pmks->id == $totalJenisPmks->jenis_pmks_id){
-                                                                $totalJenis = $totalJenisPmks->total;
-                                                            }
-                                                        }
-                                                        echo "<td>".$totalJenis."</td>";
-                                                        
+                                              <th>NO</th>
+                                              <th>KABUPATEN/KOTA</th>
+                                              @php
+                                                $i = 1;
+                                                  foreach ($jenisPmks as $key => $pmks) {
+                                                      echo "<th data-priority=".$i.">".strtoupper($pmks->jenis)."</th>";
+                                                      $i++;
                                                     }
-                                                @endphp
-                                               
+                                                
+                                              @endphp
+                               
                                             </tr>
-                                            @php
-                                                $no++;
-                                            @endphp
-                                        @endforeach
-                                      
-                                    </tbody>
-                                  </table>
+                                          </thead>
+                                          <tbody>
+                                              @php
+                                                  $no = 1;
+                                              @endphp
+                                             
+                                              @foreach ($kabupatenKotaTotalPerJenisPmks as $k => $data)
+                                                  
+                                                  <tr>
+                                                      <td>{{ $no }}</td>
+                                                      <td>{{ $data[0]->name }}</td>
+                                                      @php
+                                                          foreach ($jenisPmks as $key => $pmks) {
+                                                              $totalJenis = 0;
+                                                              foreach ($data[1] as $key => $totalJenisPmks) {
+                                                                  if($pmks->id == $totalJenisPmks->jenis_pmks_id){
+                                                                      $totalJenis = $totalJenisPmks->total;
+                                                                  }
+                                                              }
+                                                              echo "<td>".$totalJenis."</td>";
+                                                              
+                                                          }
+                                                      @endphp
+                                                     
+                                                  </tr>
+                                                  @php
+                                                      $no++;
+                                                  @endphp
+                                              @endforeach
+                                            
+                                          </tbody>
+                                    </table>
+                                 </div>
+
                             
                             </div>
                             
@@ -221,32 +222,36 @@
                                 @php
                                     // dd($chartData);
                                 @endphp
-                                <table class="table table-bordered table-chart">
-                                    <thead>
-                                      <tr>
-                                        <th>NO</th>
-                                        <th>KABUPATEN/KOTA</th>
-                                        <th>TOTAL</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                        @php
-                                            $no = 1;
-                                        @endphp
-                                        @foreach ($chartData as $k => $data)
-                                            
-                                            <tr>
-                                                <td>{{ $no }}</td>
-                                                <td>{{ $data }}</td>
-                                                <td>{{ number_format($chartDatatotalDtks[$k],0,',','.') }} </td>
-                                            </tr>
-                                            @php
-                                                $no++;
-                                            @endphp
-                                        @endforeach
-                                      
-                                    </tbody>
-                                  </table>
+
+                                    <div class="table-responsive" data-pattern="priority-columns">
+                                        <table class="table table-small-font table-tighten table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                <th>NO</th>
+                                                <th>KABUPATEN/KOTA</th>
+                                                <th>TOTAL</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php
+                                                    $no = 1;
+                                                @endphp
+                                                @foreach ($chartData as $k => $data)
+                                                    
+                                                    <tr>
+                                                        <td>{{ $no }}</td>
+                                                        <td>{{ $data }}</td>
+                                                        <td>{{ number_format($chartDatatotalDtks[$k],0,',','.') }} </td>
+                                                    </tr>
+                                                    @php
+                                                        $no++;
+                                                    @endphp
+                                                @endforeach
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                          
                             
                             </div>
                             
@@ -306,6 +311,7 @@
 
 <script>
 
+// $('.table-responsive').responsiveTable({options});
 function colourCountries(data) {
   for (var colour = 0; colour < data.length; colour++){    
     for (var country = 0; country < data[colour].length; country++){
