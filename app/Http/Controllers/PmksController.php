@@ -688,8 +688,10 @@ class PmksController extends Controller
 
     public function storeCreate(Request $request){
         // dd($request);
+        // 'iddtks' => 'required|unique:pmks_data,iddtks',
+
         $request->validate([
-            'iddtks' => 'required|unique:pmks_data,iddtks',
+            'iddtks' => 'required',
             'tahun_data' => 'required',
             'jenis_pmks' => 'required',
             'provinsi' => 'required',

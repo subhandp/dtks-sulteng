@@ -13,9 +13,41 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\Charts;
 use Yajra\DataTables\Facades\DataTables;
-
+use PDF;
 class DashboardController extends Controller
 {
+
+    public function createPDF() {
+
+        $jenisPmks = DB::table('jenis_pmks')->get();
+        $chartData = [];
+        $chartDatatotalDtks = [];
+        $charts = DB::table('charts')->select('*')->where('jenis_pmks_id','=', null)->orderBy('total','desc')->get();
+        foreach ($charts as $key => $chart) {
+            $kabupatenKota = DB::table('indonesia_cities')->select('id','name')->where('id', $chart->indonesia_cities_id)->first();
+            $chartData[] = $kabupatenKota->name;
+            $chartDatatotalDtks[] = (int)$chart->total;
+        }
+        $kabupatenKota = DB::table('indonesia_cities')
+        ->select('id', 'name')
+        ->Where('province_id', '72')
+        ->get();
+
+        $kabupatenKotaTotalPerJenisPmks = [];
+        
+        foreach ($kabupatenKota as $key => $kk) {
+            $totalPerJenisPmks = DB::table('charts')
+            ->where('indonesia_cities_id',$kk->id)
+            ->where('jenis_pmks_id','<>',null)
+            ->get();
+            $kabupatenKotaTotalPerJenisPmks[] = [$kk,$totalPerJenisPmks];
+        }
+
+        $pdf = PDF::loadView('dashboardLaporan', ['chartData' => $chartData, 'chartDatatotalDtks' => $chartDatatotalDtks,'jenisPmks' => $jenisPmks,'kabupatenKotaTotalPerJenisPmks' => $kabupatenKotaTotalPerJenisPmks])->setPaper('legal', 'landscape');
+        // download PDF file with download method
+        // return $pdf->download('pdf_file.pdf');
+        return $pdf->stream('pdf_file.pdf');
+      }
    
     public function index(DashboardChart1 $myChart1,DashboardChart2 $myChart2)
     {

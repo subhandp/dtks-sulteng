@@ -16,7 +16,7 @@ class CreatePmksDataTable extends Migration
         Schema::create('pmks_data', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('dtks_import_id')->nullable();
-            $table->string('iddtks')->unique();
+            $table->string('iddtks');
             $table->string('provinsi')->nullable();
             $table->string('kabupaten_kota')->nullable();
             $table->string('kecamatan')->nullable();

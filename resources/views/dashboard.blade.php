@@ -40,6 +40,12 @@
                                               <th>NO</th>
                                               <th>KABUPATEN/KOTA</th>
                                               @php
+                                                if(!isset($jenisPmks)){
+                                                    $jenisPmks = [];
+                                                }
+                                                if(!isset($kabupatenKotaTotalPerJenisPmks)){
+                                                    $kabupatenKotaTotalPerJenisPmks = [];
+                                                }
                                                 $i = 1;
                                                   foreach ($jenisPmks as $key => $pmks) {
                                                       echo "<th data-priority=".$i.">".strtoupper($pmks->jenis)."</th>";

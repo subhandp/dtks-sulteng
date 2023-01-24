@@ -38,6 +38,8 @@ Route::group(['middleware' => ['auth','checkRole:operator_psks,operator_pmks']],
     Route::get('/', function () {
         return view('/dashboard');
     });
+
+    Route::get('/pmks/dashboard/pdf', [DashboardController::class, 'createPDF']);
     
     Route::post('/set-session-pmks', [DashboardController::class, 'set_session_pmks'])->name('dashboard.set-session');
     Route::get('/get-jenis-pmks', [DashboardController::class, 'get_jenis_pmks'])->name('dashboard.get-jenis-pmks');

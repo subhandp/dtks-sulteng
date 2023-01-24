@@ -186,11 +186,11 @@
 
                                         <select class="@error('jenis_pmks') is-invalid @enderror" id="jenis_pmks" name="jenis_pmks"  data-placeholder="Pilih Jenis PMKS" style="width: 100%"  >
                                             @foreach ($jenisPmks as $pmks)
-                                            @if (old('jenis_pmks') == $pmks->jenis )
+                                            @if ('KELUARGA FAKIR MISKIN' == $pmks->jenis )
                                                 <option value="{{ $pmks->jenis }}" selected="selected">
                                                     {{ $pmks->jenis }}
                                                 </option>
-                                            @elseif ($pmks->jenis == 'KELUARGA FAKIR MISKIN' && empty(old('jenis_pmks')))
+                                            {{-- @elseif ($pmks->jenis == 'KELUARGA FAKIR MISKIN' && empty(old('jenis_pmks')))
                                                 <option value="{{ $pmks->jenis }}" selected="selected">
                                                     {{ $pmks->jenis }}
                                                 </option>
@@ -198,7 +198,7 @@
                                             
                                                 <option value="{{ $pmks->jenis }}">
                                                     {{ $pmks->jenis }}
-                                                </option>
+                                                </option> --}}
                                             @endif
                                             
                                             @endforeach
