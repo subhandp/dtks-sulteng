@@ -47,17 +47,8 @@
                         <div class="col-lg-9">
                             <select class="@error('jenis_pmks') is-invalid @enderror" id="jenis_pmks" name="jenis_pmks"  data-placeholder="Pilih Jenis PMKS" style="width: 100%"  >
                                 @foreach ($jenisPmks as $pmks)
-                                @if (old('jenis_pmks') == $pmks->jenis )
-                                    <option value="{{ $pmks->jenis }}" selected="selected">
-                                        {{ $pmks->jenis }}
-                                    </option>
-                                @elseif ($pmks->jenis == 'KELUARGA FAKIR MISKIN' && empty(old('jenis_pmks')))
-                                    <option value="{{ $pmks->jenis }}" selected="selected">
-                                        {{ $pmks->jenis }}
-                                    </option>
-                                @else
-                                
-                                    <option value="{{ $pmks->jenis }}">
+                                @if ('KELUARGA FAKIR MISKIN' == $pmks->jenis )
+                                    <option value="{{ $pmks->id }}" selected="selected">
                                         {{ $pmks->jenis }}
                                     </option>
                                 @endif
@@ -72,6 +63,31 @@
                         </div>
                     </div>
                     
+                    
+                    
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-form-label form-control-label">Tambahan Jenis PMKS </label>
+                        <div class="col-lg-9">
+                            <select class=" @error('jenis_pmks') is-invalid @enderror" id="tambahan_jenis_pmks" name="tambahan_jenis_pmks[]"  data-placeholder="Pilih Tambahan Jenis PMKS"   multiple="multiple">
+                                @foreach ($jenisPmks as $pmks)
+                                    @if ('KELUARGA FAKIR MISKIN' != $pmks->jenis )
+                                        <option value="{{ $pmks->id }}">
+                                            {{ $pmks->jenis }}
+                                        </option>
+                                    @endif
+
+                                
+                                @endforeach
+                            </select>
+                            @error('jenis_pmks')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    </div>
+
+
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label form-control-label">ID DTKS</label>
                         <div class="col-lg-9">
@@ -381,6 +397,8 @@
     $("#kecamatan").select2();
     $("#desa_kelurahan").select2();
     $("#jenis_pmks").select2();
+    $("#tambahan_jenis_pmks").select2();
+
 
 
 

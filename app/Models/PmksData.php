@@ -19,4 +19,10 @@ class PmksData extends Model
     {
         return $this->belongsTo(DtksImport::class,'dtks_import_id','id');
     }
+
+    public function dtksJenisPmks()
+    {
+        return $this->hasMany(RDtksJenisPmks::class,'pmks_data_id','id');
+    }
+
 }

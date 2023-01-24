@@ -67,19 +67,21 @@
 
                     <div class="form-group col-md-4">
                         <label><strong>Jenis PMKS :</strong></label>
-                        
-                        <select class="@error('jenis_pmks') is-invalid @enderror" id="jenis_pmks" name="jenis_pmks"  data-placeholder="Pilih Jenis PMKS" style="width: 100%"  >
+                        @php
+                            // dd($jenisPmks);
+                        @endphp
+                        <select class="@error('jenis_pmks') is-invalid @enderror" id="jenis_pmks" name="jenis_pmks"  data-placeholder="Pilih Jenis PMKS" style="width: 100%"  multiple="multiple">
                             <option value="">
                                 Semua Jenis PMKS
                             </option>
                             @foreach ($jenisPmks as $pmks)
-                            @if (old('jenis_pmks') == $pmks->jenis )
-                                <option value="{{ $pmks->jenis }}" selected="selected">
+                            @if (old('jenis_pmks') == $pmks->id )
+                                <option value="{{ $pmks->id }}" selected="selected">
                                     {{ $pmks->jenis }}
                                 </option>
                             @else
                             
-                                <option value="{{ $pmks->jenis }}">
+                                <option value="{{ $pmks->id }}">
                                     {{ $pmks->jenis }}
                                 </option>
                             @endif
@@ -98,7 +100,7 @@
                             <option value="18-6"> 6 - 18</option>
                             <option value="17-12"> 12 - 17</option>
                             <option value="59-18"> 18 - 59</option>
-
+                            <option value="59">59 ></option>
 
                             {{-- 18 >
                             18-59
@@ -202,6 +204,7 @@
                           <th>Kecamatan </th>
                           <th>Desa/Kelurahan</th>
                           <th>Jenis PMKS</th>
+                          <th>Umur</th>
                           <th>Tahun data</th>
                         </tr>
                         <tr>
@@ -210,6 +213,7 @@
                           <td id="td-kecamatan">-</td>
                           <td id="td-desa-kelurahan">-</td>
                           <td id="td-jenis-pmks">-</td>
+                          <td id="td-umur">-</td>
                           <td id="td-tahun-data">-</td>
 
                         </tr>
@@ -352,6 +356,7 @@
 
   
     $('#btn-search').click(function($event){
+        console.log($('#jenis_pmks').val(),'jenis pmks');
         event.preventDefault();
         table.draw();
     });
@@ -381,6 +386,7 @@
         let tdKecamatan = document.getElementById("td-kecamatan");
         let tdDesaKelurahan = document.getElementById("td-desa-kelurahan");
         let tdJenisPmks = document.getElementById("td-jenis-pmks");
+        let tdUmur = document.getElementById("td-umur");
         let tdTahunData = document.getElementById("td-tahun-data");
         let tdTotalData = document.getElementById("td-total-data");
         let downloadLinkContainer = document.getElementById("download-link-container");
@@ -397,6 +403,7 @@
                 kecamatan: $('#kecamatan').text(),
                 desa_kelurahan: $('#desa_kelurahan').text(),
                 jenis_pmks: $('#jenis_pmks').val(),
+                umur: $('#umur').val(),
                 tahun_data: $('#tahun_data').val(),
             },
             beforeSend: function() {
@@ -404,15 +411,17 @@
                 tdKecamatan.innerHTML = "";
                 tdDesaKelurahan.innerHTML = "";
                 tdJenisPmks.innerHTML = "";
+                tdUmur.innerHTML = "";
                 tdTahunData.innerHTML = "";
                 tdTotalData.innerHTML = "";
                 downloadLinkContainer.innerHTML = "";
 
                 tdKabupatenKota.innerHTML = $('#kabupaten_kota').text();
-                tdKecamatan.innerHTML = $('#kecamatan').text(),
-                tdDesaKelurahan.innerHTML = $('#desa_kelurahan').text(),
-                tdJenisPmks.innerHTML = $('#jenis_pmks').val(),
-                tdTahunData.innerHTML = $('#tahun_data').val(),
+                tdKecamatan.innerHTML = $('#kecamatan').text();
+                tdDesaKelurahan.innerHTML = $('#desa_kelurahan').text();
+                tdJenisPmks.innerHTML = $('#jenis_pmks').val();
+                tdUmur.innerHTML = $('#umur').val();
+                tdTahunData.innerHTML = $('#tahun_data').val();
                 loadingSpinner.style.display = "block";
             },
             success: function(data){

@@ -64,7 +64,7 @@ class FilepondController extends Controller
         {
             if ($object != '.' && $object != '..')
             {
-                if (filetype($dir.'/'.$object) == 'dir') {rrmdir($dir.'/'.$object);}
+                if (filetype($dir.'/'.$object) == 'dir') {rmdir($dir.'/'.$object);}
                 else {unlink($dir.'/'.$object);}
             }
         }

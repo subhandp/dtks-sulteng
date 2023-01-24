@@ -28,8 +28,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Core\XLSXWriter;
 use Illuminate\Support\Facades\Log;
 use Storage;
-
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 
 class PmksController extends Controller
 {
@@ -42,7 +42,7 @@ class PmksController extends Controller
         ->orderBy('updated_at', 'desc')
         ->get();
         
-        $jenisPmks = DB::table('jenis_pmks')->select('jenis','detail')->get();
+        $jenisPmks = DB::table('jenis_pmks')->select('id','jenis','detail')->get();
 
         $class_menu_pmks = "menu-open";
         $class_menu_pmks_import = "sub-menu-open";
@@ -78,9 +78,26 @@ class PmksController extends Controller
             return $q->where('desa_kelurahan', $request->get('desa_kelurahan'));
         });
 
+
         $pmksDataInstance->when(!empty($request->get('jenis_pmks')), function ($q) use($request){
-                    
-            return $q->where('jenis_pmks', $request->get('jenis_pmks'));
+
+            $s = $request->get('jenis_pmks');
+            $jenisPmksId = DB::table('r_dtks_jenis_pmks')->select('pmks_data_id','jenis_pmks_id')->whereIn("jenis_pmks_id",$s)->pluck('pmks_data_id');
+            return $q->whereIn('id', $jenisPmksId);
+
+        });
+
+        $pmksDataInstance->when(!empty($request->get('umur')), function ($q) use($request){
+
+            $age =  $request->get('umur');
+            $range = explode('-', $age);
+
+            if (count($range) > 1) {
+                return $q->whereBetween('tanggal_lahir', [now()->subYears($range[0]), now()->subYears($range[1])]);
+            } else {
+               return $q->where('tanggal_lahir', '<', now()->subYears($range[0]));
+            }
+
         });
 
         $pmksDataInstance->when(!empty($request->get('tahun_data')), function ($q) use($request){
@@ -284,7 +301,7 @@ class PmksController extends Controller
         ->Where('province_id', '72')
         ->get();
 
-        $jenisPmks = DB::table('jenis_pmks')->select('jenis','detail')->get();
+        $jenisPmks = DB::table('jenis_pmks')->select('id','jenis','detail')->get();
 
         return view('pmks.daftar', compact('kabupatenKota','class_menu_data_pmks','jenisPmks'));
 
@@ -293,7 +310,22 @@ class PmksController extends Controller
     public function datapmks(Request $request){
 
 
+        // $data = PmksData::with('dtksJenisPmks');
+
+        // $search = [2,4];
+        // if(!empty($request->get('jenis_pmks'))){
+        //     $s = $request->get('jenis_pmks');
+        //     $data = PmksData::WhereHas('dtksJenisPmks', function ($query) use ($s) {
+        //         $query->whereIn('jenis_pmks_id', $s);
+        //     });
+        // }
+        // else{
+        //     $data = PmksData::query();
+        // }
+        
+
         $data = PmksData::query();
+
         $dataTable = DataTables::of($data)
             
             ->addIndexColumn()
@@ -305,101 +337,85 @@ class PmksController extends Controller
 
                         return $btn;
                 })
-                ->filter(function ($instance) use ($request) {
-                    // $query = $instance->query();
+                ->filter(function ($query) use($request){
 
-                   
+                    if (!empty($request->get('search'))) {
+                        $query->where(function($w) use($request){
+                           $search = $request->get('search');
+                           $w->orWhere('kabupaten_kota', 'LIKE', "%$search%")
+                           ->orWhere('jenis_pmks', 'LIKE', "%$search%")
+                           ->orWhere('iddtks', 'LIKE', "%$search%")
+                           ->orWhere('nomor_nik', 'LIKE', "%$search%")
+                           ->orWhere('nama', 'LIKE', "%$search%")
+                           ->orWhere('tahun_data', 'LIKE', "%$search%")
+                           ->orWhere('kecamatan', 'LIKE', "%$search%")
+                           ->orWhere('desa_kelurahan', 'LIKE', "%$search%")
+                           ->orWhere('alamat', 'LIKE', "%$search%")
+                           ->orWhere('nomor_kk', 'LIKE', "%$search%")
+                           ->orWhere('jenis_kelamin', 'LIKE', "%$search%")
+                           ->orWhere('dusun', 'LIKE', "%$search%");
 
-                    if ($request->has('kabupaten_kota')) {
-                        // if(!empty($request->get('kabupaten_kota'))){
-                        //     $instance->where('kabupaten_kota', $request->get('kabupaten_kota'));
-                        // }
-
-                        $instance->when(!empty($request->get('kabupaten_kota')), function ($q) use($request){
-                            // dd($request->get('kabupaten_kota'));
+                       });
+                   }
+                   else{
+                        if (!empty($request->get('kabupaten_kota'))) {
+                            
                             $kabupatenKotaSelect = DB::table('indonesia_cities')->select('name')->where('id',$request->get('kabupaten_kota'))->first();
-                            return $q->where('kabupaten_kota', $kabupatenKotaSelect->name);
-                        });
+                            $query->where('kabupaten_kota', $kabupatenKotaSelect->name);
+                        }
 
-                        $instance->when(!empty($request->get('kecamatan')), function ($q) use($request){
+                        if (!empty($request->get('kecamatan'))) {
                             
                             $kecamatanSelect = DB::table('indonesia_districts')->select('name')->where('id',$request->get('kecamatan'))->first();
-        
-                            return $q->where('kecamatan', $kecamatanSelect->name);
-                        });
+                            $query->where('kecamatan', $kecamatanSelect->name);
+                        }
 
-                        $instance->when(!empty($request->get('desa_kelurahan')), function ($q) use($request){
+                        if (!empty($request->get('desa_kelurahan'))) {
                             
                             $desaKelurahanSelect = DB::table('indonesia_villages')->select('name')->where('id',$request->get('desa_kelurahan'))->first();
-        
-                            return $q->where('desa_kelurahan', $desaKelurahanSelect->name);
-                        });
+                            $query->where('desa_kelurahan', $desaKelurahanSelect->name);
+                        }
 
-                        $instance->when(!empty($request->get('jenis_pmks')), function ($q) use($request){
-                                    
-                            return $q->where('jenis_pmks', $request->get('jenis_pmks'));
-                        });
+                        if (!empty($request->get('jenis_pmks'))) {
+                            
+                            $s = $request->get('jenis_pmks');
+                            $jenisPmksId = DB::table('r_dtks_jenis_pmks')->select('pmks_data_id','jenis_pmks_id')->whereIn("jenis_pmks_id",$s)->pluck('pmks_data_id');
+                            // dd($jenisPmksId[0]);
+                            $query->whereIn('id', $jenisPmksId);
+                        }
 
-                        $instance->when(!empty($request->get('umur')), function ($q) use($request){
-                            // $age = "15-6";
+                        if (!empty($request->get('tahun_data'))) {
+                            
+                            $query->where('tahun_data', $request->get('tahun_data'));
+                        }
+
+
+                        if (!empty($request->get('umur'))) {
+                            
                             $age =  $request->get('umur');
                             $range = explode('-', $age);
+
+                            if (count($range) > 1) {
+                                return $query->whereBetween('tanggal_lahir', [now()->subYears($range[0]), now()->subYears($range[1])]);
+                            } else {
+                               return $query->where('tanggal_lahir', '<', now()->subYears($range[0]));
+                            }
+
                             // return $q->where('tanggal_lahir', '>', now()->subYears($range[1]));
-                            return $q->whereBetween('tanggal_lahir', [now()->subYears($range[0]), now()->subYears($range[1])]);
-                        });
+                            // return $query->whereBetween('tanggal_lahir', [now()->subYears($range[0]), now()->subYears($range[1])]);
+                        }
 
-                        $instance->when(!empty($request->get('tahun_data')), function ($q) use($request){
-                                    
-                            return $q->where('tahun_data', $request->get('tahun_data'));
-                            
-                            // $age = "15-6";
-                            // $range = explode('-', $age);
-                            // return $q->where('tanggal_lahir', '>', now()->subYears($range[1]));
-                            // return $q->whereBetween('tanggal_lahir', [now()->subYears($range[0]), now()->subYears($range[1])]);
 
-                            // if (!empty($age) && $age !== 'All') {
-                            //     $range = explode('-', $age);
-                            
-                            //     if (count($range) > 1) {
-                            //         return $q->whereBetween('tanggal_lahir', [now()->subYears($range[0]), now()->subYears($range[1])]);
-                            //     } else {
-                            //         return $q->where('tanggal_lahir', '<', now()->subYears($range[0]));
-                            //     }
-                            // }
+                   }
+                   
 
-                        });
 
-                        // return($request);
-
-                        
-                    }
-                    if (!empty($request->get('search'))) {
-                         $instance->where(function($w) use($request){
-                            $search = $request->get('search');
-                            $w->orWhere('kabupaten_kota', 'LIKE', "%$search%")
-                            ->orWhere('jenis_pmks', 'LIKE', "%$search%")
-                            ->orWhere('iddtks', 'LIKE', "%$search%")
-                            ->orWhere('nomor_nik', 'LIKE', "%$search%")
-                            ->orWhere('nama', 'LIKE', "%$search%")
-                            ->orWhere('tahun_data', 'LIKE', "%$search%")
-                            ->orWhere('kecamatan', 'LIKE', "%$search%")
-                            ->orWhere('desa_kelurahan', 'LIKE', "%$search%")
-                            ->orWhere('alamat', 'LIKE', "%$search%")
-                            ->orWhere('nomor_kk', 'LIKE', "%$search%")
-                            ->orWhere('jenis_kelamin', 'LIKE', "%$search%")
-                            ->orWhere('dusun', 'LIKE', "%$search%");
-
-                        });
-                    }
                 })
                 ->rawColumns(['action']);
 
                 
-                $response = $dataTable->make(true);
-                $query = $dataTable->getQuery()->toSql();
-                // Storage::put('file.txt', $query);
-                // Log::info($query);
-                // dd($query);
+                $response = $dataTable->toJson();
+
                 return $response;
                 
 
@@ -451,7 +467,7 @@ class PmksController extends Controller
             // DB::table('charts')->truncate();
             foreach ($kabupatenKota as $kk) {
                 // foreach ($jenisPmks as $pmks) {
-                    $batch->add(new ProcessDataChart($kk,$jenisPmks));
+                    $batch->add(new ProcessDataChart($kk,$jenisPmks,[]));
                 // }
             }
 
@@ -463,15 +479,31 @@ class PmksController extends Controller
         
     public function editCreate(Request $request){
         if($request->has('q')){
+            
             $myhashid = $request->input('q');
             $hashids = new Hashids('dtks', 15); 
             $id = $hashids->decode($myhashid);
 
             if(DB::table('pmks_data')->where('id', $id)->exists()){
-                $pmksData = DB::table('pmks_data')->select('iddtks', 'provinsi', 'kabupaten_kota', 'kecamatan', 'desa_kelurahan', 'alamat', 'dusun', 'rt', 'rw',
+                $pmksData = DB::table('pmks_data')->select('id','iddtks', 'provinsi', 'kabupaten_kota', 'kecamatan', 'desa_kelurahan', 'alamat', 'dusun', 'rt', 'rw',
                 'nomor_kk', 'nomor_nik', 'nama', 'tanggal_lahir', 'tempat_lahir', 'jenis_kelamin', 'nama_ibu_kandung',
                 'hubungan_keluarga', 'tahun_data', 'jenis_pmks')->where('id', $id)->first();
-                // dd($pmksData);
+
+                // $search = [2,4];
+                // $t = PmksData::with('dtksJenisPmks')
+                //         ->WhereHas('dtksJenisPmks', function ($query) use ($search) {
+                //         $query->whereIn('jenis_pmks_id', $search);
+                //     })
+                //     ->get();
+
+                //     $t = PmksData::WhereHas('dtksJenisPmks', function ($query) use ($search) {
+                //         $query->whereIn('jenis_pmks_id', $search);
+                //     })
+                //     ->get();
+
+                    // $t = PmksData::with('dtksJenisPmks')->get();
+
+                // dd($t);
                 $provinces = DB::table('indonesia_provinces')
                     ->Where('id', '72')
                     ->select('id', 'name')
@@ -527,10 +559,23 @@ class PmksController extends Controller
                  }
                 
                 
-                $jenisPmks = DB::table('jenis_pmks')->select('jenis','detail')->get();
+                $jenisPmks = DB::table('jenis_pmks')->select('id','jenis','detail')->get();
+
+                $r_dtks_jenis_pmks = DB::table('r_dtks_jenis_pmks')
+                ->select('jenis_pmks_id')
+                ->Where('pmks_data_id', $id)
+                ->get();
+
+                $dtksJenisPmksData = [];
+
+                foreach ($r_dtks_jenis_pmks as $key => $rdjp) {
+                    $dtksJenisPmksData[] = $rdjp->jenis_pmks_id;
+                }
+
                 $class_menu_data_pmks = "menu-open";
                 return view('pmks.edit', compact(
                     'pmksData', 'myhashid',
+                    'dtksJenisPmksData',
                     'class_menu_data_pmks', 'jenisPmks', 'provinces',
                     'desaKelurahanCreate', 'kecamatanCreate', 'kabupatenKotaCreate',
                     'desaKelurahanCreateSelect', 'kecamatanCreateSelect', 'kabupatenKotaCreateSelect'
@@ -549,7 +594,6 @@ class PmksController extends Controller
         $request->validate([
             'iddtks' => 'required',
             'tahun_data' => 'required',
-            'jenis_pmks' => 'required',
             'provinsi' => 'required',
             'kabupaten_kota' => 'required',
             'kecamatan' => 'required',
@@ -566,25 +610,28 @@ class PmksController extends Controller
             'jenis_kelamin' => 'required',
             'nama_ibu_kandung' => 'required',
             'hubungan_keluarga' => 'required',
+            'jenis_pmks' => 'required'
        ]);
 
        
 
         if ($request->has('id')) {
-
             $hashids = new Hashids('dtks', 15); 
             $id = $hashids->decode($request->input('id'))[0];
-
+            // dd($request->input('jenis_pmks'));
             if(DB::table('pmks_data')->where('id', $id)->exists()){
+
+                
+
+                
                 $provinsi = DB::table('indonesia_provinces')->where('id', $request->input('provinsi'))->first();
                 $kabupatenKota = DB::table('indonesia_cities')->where('id', $request->input('kabupaten_kota'))->first();
                 $kecamatan = DB::table('indonesia_districts')->where('id', $request->input('kecamatan'))->first();
                 $desaKelurahan = DB::table('indonesia_villages')->where('id', $request->input('desa_kelurahan'))->first();
-                $jenisPmks = DB::table('jenis_pmks')->where('jenis', $request->input('jenis_pmks'))->first();
 
                 // $id = $request->all()['id'];
             
-                $storeData = request()->except(['_token','id']);
+                $storeData = request()->except(['_token','id','tambahan_jenis_pmks']);
                 
                 $storeData['provinsi'] = $provinsi->name;
                 $storeData['kabupaten_kota'] = $kabupatenKota->name;
@@ -594,18 +641,29 @@ class PmksController extends Controller
                 DB::table('pmks_data')
                 ->where('id', $id)
                 ->update($storeData);
-                
-                // $batch = Bus::batch([])->dispatch();
 
-                // $batch->add(new ProcessDataChart($kabupatenKota,$jenisPmks));
+                if(DB::table('r_dtks_jenis_pmks')->where('pmks_data_id', $id)->exists()){
+                    DB::table('r_dtks_jenis_pmks')->where('pmks_data_id', $id)->delete();
+                }
 
+                $tambahanJenisPmksArr = [];
+                if(!empty($request->input('tambahan_jenis_pmks'))){
+                    $tambahanJenisPmksArr = $request->input('tambahan_jenis_pmks');
+                }
+
+                $tambahanJenisPmksData = [];
+                foreach ($tambahanJenisPmksArr as $key => $i_jenis) {
+                    $jenisPmks = DB::table('jenis_pmks')->select('id', 'jenis')->where('id',$i_jenis)->first();
+                    $tambahanJenisPmksData[] = ['pmks_data_id' => str_replace(".", "", $id),'jenis_pmks_id' => $jenisPmks->id];
+                }
+                DB::table('r_dtks_jenis_pmks')->insert($tambahanJenisPmksData);
 
                 $batch = Bus::batch([])->dispatch();
 
                 $kabupatenKota = DB::table('indonesia_cities')->select('id','name')->where('province_id','72')->get();
-                $jenisPmks = DB::table('jenis_pmks')->select('id', 'jenis')->where('jenis',$request->input('jenis_pmks'))->first();
+                $jenisPmks = DB::table('jenis_pmks')->select('id', 'jenis')->where('id',$request->input('jenis_pmks'))->first();
                 foreach ($kabupatenKota as $kk) {
-                        $batch->add(new ProcessDataChart($kk,$jenisPmks));
+                        $batch->add(new ProcessDataChart($kk,$jenisPmks,$tambahanJenisPmksArr));
                 }
 
                 // PmksData::create($storeData);
@@ -619,7 +677,7 @@ class PmksController extends Controller
     }
 
     public function create(Request $request){
-        $jenisPmks = DB::table('jenis_pmks')->select('jenis','detail')->get();
+        $jenisPmks = DB::table('jenis_pmks')->select('id','jenis','detail')->get();
         $class_menu_data_pmks = "menu-open";
         return view('pmks.create', compact(
             'class_menu_data_pmks', 'jenisPmks'
@@ -657,24 +715,44 @@ class PmksController extends Controller
         $kecamatan = DB::table('indonesia_districts')->where('id', $request->input('kecamatan'))->first();
         $desaKelurahan = DB::table('indonesia_villages')->where('id', $request->input('desa_kelurahan'))->first();
 
-        $storeData = $request->all();
+        $storeData = request()->except(['tambahan_jenis_pmks']);
+
+        // $storeData = $request->all();
         
         $storeData['provinsi'] = $provinsi->name;
         $storeData['kabupaten_kota'] = $kabupatenKota->name;
         $storeData['kecamatan'] = $kecamatan->name;
         $storeData['desa_kelurahan'] = $desaKelurahan->name;
 
-        PmksData::create($storeData);
+        $id = PmksData::create($storeData)->id;
+
+        $tambahanJenisPmksData = [];
+        
+        foreach ($tambahanJenisPmksData as $key => $i_jenis) {
+            $jenisPmks = DB::table('jenis_pmks')->select('id', 'jenis')->where('id',$i_jenis)->first();
+            $tambahanJenisPmksData[] = ['pmks_data_id' => str_replace(".", "", $id),'jenis_pmks_id' => $jenisPmks->id];
+        }
+
+        DB::table('r_dtks_jenis_pmks')->insert($tambahanJenisPmksData);
+
+        $tambahanJenisPmksArr = [];
+        if(!empty($request->input('tambahan_jenis_pmks'))){
+            $tambahanJenisPmksArr = $request->input('tambahan_jenis_pmks');
+        }
+
+        $tambahanJenisPmksData = [];
+        foreach ($tambahanJenisPmksArr as $key => $i_jenis) {
+            $jenisPmks = DB::table('jenis_pmks')->select('id', 'jenis')->where('id',$i_jenis)->first();
+            $tambahanJenisPmksData[] = ['pmks_data_id' => str_replace(".", "", $id),'jenis_pmks_id' => $jenisPmks->id];
+        }
+        DB::table('r_dtks_jenis_pmks')->insert($tambahanJenisPmksData);
 
         $batch = Bus::batch([])->dispatch();
 
         $kabupatenKota = DB::table('indonesia_cities')->select('id','name')->where('province_id','72')->get();
-        $jenisPmks = DB::table('jenis_pmks')->select('id', 'jenis')->where('jenis',$request->input('jenis_pmks'))->first();
-        // DB::table('charts')->truncate();
+        $jenisPmks = DB::table('jenis_pmks')->select('id', 'jenis')->where('id',$request->input('jenis_pmks'))->first();
         foreach ($kabupatenKota as $kk) {
-            // foreach ($jenisPmks as $pmks) {
-                $batch->add(new ProcessDataChart($kk,$jenisPmks));
-            // }
+                $batch->add(new ProcessDataChart($kk,$jenisPmks,$tambahanJenisPmksArr));
         }
         
         return back()->with('success', 'Data berhasil di rekam.');

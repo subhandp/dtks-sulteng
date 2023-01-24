@@ -48,9 +48,9 @@
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label form-control-label">Jenis PMKS</label>
                         <div class="col-lg-9">
-                            <select class="@error('jenis_pmks') is-invalid @enderror" id="jenis_pmks" name="jenis_pmks"  data-placeholder="Pilih Jenis PMKS" style="width: 100%" disabled="disabled" >
+                            <select class="@error('jenis_pmks') is-invalid @enderror" id="jenis_pmks" name="jenis_pmks"  data-placeholder="Pilih Jenis PMKS" style="width: 100%" >
                                 @foreach ($jenisPmks as $pmks)
-                                @if ($pmksData->jenis_pmks == $pmks->jenis )
+                                {{-- @if ($pmksData->jenis_pmks == $pmks->jenis )
                                     <option value="{{ $pmks->jenis }}" selected="selected">
                                         {{ $pmks->jenis }}
                                     </option>
@@ -60,7 +60,13 @@
                                     <option value="{{ $pmks->jenis }}">
                                         {{ $pmks->jenis }}
                                     </option>
-                                @endif
+                                @endif --}}
+
+                                @if ('KELUARGA FAKIR MISKIN' == $pmks->jenis )
+                                        <option value="{{ $pmks->id }}">
+                                            {{ $pmks->jenis }}
+                                        </option>
+                                    @endif
                                 
                                 @endforeach
                             </select>
@@ -75,19 +81,12 @@
                     <div class="form-group row">
                         <label class="col-lg-3 col-form-label form-control-label">Tambahan Jenis PMKS </label>
                         <div class="col-lg-9">
-                            <select class="select2-multiple  @error('jenis_pmks') is-invalid @enderror" id="tambahan_jenis_pmks" name="tambahan_jenis_pmks[]"  data-placeholder="Pilih Tambahan Jenis PMKS" style="width: 100%"  multiple="multiple">
+                            <select class=" @error('jenis_pmks') is-invalid @enderror" id="tambahan_jenis_pmks" name="tambahan_jenis_pmks[]"  data-placeholder="Pilih Tambahan Jenis PMKS"   multiple="multiple">
                                 @foreach ($jenisPmks as $pmks)
-                                @if ($pmksData->jenis_pmks == $pmks->jenis )
-                                    <option value="{{ $pmks->jenis }}" selected="selected">
-                                        {{ $pmks->jenis }}
-                                    </option>
-        
-                                @else
-                                
-                                    <option value="{{ $pmks->jenis }}">
-                                        {{ $pmks->jenis }}
-                                    </option>
-                                @endif
+
+                                <option value="{{ $pmks->id }}">
+                                    {{ $pmks->jenis }}
+                                </option>
                                 
                                 @endforeach
                             </select>
@@ -436,6 +435,7 @@
 
 @section('js-create-pmks')
 <script>
+    var jenisPmksTambahan = {!! json_encode($dtksJenisPmksData) !!};
     $.fn.select2.defaults.set( "theme", "bootstrap" );
 
     $("#input-tahun-data").datepicker({
@@ -454,7 +454,7 @@
     $("#jenis_pmks").select2();
     $("#tambahan_jenis_pmks").select2();
 
-
+    $('#tambahan_jenis_pmks').val(jenisPmksTambahan).trigger('change');
 
     $('#provinsi').select2({
             allowClear: true,

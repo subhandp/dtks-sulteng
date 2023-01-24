@@ -30,6 +30,8 @@ class DependentDropdownController extends Controller
      
     }
 
+
+
     public function cities(Request $request)
     {
         $provinceID = $request->provinceID;

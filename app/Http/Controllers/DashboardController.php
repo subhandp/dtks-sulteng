@@ -26,7 +26,7 @@ class DashboardController extends Controller
         $jenisPmksSelect = session('pmks');
 
         $charts = DB::table('charts')->select('*')->where('jenis_pmks_id','=', null)->orderBy('total','desc')->get();
-       
+          
         $chartData = [];
         $chartDataForTooltip = [];
         $chartDatatotalDtks = [];

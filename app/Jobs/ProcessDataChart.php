@@ -11,6 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Bus\Batchable;
 use App\Models\DtksErrorsImport;
+use  App\Models\PmksData;
 
 class ProcessDataChart implements ShouldQueue
 {
@@ -18,6 +19,7 @@ class ProcessDataChart implements ShouldQueue
 
     public $kabupatenKota;
     public $jenisPmks;
+    public $tambahanJenisPmksArr;
     public $dtksImportId;
 
     /**
@@ -25,10 +27,11 @@ class ProcessDataChart implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($kabupatenKota, $jenisPmks)
+    public function __construct($kabupatenKota, $jenisPmks,$tambahanJenisPmksArr)
     {
         $this->kabupatenKota = $kabupatenKota;
         $this->jenisPmks = $jenisPmks;
+        $this->tambahanJenisPmksArr = $tambahanJenisPmksArr;
 
     }
 
@@ -48,10 +51,30 @@ class ProcessDataChart implements ShouldQueue
                                         ->count();
                 
             DB::table('charts')
+            ->updateOrInsert(
+                ['indonesia_cities_id' => $this->kabupatenKota->id, 'jenis_pmks_id' => $this->jenisPmks->id],
+                ['total' => $totalPmksJenisKabupatenKota]
+            );
+
+        
+            foreach ($this->tambahanJenisPmksArr as $key => $tjp) {
+                $pmks = PmksData::with('dtksJenisPmks')
+                        ->where('kabupaten_kota', $this->kabupatenKota->name);
+                
+                $pmks = $pmks->WhereHas('dtksJenisPmks', function ($query) use ($tjp) {
+                    return $query->where('jenis_pmks_id', $tjp);
+                });
+
+                $jenisPmksTotal = $pmks->count();
+
+                DB::table('charts')
                 ->updateOrInsert(
-                    ['indonesia_cities_id' => $this->kabupatenKota->id, 'jenis_pmks_id' => $this->jenisPmks->id],
-                    ['total' => $totalPmksJenisKabupatenKota]
+                    ['indonesia_cities_id' => $this->kabupatenKota->id, 'jenis_pmks_id' => $tjp],
+                    ['total' => $jenisPmksTotal]
                 );
+
+            }
+            
 
             $totalPmksKabupatenKota = DB::table('pmks_data')
                                         ->select('id')
