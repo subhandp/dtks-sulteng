@@ -119,5 +119,11 @@ Route::group(['middleware' => ['auth','checkRole:operator_pmks']], function () {
 
     Route::post('/pmks/get-export-excel', [PmksController::class, 'getExportExcel'])->name('get-download-excel');
     Route::get('/pmks/export-excel', [PmksController::class, 'exportExcel'])->name('download-excel');
+
+    Route::post('/pmks/ss',[PmksController::class, 'storeSearch'])->name('saving-search');
+    Route::get('/pmks/rs',[PmksController::class, 'resetSearch'])->name('reset-search');
+
+
+
 });
 

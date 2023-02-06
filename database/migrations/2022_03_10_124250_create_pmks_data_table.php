@@ -37,7 +37,7 @@ class CreatePmksDataTable extends Migration
             $table->string('jenis_pmks')->nullable(); 
             // $table->foreign('dtks_import_id')->references('id')->on('dtks_imports');
             $table->timestamps();
-            $table->index(['dtks_import_id', 'iddtks', 'kabupaten_kota', 'jenis_pmks']);
+            $table->index(['dtks_import_id', 'iddtks', 'kabupaten_kota', 'jenis_pmks','tahun_data','nomor_nik']);
 
         });
 

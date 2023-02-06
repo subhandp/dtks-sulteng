@@ -46,22 +46,27 @@
                     <div class="form-group col-md-4">
                         <label><strong>Kabupaten/Kota :</strong></label>
                         <select class="form-control" id="kabupaten_kota" name="kabupaten_kota" data-placeholder="Semua Kabupaten/Kota" style="width: 100%" >
-                            {{-- <option value="">Semua Kab/Kota</option>
-                            @foreach ($kabupatenKota as $kk)
-                                <option value="{{ $kk->name }}"> {{ $kk->name }} </option>
-                            @endforeach --}}
+                            @if($kabupatenKotaSearch)
+                                <option value="{{ $kabupatenKotaSearch->id }}" selected="selected"> {{ $kabupatenKotaSearch->name }} </option>
+                            @endif
                         </select>
                     </div>
 
                     <div class="form-group col-md-4">
                         <label><strong>Kecamatan :</strong></label>
                         <select class="form-control" id="kecamatan" name="kecamatan" data-placeholder="Semua Kecamatan" style="width: 100%" >
+                            @if($kecamatanSearch)
+                                <option value="{{ $kecamatanSearch->id }}" selected="selected"> {{ $kecamatanSearch->name }} </option>
+                            @endif
                         </select>
                     </div>
 
                     <div class="form-group col-md-4">
                         <label><strong>Desa/Kelurahan :</strong></label>
                         <select  class="form-control" id="desa_kelurahan" name="desa_kelurahan" data-placeholder="Semua Desa/kelurahan" style="width: 100%" >
+                            @if($desaKelurahanSearch)
+                                <option value="{{ $desaKelurahanSearch->id }}" selected="selected"> {{ $desaKelurahanSearch->name }} </option>
+                            @endif
                         </select>
                     </div>
 
@@ -90,17 +95,30 @@
                         </select>
                         
                     </div>
-
+@php
+    // dd($searchSaved);
+@endphp
                     <div class="form-group col-md-4">
                         <label><strong>Umur</strong></label>
                         <select class="form-control" id="umur" name="umur" data-placeholder="Semua Umur" style="width: 100%" >
+                                
+                                         
+                            
                             <option value=""> Semua Umur</option>
-                            <option value="5-0"> < 5</option>
-                            <option value="18-0"> < 18</option>
-                            <option value="18-6"> 6 - 18</option>
-                            <option value="17-12"> 12 - 17</option>
-                            <option value="59-18"> 18 - 59</option>
-                            <option value="59">59 ></option>
+                            <option value="5-0"  @isset($searchSaved->umur)@if ($searchSaved->umur == "5-0") selected="selected" @endif @endisset  > < 5</option> 
+                            <option value="18-0"  @isset($searchSaved->umur)@if ($searchSaved->umur == "18-0") selected="selected" @endif @endisset > < 18</option>
+                            <option value="18-6"  @isset($searchSaved->umur)@if ($searchSaved->umur == "18-6") selected="selected" @endif @endisset> 6 - 18</option>
+                            <option value="17-12"  @isset($searchSaved->umur)@if ($searchSaved->umur == "17-12") selected="selected" @endif @endisset> 12 - 17</option>
+                            <option value="59-18"  @isset($searchSaved->umur)@if ($searchSaved->umur == "59-18") selected="selected" @endif @endisset> 18 - 59</option>
+                            <option value="59"  @isset($searchSaved->umur)@if ($searchSaved->umur == "59") selected="selected" @endif @endisset>59 ></option>
+                            
+                            {{-- <option value=""> Semua Umur</option>
+                            <option value="5-0" > < 5</option> 
+                            <option value="18-0" > < 18</option>
+                            <option value="18-6" >6 - 18</option>
+                            <option value="17-12" > 12 - 17</option>
+                            <option value="59-18" > 18 - 59</option>
+                            <option value="59"  ></option> --}}
 
                             {{-- 18 >
                             18-59
@@ -114,9 +132,18 @@
                         <select class="form-control" id="tahun_data" name="tahun_data" data-placeholder="Semua Tahun Data" style="width: 100%" >
                             <option value=""></option>
 
-
                             @for ($i = date('Y'); $i >= 2000; $i--)
-                                <option value="{{ $i }}"> {{ $i }} </option>
+                                @if (isset($searchSaved->umur))
+                                    @if ($searchSaved->tahun_data == $i) 
+                                        <option value="{{ $i }}" selected="selected"> {{ $i }} </option>
+                                    @else
+                                        <option value="{{ $i }}"> {{ $i }} </option>
+                                    @endif 
+                                @else
+                                    <option value="{{ $i }}"> {{ $i }} </option>
+                                @endif
+                                
+                                
                             @endfor
 
                                 
@@ -129,6 +156,8 @@
                     <div class="form-group col-md-4">
                       <button class="btn btn-warning " id="btn-search"><i class="fas fa-search"></i></button>
                       <button class="btn btn-warning " id="btn-download"><i class="fas fa-download"></i></button>
+                      {{-- <button class="btn btn-default " id="btn-search"><i class="fas fa-load"> reset filter</i></button> --}}
+                      <a class="btn btn-default" id="btn-search" href="{{ route('reset-search') }}" role="button"><i class="fas fa-load"> reset filter</i></a>
                     </div>
 
                 </div>
@@ -233,6 +262,14 @@
 
  @section('file-pond-data-import')
  <script>
+
+    let searchSaved = {!! json_encode($searchSaved) !!};
+    if(searchSaved){
+        if (typeof(searchSaved.jenis_pmks) !== 'undefined'  ) {
+             $('#jenis_pmks').val(JSON.parse(searchSaved.jenis_pmks)).trigger('change');
+        }
+    }
+    
     //  $("#tabel-import-data").DataTable();
     $('#load2').button('loading');
     // $('#load2').on('click', function() {
@@ -258,6 +295,8 @@
                 desa_kelurahan: $('#desa_kelurahan').val(),
                 jenis_pmks: $('#jenis_pmks').val(),
                 tahun_data: $('#tahun_data').val(),
+                umur: $('#umur').val(),
+
             },
             beforeSend : function(){
                 loadingSpinner.style.display = "block";
@@ -300,10 +339,11 @@
     $('#kabupaten_kota').select2({
             allowClear: true,
             ajax: {
-               url: "{{ route('cities') }}",
+               url: "{{ route('cities') }}?provinceID=72",
                dataType: 'json',
                processResults: function(data) {
-                   console.log(data);
+                    $("#kecamatan").empty();
+                    $("#desa_kelurahan").empty();
                   return {
                      results: $.map(data, function(item) {
                         return {
@@ -316,8 +356,69 @@
             }
         });
 
+        let regencyID = $('#kabupaten_kota').val();
+        if (regencyID) {
+                $('#kecamatan').select2({
+                allowClear: true,
+                ajax: {
+                url: "{{ route('districts') }}?regencyID=" + regencyID,
+                dataType: 'json',
+                processResults: function(data) {
+                    $("#desa_kelurahan").empty();
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                            text: item.name,
+                            id: item.id
+                            }
+                        })
+                    };
+                }
+                }
+            });
+        }
+        
+        let districtID = $('#kecamatan').val();
+        if (districtID) {
+            $('#desa_kelurahan').select2({
+                allowClear: true,
+                ajax: {
+                url: "{{ route('villages') }}?districtID=" + districtID,
+                dataType: 'json',
+                processResults: function(data) {
+                    console.log(data);
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                            text: item.name,
+                            id: item.id
+                            }
+                        })
+                    };
+                }
+                }
+            });
+        }
+        
+        
+
+
     // $("#kabupaten_kota").select2();
      var table = $('#tabel-data-pmks').DataTable({
+        preDrawCallback: function( settings ) {
+        
+            // console.log($('#jenis_pmks').val(),'awal');
+            // console.log($('#umur').val(),'awal');
+
+            //    var searchSaved = {!! json_encode($searchSaved) !!};
+        //    var kabko = $("#kabupaten_kota").val();
+        //    if(!kabko){
+        //     $("#kabupaten_kota").val(searchSaved.kabupaten_kota).trigger('change');
+        //    }
+        // $("#kabupaten_kota").val(searchSaved.kabupaten_kota).trigger('change');
+        // console.log(searchSaved.kabupaten_kota);
+
+        },
         lengthMenu: [[5, 10, -1], [5, 10, "All"]],
         processing: true,
         serverSide: true,
@@ -356,9 +457,28 @@
 
   
     $('#btn-search').click(function($event){
-        console.log($('#jenis_pmks').val(),'jenis pmks');
         event.preventDefault();
         table.draw();
+        $.ajax({
+            type: "POST",
+            url:"{{ route('saving-search') }}",
+            data: {
+                _token: $('#csrf-token')[0].content,
+                kabupaten_kota: $('#kabupaten_kota').val(),
+                kecamatan: $('#kecamatan').val(),
+                desa_kelurahan: $('#desa_kelurahan').val(),
+                jenis_pmks: $('#jenis_pmks').val(),
+                tahun_data: $('#tahun_data').val(),
+                umur: $('#umur').val()
+
+            },
+            success: function(data){
+                console.log(data);
+            },
+            error: function(xhr) { // if error occured
+                console.log(xhr.statusText + xhr.responseText,'Error Console');
+            },    
+        });
     });
 
     
@@ -538,6 +658,8 @@
             $("#desa_kelurahan").select2();
          });
 
+        
+         
 
  </script>
  @endsection

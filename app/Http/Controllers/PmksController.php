@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use  App\Models\DtksErrorsImport;
-use  App\Models\PmksDataTemp;
+use  App\Models\SearchSaved;
 use  App\Models\PmksData;
-// use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth;
 // use Illuminate\Support\Facades\File;  
 // use Maatwebsite\Excel\Facades\Excel;
 // use App\Imports\PmksDataImport;
@@ -137,12 +137,7 @@ class PmksController extends Controller
         ];
         $time_start = microtime(true);
         $writer = new XLSXWriter();
-        // $writer->writeSheetHeader('Sheet1', array('c1'=>'string','c2'=>'string','c3'=>'string','c4'=>'string') );//optional
 
-        // $pmksData = DB::table('pmks_data')
-        //         ->orderBy('id')
-        //         ->limit(50000)
-        //         ->get();
 
         $pmksDataInstance = DB::table('pmks_data')->orderBy('id');
         $pmksDataInstance->when(!empty($request->get('kabupaten_kota')), function ($q) use($request){
@@ -173,6 +168,19 @@ class PmksController extends Controller
         $pmksDataInstance->when(!empty($request->get('tahun_data')), function ($q) use($request){
                     
             return $q->where('tahun_data', $request->get('tahun_data'));
+        });
+
+        $pmksDataInstance->when(!empty($request->get('umur')), function ($q) use($request){
+
+            $age =  $request->get('umur');
+            $range = explode('-', $age);
+
+            if (count($range) > 1) {
+                return $q->whereBetween('tanggal_lahir', [now()->subYears($range[0]), now()->subYears($range[1])]);
+            } else {
+               return $q->where('tanggal_lahir', '<', now()->subYears($range[0]));
+            }
+
         });
 
         $pmksData = $pmksDataInstance->paginate(50000)->items();
@@ -215,41 +223,7 @@ class PmksController extends Controller
         $writer->writeToFile($fileName);
 
         return url($fileName);
-        // $filecontent=$writer->writeToString();
-        
-        // return $filecontent;
-        // $writer->writeToFile('pmks-data.xlsx');
-//         $headers = [
-//             'Content-Type' => 'application/pdf',
-//          ];
-
-// return response()->download($file, 'filename.pdf', $headers);
-        // response()->download(public_path($fileName));
-        // Display Script End time
-        // $time_end = microtime(true);
-
-        //dividing with 60 will give the execution time in minutes other wise seconds
-        // $execution_time = ($time_end - $time_start)/60;
-
-        //execution time of the script
-        // echo '<b>Total Execution Time:</b> '.$execution_time.' Mins'."\n";
-
-        // echo '#'.floor((memory_get_peak_usage())/1024/1024)."MB"."\n";
-
-        // exit(0);
-
-        // return json_encode(['status' => 'sukses']);
-
-
-        // (new PmksExport)->queue('invoices.xlsx');
-        // return (new PmksExport)->download('invoices.xlsx');
-
-        // $name = 'test.csv';
-        // (new PmksExport())->queue('public/exports/' . $name)->chain([
-        //     new NotifyUserOfExport($request->user(), $name),
-        // ]);
-    
-        // return back()->with('message', 'This export will take some time. You will receive an email when it is ready to download.');
+       
     }
 
     // public function exportExcel(){
@@ -301,11 +275,48 @@ class PmksController extends Controller
         ->Where('province_id', '72')
         ->get();
 
+        $searchSaved = DB::table('search_saveds')
+        ->Where('user_id', Auth::id())
+        ->first();
+
+        if(isset($searchSaved->kabupaten_kota)){
+            $kabupatenKotaSearch = DB::table('indonesia_cities')
+            ->select('id', 'name')
+            ->Where('id', $searchSaved->kabupaten_kota)
+            ->first();
+        }
+
+        $kabupatenKotaSearch = null;
+        $kecamatanSearch = null;
+        $desaKelurahanSearch = null;
+
+
+        if(isset($searchSaved->kabupaten_kota)){
+            $kabupatenKotaSearch = DB::table('indonesia_cities')
+            ->select('id', 'name')
+            ->Where('id', $searchSaved->kabupaten_kota)
+            ->first();
+        }
+        if(isset($searchSaved->kecamatan)){
+            $kecamatanSearch = DB::table('indonesia_districts')
+            ->select('id', 'name')
+            ->Where('id', $searchSaved->kecamatan)
+            ->first();
+        }
+        if(isset($searchSaved->desa_keluarahan)){
+            $desaKelurahanSearch = DB::table('indonesia_districts')
+            ->select('id', 'name')
+            ->Where('id', $searchSaved->desa_keluarahan)
+            ->first();
+        }
+
         $jenisPmks = DB::table('jenis_pmks')->select('id','jenis','detail')->get();
 
-        return view('pmks.daftar', compact('kabupatenKota','class_menu_data_pmks','jenisPmks'));
+        return view('pmks.daftar', compact('kabupatenKotaSearch','kecamatanSearch','desaKelurahanSearch','searchSaved', 'kabupatenKota','class_menu_data_pmks','jenisPmks'));
 
     }
+
+   
 
     public function datapmks(Request $request){
 
@@ -758,6 +769,43 @@ class PmksController extends Controller
         }
         
         return back()->with('success', 'Data berhasil di rekam.');
+    }
+
+
+    public function storeSearch(Request $request){
+
+        $storeData = request()->except(['_token']);
+
+        // $storeData['user_id'] = Auth::id();
+        // $id = SearchSaved::create($storeData)->id;
+
+        if(DB::table('search_saveds')->where('user_id', Auth::id())->exists()){
+            DB::table('search_saveds')->where('user_id', Auth::id())->delete();
+        }
+
+        $storeData['user_id'] = Auth::id();
+        if(isset($storeData['jenis_pmks'])){
+            $storeData['jenis_pmks'] = json_encode($storeData['jenis_pmks'] );
+        }
+        
+        $id = SearchSaved::create($storeData)->id;
+
+        // DB::table('search_saveds')
+        // ->updateOrInsert(
+        //         ['user_id' => Auth::id()],
+        //         $storeData
+        //     );
+        return response()->json(['saving-search'=>true]);
+    }
+
+    public function resetSearch(){
+
+
+        if(DB::table('search_saveds')->where('user_id', Auth::id())->exists()){
+            DB::table('search_saveds')->where('user_id', Auth::id())->delete();
+        }
+
+        return back()->with('sukseshapus', 'Filter di reset ke default');
     }
 
 
