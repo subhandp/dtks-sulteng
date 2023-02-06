@@ -133,7 +133,7 @@
                             <option value=""></option>
 
                             @for ($i = date('Y'); $i >= 2000; $i--)
-                                @if (isset($searchSaved->umur))
+                                @if (isset($searchSaved->tahun_data))
                                     @if ($searchSaved->tahun_data == $i) 
                                         <option value="{{ $i }}" selected="selected"> {{ $i }} </option>
                                     @else
