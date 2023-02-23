@@ -388,11 +388,13 @@ class PmksController extends Controller
                         }
 
                         if (!empty($request->get('jenis_pmks'))) {
+                            if($request->get('jenis_pmks')[0] != null){
+                                $s = $request->get('jenis_pmks');
+                                $jenisPmksId = DB::table('r_dtks_jenis_pmks')->select('pmks_data_id','jenis_pmks_id')->whereIn("jenis_pmks_id",$s)->pluck('pmks_data_id');
+                                $query->whereIn('id', $jenisPmksId);
+
+                            }
                             
-                            $s = $request->get('jenis_pmks');
-                            $jenisPmksId = DB::table('r_dtks_jenis_pmks')->select('pmks_data_id','jenis_pmks_id')->whereIn("jenis_pmks_id",$s)->pluck('pmks_data_id');
-                            // dd($jenisPmksId[0]);
-                            $query->whereIn('id', $jenisPmksId);
                         }
 
                         if (!empty($request->get('tahun_data'))) {
