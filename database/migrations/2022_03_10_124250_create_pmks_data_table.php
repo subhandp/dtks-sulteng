@@ -34,10 +34,16 @@ class CreatePmksDataTable extends Migration
             $table->string('nama_ibu_kandung')->nullable();
             $table->string('hubungan_keluarga')->nullable();
             $table->string('tahun_data')->nullable();
-            $table->string('jenis_pmks')->nullable(); 
-            // $table->foreign('dtks_import_id')->references('id')->on('dtks_imports');
+            $table->string('jenis_pmks')->nullable();
+            $table->string('pekerjaan')->nullable();
+            $table->string('keterangan_padan')->nullable(); 
+            $table->string('bansos_bpnt')->nullable(); 
+            $table->string('bansos_pkh')->nullable(); 
+            $table->string('bansos_bpnt_ppkm')->nullable(); 
+            $table->string('pbi_jkn')->nullable(); 
+        
             $table->timestamps();
-            $table->index(['dtks_import_id', 'iddtks', 'kabupaten_kota', 'jenis_pmks','tahun_data','nomor_nik']);
+            $table->index(['kabupaten_kota', 'jenis_pmks','tahun_data']);
 
         });
 

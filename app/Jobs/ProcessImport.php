@@ -99,8 +99,10 @@ class ProcessImport implements ShouldQueue
                         }
                     fclose($file);  
                     
-                    $header = ["ID DTKS","PROVINSI","KABUPATEN/KOTA","KECAMATAN","DESA/KELUARAHAN","ALAMAT","DUSUN","RT","RW","NOMOR KK","NOMOR NIK","NAMA","TANGGAL LAHIR","TEMPAT LAHIR","JENIS KELAMIN","NAMA IBU KANDUNG","HUBUNGAN KELUARGA"];
-                   
+                    // $header = ["ID DTKS","PROVINSI","KABUPATEN/KOTA","KECAMATAN","DESA/KELUARAHAN","ALAMAT","DUSUN","RT","RW","NOMOR KK","NOMOR NIK","NAMA","TANGGAL LAHIR","TEMPAT LAHIR","JENIS KELAMIN","NAMA IBU KANDUNG","HUBUNGAN KELUARGA"];
+
+                    $header = ["ID DTKS","PROVINSI","KABUPATEN/KOTA","KECAMATAN","DESA/KELUARAHAN","ALAMAT","DUSUN","RT","RW","NOKK","NIK","NAMA","TANGGAL LAHIR","TEMPAT LAHIR","JENIS KELAMIN","PEKERJAAN","NAMA IBU KANDUNG","HUB KELUARGA","KETERANGAN PADAN", "BANSOS BPNT", "BANSOS PKH", "BANSOS BPNT-PPKM","PBI JKN"];
+
                     $validHeader = true;
                     $listHeaderError = [];
                     foreach ($header as $key => $h) {
@@ -139,14 +141,14 @@ class ProcessImport implements ShouldQueue
 
                             $pdo = DB::connection()->getPdo();
                             $path = str_replace('\\', '/', $path);
-                            $pdo->exec("LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE pmks_data FIELDS TERMINATED BY '|' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (iddtks, provinsi, kabupaten_kota, kecamatan, desa_kelurahan, alamat, dusun, rt, rw,nomor_kk, nomor_nik, nama, tanggal_lahir, tempat_lahir, jenis_kelamin, nama_ibu_kandung,hubungan_keluarga, @tahun_data, @jenis_pmks, @created_at, @updated_at,@dtks_import_id) SET dtks_import_id = '".$this->dtksimportId."', tahun_data = '".$tahun_data."', jenis_pmks = '".$jenis_pmks."', created_at = NOW(), updated_at = NOW()");
+                            $pdo->exec("LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE pmks_data FIELDS TERMINATED BY '|' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (iddtks, provinsi, kabupaten_kota, kecamatan, desa_kelurahan, alamat, dusun, rt, rw,nomor_kk, nomor_nik, nama, tanggal_lahir, tempat_lahir, jenis_kelamin, pekerjaan, nama_ibu_kandung,hubungan_keluarga, keterangan_padan, bansos_bpnt, bansos_pkh, bansos_bpnt_ppkm,pbi_jkn,@tahun_data, @jenis_pmks, @created_at, @updated_at,@dtks_import_id) SET dtks_import_id = '".$this->dtksimportId."', tahun_data = '".$tahun_data."', jenis_pmks = '".$jenis_pmks."', created_at = NOW(), updated_at = NOW()");
                             // ProcessChart::dispatch($this->dtksimportId);
                         } catch(\Illuminate\Database\QueryException $ex){ 
                             DtksErrorsImport::create([
                                 'dtks_import_id' => $this->dtksimportId,
                                 'row' => 0,
-                                'attribute' => 'line: '.$ex->getLine(),
-                                'values' => 'code: '.$ex->getCode(),
+                                'attribute' => 'load local line: '.$ex->getLine(),
+                                'values' => 'load local code: '.$ex->getCode(),
                                 'errors' => substr($ex->getMessage(), 0, 200)
                             ]);
                             DtksImport::find($this->dtksimportId)
@@ -161,8 +163,8 @@ class ProcessImport implements ShouldQueue
                 DtksErrorsImport::create([
                     'dtks_import_id' => $this->dtksimportId,
                     'row' => 0,
-                    'attribute' => 'line: '.$e->getLine(),
-                    'values' => 'code: '.$e->getCode(),
+                    'attribute' => 'process import line: '.$e->getLine(),
+                    'values' => 'process import code: '.$e->getCode(),
                     'errors' => substr($e->getMessage(), 0, 200)
                 ]);
                 DtksImport::find($this->dtksimportId)

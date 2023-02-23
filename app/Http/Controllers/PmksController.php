@@ -500,7 +500,7 @@ class PmksController extends Controller
             if(DB::table('pmks_data')->where('id', $id)->exists()){
                 $pmksData = DB::table('pmks_data')->select('id','iddtks', 'provinsi', 'kabupaten_kota', 'kecamatan', 'desa_kelurahan', 'alamat', 'dusun', 'rt', 'rw',
                 'nomor_kk', 'nomor_nik', 'nama', 'tanggal_lahir', 'tempat_lahir', 'jenis_kelamin', 'nama_ibu_kandung',
-                'hubungan_keluarga', 'tahun_data', 'jenis_pmks')->where('id', $id)->first();
+                'hubungan_keluarga', 'tahun_data', 'jenis_pmks','pekerjaan','keterangan_padan','bansos_bpnt','bansos_pkh','bansos_bpnt_ppkm','pbi_jkn')->where('id', $id)->first();
 
                 // $search = [2,4];
                 // $t = PmksData::with('dtksJenisPmks')
@@ -623,7 +623,9 @@ class PmksController extends Controller
             'jenis_kelamin' => 'required',
             'nama_ibu_kandung' => 'required',
             'hubungan_keluarga' => 'required',
-            'jenis_pmks' => 'required'
+            'jenis_pmks' => 'required',
+            'pekerjaan' => 'required'
+
        ]);
 
        
@@ -823,6 +825,26 @@ class PmksController extends Controller
             }
 
             return back()->with('sukseshapus', 'Data berhasil di Hapus.');
+        }
+
+        abort(404);
+    }
+
+
+    public function deleteImportData(Request $request){
+        if($request->has('q')){
+
+            // $myhashid = $request->input('q');
+            // $hashids = new Hashids('dtks', 15); 
+            // $id = $hashids->decode($myhashid);
+
+            $id = $request->input('q');
+
+            if(DB::table('pmks_data')->where('dtks_import_id', $id)->exists()){
+                DB::table('pmks_data')->where('dtks_import_id', $id)->delete();
+            }
+
+            return back()->with('sukseshapus', 'Data Import PMKS berhasil di Hapus.');
         }
 
         abort(404);

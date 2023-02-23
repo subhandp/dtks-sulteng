@@ -402,6 +402,21 @@
                         </div>
                     </div>
 
+
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-form-label form-control-label">Pekerjaan</label>
+                        <div class="col-lg-9">
+                            <input name="pekerjaan" class="form-control @error('pekerjaan') is-invalid @enderror" type="text" value="{{ $pmksData->pekerjaan }}">
+                            @error('pekerjaan')
+                                <div class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </div>
+                            @enderror
+                        </div>
+                        </div>
+                    
+                    
+
                     
 
                     <div class="form-group row">

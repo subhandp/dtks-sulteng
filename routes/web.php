@@ -123,7 +123,7 @@ Route::group(['middleware' => ['auth','checkRole:operator_pmks']], function () {
     Route::post('/pmks/ss',[PmksController::class, 'storeSearch'])->name('saving-search');
     Route::get('/pmks/rs',[PmksController::class, 'resetSearch'])->name('reset-search');
 
-
+    Route::get('/pmks/delete-import-data',[PmksController::class, 'deleteImportData'])->name('pmks.delete.import.data');
 
 });
 

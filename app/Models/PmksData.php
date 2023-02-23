@@ -12,7 +12,7 @@ class PmksData extends Model
     protected $fillable = [
         'dtks_import_id','iddtks', 'provinsi', 'kabupaten_kota', 'kecamatan', 'desa_kelurahan', 'alamat', 'dusun', 'rt', 'rw',
         'nomor_kk', 'nomor_nik', 'nama', 'tanggal_lahir', 'tempat_lahir', 'jenis_kelamin', 'nama_ibu_kandung',
-        'hubungan_keluarga', 'tahun_data', 'jenis_pmks','created_at', 'updated_at'
+        'hubungan_keluarga', 'tahun_data', 'jenis_pmks','pekerjaan','keterangan_padan','bansos_bpnt','bansos_pkh','bansos_bpnt_ppkm','pbi_jkn','created_at', 'updated_at'
     ];
 
     public function dtksImports()

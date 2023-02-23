@@ -79,10 +79,17 @@ class PostingImport implements ShouldQueue
                                 'tanggal_lahir' => $pmks_data->tanggal_lahir, 
                                 'tempat_lahir' => $pmks_data->tempat_lahir, 
                                 'jenis_kelamin' => $pmks_data->jenis_kelamin, 
+                                'pekerjaan' => $pmks_data->pekerjaan,
                                 'nama_ibu_kandung' => $pmks_data->nama_ibu_kandung,
                                 'hubungan_keluarga' => $pmks_data->hubungan_keluarga, 
+                                'keterangan_padan' => $pmks_data->keterangan_padan,
+                                'bansos_bpnt' => $pmks_data->bansos_bpnt,
+                                'bansos_pkh' => $pmks_data->bansos_pkh,
+                                'bansos_bpnt_ppkm' => $pmks_data->bansos_bpnt_ppkm,
+                                'pbi_jkn' => $pmks_data->pbi_jkn,
                                 'tahun_data' => $pmks_data->tahun_data, 
-                                'jenis_pmks' => $pmks_data->jenis_pmks
+                                'jenis_pmks' => $pmks_data->jenis_pmks,
+                                
                             ];
 
                         }
@@ -110,8 +117,8 @@ class PostingImport implements ShouldQueue
                 DtksErrorsImport::create([
                     'dtks_import_id' => $this->dtksimportId,
                     'row' => 0,
-                    'attribute' => 'line: '.$e->getLine(),
-                    'values' => 'code: '.$e->getCode(),
+                    'attribute' => 'posting import line: '.$e->getLine(),
+                    'values' => 'posting import code: '.$e->getCode(),
                     'errors' => substr($e->getMessage(), 0, 200)
                 ]);
 
