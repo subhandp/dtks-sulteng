@@ -138,7 +138,12 @@
                                 data-attr="{{ route('psks.dataerrors',  ['id' => $import->id]) }}" class="btn btn-default btn-sm my-1 mr-sm-1 btn-block" data-toggle="tooltip" data-placement="left" title="Detail">
                                 
                                 <i class="fas fa-eye"></i>
-                            </a>
+                            </a>    
+
+                            <a href="{{  route('psks.delete.import.data',['q' => $import->id]) }}" onclick="return confirm('Hapus Seluruh Data Import ? ')" class="delete btn btn-default btn-sm  my-1 mr-sm-1 btn-block" data-toggle="tooltip" data-placement="left" title="Delete">
+                                <i class="fas fa-trash"></i></a>
+                                
+                            </td>
                                 
                             </td>
                         </tr>

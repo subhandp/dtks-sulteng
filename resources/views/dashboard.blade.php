@@ -222,8 +222,11 @@
                                         </form><br> --}}
                                         
                                     </div>
-        
+                                    
+                                    @isset($myChart2)
                                     {!! $myChart2->container() !!}
+                                    @endisset
+                                    
                                 </div>
                                 @php
                                     // dd($chartData);
@@ -242,17 +245,20 @@
                                                 @php
                                                     $no = 1;
                                                 @endphp
-                                                @foreach ($chartData as $k => $data)
-                                                    
-                                                    <tr>
-                                                        <td>{{ $no }}</td>
-                                                        <td>{{ $data }}</td>
-                                                        <td>{{ number_format($chartDatatotalDtks[$k],0,',','.') }} </td>
-                                                    </tr>
-                                                    @php
-                                                        $no++;
-                                                    @endphp
-                                                @endforeach
+                                                @isset($chartData)
+                                                    @foreach ($chartData as $k => $data)
+                                                            
+                                                        <tr>
+                                                            <td>{{ $no }}</td>
+                                                            <td>{{ $data }}</td>
+                                                            <td>{{ number_format($chartDatatotalDtks[$k],0,',','.') }} </td>
+                                                        </tr>
+                                                        @php
+                                                            $no++;
+                                                        @endphp
+                                                    @endforeach
+                                                @endisset
+                                                
                                                 
                                             </tbody>
                                         </table>
@@ -308,12 +314,24 @@
 @section('js-create-pmks')
 
 
-<script src="{{ $myChart1->cdn() }}"></script>
-<script src="{{ $myChart2->cdn() }}"></script>
+@isset($myChart1)
+    <script src="{{ $myChart1->cdn() }}"></script>
+    {{ $myChart1->script() }}
+@endisset
 
-{{ $myChart1->script() }}
-{{ $myChart2->script() }}
+@isset($myChart2)
+    <script src="{{ $myChart2->cdn() }}"></script>
+    {{ $myChart2->script() }}
+@endisset
 
+@php
+    if (!isset($dataGroupColour))
+        $dataGroupColour = '';
+
+    if (!isset($chartMapDatatotalDtks)) {
+        $chartMapDatatotalDtks = '';
+    }
+@endphp
 
 <script>
 
@@ -331,7 +349,6 @@ function colourCountries(data) {
 
 let data1 = @json($dataGroupColour);
 let chartMapDatatotalDtks = @json($chartMapDatatotalDtks);
-// console.log(chartMapDatatotalDtks);
 colourCountries(data1);
 
   $('.detail-chart').click(function(){

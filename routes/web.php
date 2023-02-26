@@ -33,12 +33,10 @@ Route::post('/postlogin-pmks',[AuthController::class, 'postloginPmks'])->name('p
 Route::post('/postlogin-psks',[AuthController::class, 'postloginPsks'])->name('post.login.psks');
 
 Route::get('/logout',[AuthController::class ,'logout']);
-Route::get('/pmks/dashboard',[DashboardController::class, 'index']);
-Route::group(['middleware' => ['auth','checkRole:operator_psks,operator_pmks']], function () {
-    Route::get('/', function () {
-        return view('/dashboard');
-    });
 
+Route::group(['middleware' => ['auth','checkRole:operator_psks,operator_pmks']], function () {
+    Route::get('/',[DashboardController::class, 'index']);
+    Route::get('/pmks/dashboard',[DashboardController::class, 'index']);
     Route::get('/pmks/dashboard/pdf', [DashboardController::class, 'createPDF']);
     
     Route::post('/set-session-pmks', [DashboardController::class, 'set_session_pmks'])->name('dashboard.set-session');
@@ -60,6 +58,9 @@ Route::group(['middleware' => ['auth','checkRole:operator_psks,operator_pmks']],
 });
 
 Route::group(['middleware' => ['auth','checkRole:operator_psks']], function () {
+
+    Route::get('/',[DashboardControllerPsks::class, 'index']);
+
     Route::get('/psks/dashboard',[DashboardControllerPsks::class, 'index']);
     Route::get('/get-psks-kab', [DashboardControllerPsks::class, 'get_psks_kab'])->name('dashboard.get-psks-kab');
 
@@ -97,6 +98,71 @@ Route::group(['middleware' => ['auth','checkRole:operator_psks']], function () {
     Route::get('/psks/tksk/delete',[PsksController::class, 'tkskDelete'])->name('psks.tksk.delete');
     Route::post('/psks/tksk/store-create',[PsksController::class, 'tkskStore'])->name('psks.tksk.store-create');
     Route::post('/psks/tksk/store-edit',[PsksController::class, 'tkskStore'])->name('psks.tksk.store-edit');
+
+    Route::get('/psks/lk3',[PsksController::class, 'indexLk3'])->name('psks.lk3.index');
+    Route::get('/psks/lk3/datatatables',[PsksController::class, 'datatablesLk3'])->name('psks.lk3.datatables');
+
+    Route::get('/psks/lk3/create',[PsksController::class, 'lk3EditCreate'])->name('psks.lk3.create');
+    Route::get('/psks/lk3/edit',[PsksController::class, 'lk3EditCreate'])->name('psks.lk3.edit');
+    Route::get('/psks/lk3/delete',[PsksController::class, 'lk3Delete'])->name('psks.lk3.delete');
+    Route::post('/psks/lk3/store-create',[PsksController::class, 'lk3Store'])->name('psks.lk3.store-create');
+    Route::post('/psks/lk3/store-edit',[PsksController::class, 'lk3Store'])->name('psks.lk3.store-edit');
+
+    Route::get('/psks/lks',[PsksController::class, 'indexLks'])->name('psks.lks.index');
+    Route::get('/psks/lks/datatatables',[PsksController::class, 'datatablesLks'])->name('psks.lks.datatables');
+
+    Route::get('/psks/lks/create',[PsksController::class, 'lksEditCreate'])->name('psks.lks.create');
+    Route::get('/psks/lks/edit',[PsksController::class, 'lksEditCreate'])->name('psks.lks.edit');
+    Route::get('/psks/lks/delete',[PsksController::class, 'lksDelete'])->name('psks.lks.delete');
+    Route::post('/psks/lks/store-create',[PsksController::class, 'lksStore'])->name('psks.lks.store-create');
+    Route::post('/psks/lks/store-edit',[PsksController::class, 'lksStore'])->name('psks.lks.store-edit');
+
+    Route::get('/psks/kt',[PsksController::class, 'indexKt'])->name('psks.kt.index');
+    Route::get('/psks/kt/datatatables',[PsksController::class, 'datatablesKt'])->name('psks.kt.datatables');
+
+    Route::get('/psks/kt/create',[PsksController::class, 'ktEditCreate'])->name('psks.kt.create');
+    Route::get('/psks/kt/edit',[PsksController::class, 'ktEditCreate'])->name('psks.kt.edit');
+    Route::get('/psks/kt/delete',[PsksController::class, 'ktDelete'])->name('psks.kt.delete');
+    Route::post('/psks/kt/store-create',[PsksController::class, 'ktStore'])->name('psks.kt.store-create');
+    Route::post('/psks/kt/store-edit',[PsksController::class, 'ktStore'])->name('psks.kt.store-edit');
+
+    Route::get('/psks/tksk',[PsksController::class, 'indexTksk'])->name('psks.tksk.index');
+    Route::get('/psks/tksk/datatatables',[PsksController::class, 'datatablesTksk'])->name('psks.tksk.datatables');
+
+    Route::get('/psks/tksk/create',[PsksController::class, 'tkskEditCreate'])->name('psks.tksk.create');
+    Route::get('/psks/tksk/edit',[PsksController::class, 'tkskEditCreate'])->name('psks.tksk.edit');
+    Route::get('/psks/tksk/delete',[PsksController::class, 'tkskDelete'])->name('psks.tksk.delete');
+    Route::post('/psks/tksk/store-create',[PsksController::class, 'tkskStore'])->name('psks.tksk.store-create');
+    Route::post('/psks/tksk/store-edit',[PsksController::class, 'tkskStore'])->name('psks.tksk.store-edit');
+
+    Route::get('/psks/wkskbm',[PsksController::class, 'indexWkskbm'])->name('psks.wkskbm.index');
+    Route::get('/psks/wkskbm/datatatables',[PsksController::class, 'datatableswkskbm'])->name('psks.wkskbm.datatables');
+
+    Route::get('/psks/wkskbm/create',[PsksController::class, 'wkskbmEditCreate'])->name('psks.wkskbm.create');
+    Route::get('/psks/wkskbm/edit',[PsksController::class, 'wkskbmEditCreate'])->name('psks.wkskbm.edit');
+    Route::get('/psks/wkskbm/delete',[PsksController::class, 'wkskbmDelete'])->name('psks.wkskbm.delete');
+    Route::post('/psks/wkskbm/store-create',[PsksController::class, 'wkskbmStore'])->name('psks.wkskbm.store-create');
+    Route::post('/psks/wkskbm/store-edit',[PsksController::class, 'wkskbmStore'])->name('psks.wkskbm.store-edit');
+
+    Route::get('/psks/fcsr',[PsksController::class, 'indexFcsr'])->name('psks.fcsr.index');
+    Route::get('/psks/fcsr/datatatables',[PsksController::class, 'datatablesFcsr'])->name('psks.fcsr.datatables');
+
+    Route::get('/psks/fcsr/create',[PsksController::class, 'fcsrEditCreate'])->name('psks.fcsr.create');
+    Route::get('/psks/fcsr/edit',[PsksController::class, 'fcsrEditCreate'])->name('psks.fcsr.edit');
+    Route::get('/psks/fcsr/delete',[PsksController::class, 'fcsrDelete'])->name('psks.fcsr.delete');
+    Route::post('/psks/fcsr/store-create',[PsksController::class, 'fcsrStore'])->name('psks.fcsr.store-create');
+    Route::post('/psks/fcsr/store-edit',[PsksController::class, 'fcsrStore'])->name('psks.fcsr.store-edit');
+
+    Route::get('/psks/fcu',[PsksController::class, 'indexFcu'])->name('psks.fcu.index');
+    Route::get('/psks/fcu/datatatables',[PsksController::class, 'datatablesFcu'])->name('psks.fcu.datatables');
+
+    Route::get('/psks/fcu/create',[PsksController::class, 'fcuEditCreate'])->name('psks.fcu.create');
+    Route::get('/psks/fcu/edit',[PsksController::class, 'fcuEditCreate'])->name('psks.fcu.edit');
+    Route::get('/psks/fcu/delete',[PsksController::class, 'fcuDelete'])->name('psks.fcu.delete');
+    Route::post('/psks/fcu/store-create',[PsksController::class, 'fcuStore'])->name('psks.fcu.store-create');
+    Route::post('/psks/fcu/store-edit',[PsksController::class, 'fcuStore'])->name('psks.fcu.store-edit');
+
+    Route::get('/psks/delete-import-data',[PsksController::class, 'deleteImportData'])->name('psks.delete.import.data');
 
 });
 

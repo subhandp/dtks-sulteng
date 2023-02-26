@@ -26,10 +26,10 @@
                 <div class="col">
                 <h5>
                    
-                    <strong>Daftar TKSK</strong>
+                    <strong>Daftar FCU</strong>
                     <span class="float-right">
                         
-                        <a class="btn btn-warning btn-sm my-1 mr-sm-1" href="{{ route('psks.tksk.create') }}" role="button" data-toggle="tooltip" title="Rekam data baru" data-offset="50%, 3"><i class="fas fa-edit"></i> Rekam</a>
+                        <a class="btn btn-warning btn-sm my-1 mr-sm-1" href="{{ route('psks.fcu.create') }}" role="button" data-toggle="tooltip" title="Rekam data baru" data-offset="50%, 3"><i class="fas fa-edit"></i> Rekam</a>
                     </span>
                 </h5>
                 
@@ -67,25 +67,17 @@
                         <tr>
                             <th>No</th>
                             <th width="100px">Action</th>
-                            <th>KAB/KOTA</th>
-                            <th>NO INDUK A</th>
-                            <th>NO INDUK B</th>
-                            
-                            <th>KECAMATAN</th>
+                            <th>KABUPATEN KOTA</th>
                             <th>NAMA</th>
-                            <th>NAMA IBU</th>
-                            <th>NIK</th>
-                            <th>TGL LAHIR</th>
-                            <th>TEMPAT LAHIR</th>
-                            <th>JENIS KELAMIN.</th>
-                            <th>ALAMAT</th>
-                            <th>NO HP</th>
-                            <th>PENDIDIKAN</th>
-                            <th>T. PENGANGKATAN</th>
-                            <th>MULAI AKTIF</th>
-                            <th>LEGAL SERTIFIKAT</th>
-                            <th>JENIS DIKLAT YG DIIKUTI</th>
-                            <th>PENDAMPINGAN</th>
+                            <th>DESA/KELURAHAN</th>
+                            <th>KECAMATAN</th>
+                            <th>NO HP KETUA</th>
+                            <th>EMAIL</th>
+                            <th>NAMA KETUA</th>
+                            <th>LEGALITAS</th>
+                            <th>JMLH KEL. PIONIR</th>
+                            <th>JMLH KEL. PLASMA</th>
+                        
                         </tr>
                     </thead>
                     <tbody>
@@ -180,7 +172,7 @@
         processing: true,
         serverSide: true,
         ajax: {
-            url: "{{ route('psks.tksk.datatables') }}",
+            url: "{{ route('psks.fcu.datatables') }}",
             data: function (d) {
                 d.kabupaten_kota = $('#kabupaten_kota').val(),
                 d.search = $('input[type="search"]').val()
@@ -188,33 +180,22 @@
             
         },
         columns: [
-
             {data: 'id', name: 'id'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
             {data: 'kabupaten_kota', name: 'kabupaten_kota'},
-            {data: 'no_induk_tksk_a', name: 'no_induk_tksk_a'},
-            {data: 'no_induk_tksk_b', name: 'no_induk_tksk_b'},
-            
+            {data: 'nama_fcu', name: 'nama_fcu'},
+            {data: 'desa_kelurahan', name: 'desa_kelurahan'},
             {data: 'kecamatan', name: 'kecamatan'},
-            {data: 'nama', name: 'nama'},
-            {data: 'nama_ibu_kandung', name: 'nama_ibu_kandung'},
-            {data: 'nomor_nik', name: 'nomor_nik'},
-            {data: 'tanggal_lahir', name: 'tanggal_lahir'},
-            {data: 'tempat_lahir', name: 'tempat_lahir'},
-            {data: 'jenis_kelamin', name: 'jenis_kelamin'},
-            {data: 'alamat_rumah', name: 'alamat_rumah'},
-            {data: 'no_hp', name: 'no_hp'},
-            {data: 'pendidikan_terakhir', name: 'pendidikan_terakhir'},
-            {data: 'tahun_pengangkatan_tksk', name: 'tahun_pengangkatan_tksk'},
-            {data: 'mulai_aktif', name: 'mulai_aktif'},
-            {data: 'legalitas_sertifikat', name: 'legalitas_sertifikat'},
-            {data: 'jenis_diklat_yg_diikuti', name: 'jenis_diklat_yg_diikuti'},
-            {data: 'pendampingan', name: 'pendampingan'},
-            
+            {data: 'no_hp_ketua_fcu', name: 'no_hp_ketua_fcu'},
+            {data: 'email', name: 'email'},
+            {data: 'nama_ketua_fcu', name: 'nama_ketua_fcu'},
+            {data: 'legalitas_fcu', name: 'legalitas_fcu'},
+            {data: 'jumlah_keluarga_pionir', name: 'jumlah_keluarga_pionir'},
+            {data: 'jumlah_keluarga_plasma', name: 'jumlah_keluarga_plasma'},
+
         ]
     });
 
-  
     $('#btn-search').click(function($event){
         event.preventDefault();
         table.draw();
@@ -238,7 +219,7 @@
             data: {
                 _token: $('#csrf-token')[0].content,
                 kabupaten_kota: $('#kabupaten_kota').text(),
-                jenis_psks: 'tksk',
+                jenis_psks: 'fcu',
                 
             },
             beforeSend: function() {
@@ -248,7 +229,7 @@
                 downloadLinkContainer.innerHTML = "";
 
                 tdKabupatenKota.innerHTML = $('#kabupaten_kota').text();
-                tdJenisPsks.innerHTML = 'TKSK',
+                tdJenisPsks.innerHTML = 'FCU',
                 loadingSpinner.style.display = "block";
             },
             success: function(data){

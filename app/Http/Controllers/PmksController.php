@@ -39,6 +39,7 @@ class PmksController extends Controller
     public function index()
     {
         $data_pmks_import = DB::table('dtks_imports')
+        ->where('jenis_dtks','pmks')
         ->orderBy('updated_at', 'desc')
         ->get();
         

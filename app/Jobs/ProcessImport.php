@@ -65,6 +65,7 @@ class ProcessImport implements ShouldQueue
                     $dtksimport->baris_selesai = '-';
                     $dtksimport->status_import = 'FILE TERSIMPAN';
                     $dtksimport->keterangan = $upload['size'];
+                    $dtksimport->jenis_dtks = $this->request['jenis_dtks'] ;
                     $dtksimport->save();
                     $this->dtksimportId = $dtksimport->id;
                     // File::moveDirectory(storage_path('app/'.$upload['filepath']), storage_path('app/'.$finalpath));

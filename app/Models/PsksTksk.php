@@ -13,14 +13,20 @@ class PsksTksk extends Model
 
     protected $fillable = [
         'dtks_import_id',
-        'nama_tksk',
-        'kabupaten_kota',
+        'no_induk_tksk_a',
+        'no_induk_tksk_b',
+        'kecamatan',
+        'nama',
+        'nama_ibu_kandung',
+        'nomor_nik',
+        'tempat_lahir',
+        'tanggal_lahir',
         'jenis_kelamin',
-        'pendidikan_terakhir',
-        'nik_no_ktp',
         'alamat_rumah',
         'no_hp',
-        'email',
+        'pendidikan_terakhir',
+        'kabupaten_kota',
+        'tahun_pengangkatan_tksk',
         'mulai_aktif',
         'legalitas_sertifikat',
         'jenis_diklat_yg_diikuti',
@@ -28,3 +34,5 @@ class PsksTksk extends Model
         'created_at', 'updated_at'
     ];
 }
+
+

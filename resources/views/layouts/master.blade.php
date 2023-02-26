@@ -403,7 +403,7 @@ path:hover, circle:hover {
 
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item" data-toggle="tooltip" title="Lembaga Konsultasi Kesejahteraan Keluarga" data-offset="50%, 3">
-                                        <a href="#" class="nav-link
+                                        <a href="{{ route('psks.lk3.index') }}" class="nav-link
                                         @isset($class_menu_data_lk3)
                                             {{ $class_menu_data_lk3 }}
                                         @endisset
@@ -416,7 +416,7 @@ path:hover, circle:hover {
 
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item" data-toggle="tooltip" title="Lembaga Kesejahteraan Sosial" data-offset="50%, 3">
-                                        <a href="#" class="nav-link
+                                        <a href="{{ route('psks.lks.index') }}" class="nav-link
                                         @isset($class_menu_data_lks)
                                             {{ $class_menu_data_lks }}
                                         @endisset
@@ -430,9 +430,9 @@ path:hover, circle:hover {
 
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item" data-toggle="tooltip" title="Karang Taruna" data-offset="50%, 3">
-                                        <a href="#" class="nav-link
-                                        @isset($class_menu_data_lks)
-                                            {{ $class_menu_data_lks }}
+                                        <a href="{{ route('psks.kt.index') }}" class="nav-link
+                                        @isset($class_menu_data_kt)
+                                            {{ $class_menu_data_kt }}
                                         @endisset
                                         " >
                                             <i class="far fa-envelope nav-icon"></i>
@@ -443,9 +443,9 @@ path:hover, circle:hover {
 
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item" data-toggle="tooltip" title="Wahana Kesejahteraan Sosial Berbasis Masyarakat" data-offset="50%, 3">
-                                        <a href="#" class="nav-link
-                                        @isset($class_menu_data_lks)
-                                            {{ $class_menu_data_lks }}
+                                        <a href="{{ route('psks.wkskbm.index') }}" class="nav-link
+                                        @isset($class_menu_data_wkskbm)
+                                            {{ $class_menu_data_wkskbm }}
                                         @endisset
                                         " >
                                             <i class="far fa-envelope nav-icon"></i>
@@ -456,9 +456,9 @@ path:hover, circle:hover {
 
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item" data-toggle="tooltip" title="Forum CSR Kesejahteraan Sosial" data-offset="50%, 3">
-                                        <a href="#" class="nav-link
-                                        @isset($class_menu_data_lks)
-                                            {{ $class_menu_data_lks }}
+                                        <a href="{{ route('psks.fcsr.index') }}" class="nav-link
+                                        @isset($class_menu_data_fcsr)
+                                            {{ $class_menu_data_fcsr }}
                                         @endisset
                                         " >
                                             <i class="far fa-envelope nav-icon"></i>
@@ -469,9 +469,9 @@ path:hover, circle:hover {
 
                                 <ul class="nav nav-treeview">
                                     <li class="nav-item" data-toggle="tooltip" title="Family Care Unit" data-offset="50%, 3">
-                                        <a href="#" class="nav-link
-                                        @isset($class_menu_data_lks)
-                                            {{ $class_menu_data_lks }}
+                                        <a href="{{ route('psks.fcu.index') }}" class="nav-link
+                                        @isset($class_menu_data_fcu)
+                                            {{ $class_menu_data_fcu }}
                                         @endisset
                                         " >
                                             <i class="far fa-envelope nav-icon"></i>

@@ -17,6 +17,8 @@ use App\Models\DtksErrorsImport;
 use Illuminate\Support\Facades\DB;
 // use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use PhpParser\Node\Stmt\Break_;
+
 // use Hashids\Hashids;
 
 
@@ -61,6 +63,7 @@ class ProcessImportPsks implements ShouldQueue
                     $dtksimport->baris_selesai = '-';
                     $dtksimport->status_import = 'FILE TERSIMPAN';
                     $dtksimport->keterangan = $upload['size'];
+                    $dtksimport->jenis_dtks = $this->request['jenis_dtks'];
                     $dtksimport->save();
                     $this->dtksimportId = $dtksimport->id;
                     File::moveDirectory(storage_path('app/'.$upload['filepath']), storage_path('app/'.$finalpath));
@@ -173,18 +176,26 @@ class ProcessImportPsks implements ShouldQueue
                     ];
                 
                 $headerTksk = [
-                        'nama_tksk',
-                        'jenis_kelamin',
-                        'pendidikan_terakhir',
-                        'nik_no_ktp',
-                        'alamat_rumah',
-                        'no_hp',
-                        'email',
-                        'mulai_aktif',
-                        'legalitas_sertifikat',
-                        'jenis_diklat_yg_diikuti',
-                        'pendampingan'
+                    'no_induk_tksk_a',
+                    'no_induk_tksk_b',
+                    'kecamatan',
+                    'nama',
+                    'nama_ibu_kandung',
+                    'nomor_nik',
+                    'tempat_lahir',
+                    'tanggal_lahir',
+                    'jenis_kelamin',
+                    'alamat_rumah',
+                    'no_hp',
+                    'pendidikan_terakhir',
+                    'tahun_pengangkatan_tksk',
+                    'mulai_aktif',
+                    'legalitas_sertifikat',
+                    'jenis_diklat_yg_diikuti',
+                    'pendampingan',
                     ];
+
+                    
                 
                 $headerWkskbm = [
                         'nama_wksb',
@@ -272,360 +283,44 @@ class ProcessImportPsks implements ShouldQueue
                             $path = str_replace('\\', '/', $path);
                             
                             switch ($jenis_psks) {
-                                case 'psm':
-                                    $pdo->exec("
-                                    DROP TEMPORARY TABLE IF EXISTS temporary_table;
-                                    
-                                    CREATE TEMPORARY TABLE temporary_table SELECT * FROM psks_psms WHERE 1=0;
-
-                                    LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE temporary_table FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (
-                                        nama_psm,
-                                        jenis_kelamin,
-                                        pendidikan_terakhir,
-                                        nik_no_ktp,
-                                        alamat_rumah,
-                                        no_hp,
-                                        email,
-                                        mulai_aktif,
-                                        legalitas_sertifikat,
-                                        jenis_diklat_yg_diikuti,
-                                        pendampingan, 
-                                        @created_at, @updated_at,@dtks_import_id,@kabupaten_kota) 
-                                        SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();
-                                    
-                                    SHOW COLUMNS FROM psks_psms;
-
-                                    INSERT INTO psks_psms
-                                        SELECT * FROM temporary_table
-                                        ON DUPLICATE KEY UPDATE 
-                                        dtks_import_id = '".$this->dtksimportId."',
-                                        nama_psm = VALUES(nama_psm), 
-                                        jenis_kelamin = VALUES(jenis_kelamin),
-                                        pendidikan_terakhir = VALUES(pendidikan_terakhir), 
-                                        nik_no_ktp = VALUES(nik_no_ktp),
-                                        alamat_rumah = VALUES(alamat_rumah), 
-                                        no_hp = VALUES(no_hp),
-                                        email = VALUES(email), 
-                                        mulai_aktif = VALUES(mulai_aktif),
-                                        legalitas_sertifikat = VALUES(legalitas_sertifikat), 
-                                        jenis_diklat_yg_diikuti = VALUES(jenis_diklat_yg_diikuti),
-                                        pendampingan = VALUES(pendampingan), 
-                                        kabupaten_kota = VALUES(kabupaten_kota);
-                                    
-                                    DROP TEMPORARY TABLE temporary_table;
-                                    
-                                    ");
-                                    break;
+                                case 'lk3':
+                                    $pdo->exec("LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE psks_lk3s FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (nama_lk3,alamat_kantor,email,nama_ketua_lk3,no_hp_ketua_lk3,jenis_lk3,legalitas_lk3,jumlah_tenaga_professional,jumlah_klien,jumlah_masalah_kasus, @created_at, @updated_at,@dtks_import_id,@kabupaten_kota) SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();");
+                                break;
                                 case 'tksk':
-
-                                    $pdo->exec("
-                                        DROP TEMPORARY TABLE IF EXISTS temporary_table;
-                                        
-                                        CREATE TEMPORARY TABLE temporary_table SELECT * FROM psks_tksks WHERE 1=0;
-
-                                        LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE temporary_table FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (
-                                            nama_tksk,
-                                            jenis_kelamin,
-                                            pendidikan_terakhir,
-                                            nik_no_ktp,
-                                            alamat_rumah,
-                                            no_hp,
-                                            email,
-                                            mulai_aktif,
-                                            legalitas_sertifikat,
-                                            jenis_diklat_yg_diikuti,
-                                            pendampingan, 
-                                            @created_at, @updated_at,@dtks_import_id,@kabupaten_kota) 
-                                            SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();
-                                        
-                                        SHOW COLUMNS FROM psks_tksks;
-
-                                        INSERT INTO psks_tksks
-                                            SELECT * FROM temporary_table
-                                            ON DUPLICATE KEY UPDATE 
-                                            dtks_import_id = '".$this->dtksimportId."',
-                                            nama_tksk = VALUES(nama_tksk), 
-                                            jenis_kelamin = VALUES(jenis_kelamin),
-                                            pendidikan_terakhir = VALUES(pendidikan_terakhir), 
-                                            nik_no_ktp = VALUES(nik_no_ktp),
-                                            alamat_rumah = VALUES(alamat_rumah), 
-                                            no_hp = VALUES(no_hp),
-                                            email = VALUES(email), 
-                                            mulai_aktif = VALUES(mulai_aktif),
-                                            legalitas_sertifikat = VALUES(legalitas_sertifikat), 
-                                            jenis_diklat_yg_diikuti = VALUES(jenis_diklat_yg_diikuti),
-                                            pendampingan = VALUES(pendampingan), 
-                                            kabupaten_kota = VALUES(kabupaten_kota);
-                                        
-                                        DROP TEMPORARY TABLE temporary_table;
-                                        
-                                        ");
-                                        break;
-                                    case 'lk3':
-
-                                        $pdo->exec("
-                                        DROP TEMPORARY TABLE IF EXISTS temporary_table;
-                                        
-                                        CREATE TEMPORARY TABLE temporary_table SELECT * FROM psks_lk3s WHERE 1=0;
-
-                                        LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE temporary_table FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (
-                                            nama_lk3,
-                                            alamat_kantor,
-                                            email,                                            
-                                            nama_ketua_lk3,
-                                            no_hp_ketua_lk3,
-                                            jenis_lk3,
-                                            legalitas_lk3,
-                                            jumlah_tenaga_professional,
-                                            jumlah_klien,
-                                            jumlah_masalah_kasus, 
-                                            @created_at, @updated_at,@dtks_import_id,@kabupaten_kota) 
-                                            SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();
-                                            
-                                        
-                                        SHOW COLUMNS FROM psks_lk3s;
-
-                                        INSERT INTO psks_lk3s
-                                            SELECT * FROM temporary_table
-                                            ON DUPLICATE KEY UPDATE 
-                                            dtks_import_id = '".$this->dtksimportId."',
-                                            nama_lk3 = VALUES(nama_lk3),
-                                            alamat_kantor = VALUES(alamat_kantor),
-                                            email = VALUES(email),                                            
-                                            nama_ketua_lk3 = VALUES(nama_ketua_lk3),
-                                            no_hp_ketua_lk3 = VALUES(no_hp_ketua_lk3),
-                                            jenis_lk3 = VALUES(jenis_lk3),
-                                            legalitas_lk3 = VALUES(legalitas_lk3),
-                                            jumlah_tenaga_professional = VALUES(jumlah_tenaga_professional),
-                                            jumlah_klien = VALUES(jumlah_klien),
-                                            jumlah_masalah_kasus = VALUES(jumlah_masalah_kasus), 
-                                            kabupaten_kota = VALUES(kabupaten_kota);
-                                        
-                                        DROP TEMPORARY TABLE temporary_table;
-                                        
-                                            ");
-                                    break;
-                                    case 'lks':
-
-                                        $pdo->exec("
-                                        DROP TEMPORARY TABLE IF EXISTS temporary_table;
-                                        
-                                        CREATE TEMPORARY TABLE temporary_table SELECT * FROM psks_lks WHERE 1=0;
-
-                                        LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE temporary_table FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (
-                                            nama_lks,
-                                            desa_kelurahan,
-                                            kecamatan,
-                                            no_hp,
-                                            email,
-                                            nama_ketua_lks,
-                                            legalitas_lks,
-                                            posisi_lks,
-                                            ruang_lingkup,
-                                            jenis_kegiatan,
-                                            @created_at, @updated_at,@dtks_import_id,@kabupaten_kota) 
-                                            SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();
-                                            
-                                        
-                                        SHOW COLUMNS FROM psks_lks;
-
-                                        INSERT INTO psks_lks
-                                            SELECT * FROM temporary_table
-                                            ON DUPLICATE KEY UPDATE 
-                                            dtks_import_id = '".$this->dtksimportId."',
-                                            nama_lks = VALUES(nama_lks),
-                                            desa_kelurahan = VALUES(desa_kelurahan),
-                                            kecamatan = VALUES(kecamatan),
-                                            no_hp = VALUES(no_hp),
-                                            email = VALUES(email),
-                                            nama_ketua_lks = VALUES(nama_ketua_lks),
-                                            legalitas_lks = VALUES(legalitas_lks),
-                                            posisi_lks = VALUES(posisi_lks),
-                                            ruang_lingkup = VALUES(ruang_lingkup),
-                                            jenis_kegiatan = VALUES(jenis_kegiatan), 
-                                            kabupaten_kota = VALUES(kabupaten_kota);
-                                        
-                                        DROP TEMPORARY TABLE temporary_table;
-                                        
-                                            ");
-                                    break;
-                                    case 'kt':
-
-                                        $pdo->exec("
-                                        DROP TEMPORARY TABLE IF EXISTS temporary_table;
-                                        
-                                        CREATE TEMPORARY TABLE temporary_table SELECT * FROM psks_kts WHERE 1=0;
-
-                                        LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE temporary_table FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (
-                                            nama_kt,
-                                            desa_kelurahan,
-                                            kecamatan,
-                                            no_hp,
-                                            email,
-                                            nama_ketua_kt,
-                                            legalitas_kt,
-                                            klasifikasi_kt,
-                                            jumlah_pengurus,
-                                            jenis_kegiatan,
-                                            @created_at, @updated_at,@dtks_import_id,@kabupaten_kota) 
-                                            SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();
-                                            
-                                        
-                                        SHOW COLUMNS FROM psks_kts;
-
-                                        INSERT INTO psks_kts
-                                            SELECT * FROM temporary_table
-                                            ON DUPLICATE KEY UPDATE 
-                                            dtks_import_id = '".$this->dtksimportId."',
-                                            nama_kt = VALUES(nama_kt),
-                                            desa_kelurahan = VALUES(desa_kelurahan),
-                                            kecamatan = VALUES(kecamatan),
-                                            no_hp = VALUES(no_hp),
-                                            email = VALUES(email),
-                                            nama_ketua_kt = VALUES(nama_ketua_kt),
-                                            legalitas_kt = VALUES(legalitas_kt),
-                                            klasifikasi_kt = VALUES(klasifikasi_kt),
-                                            jumlah_pengurus = VALUES(jumlah_pengurus),
-                                            jenis_kegiatan = VALUES(jenis_kegiatan),
-                                            kabupaten_kota = VALUES(kabupaten_kota);
-                                        
-                                        DROP TEMPORARY TABLE temporary_table;
-                                        
-                                            ");
-                                    break;
-                                    case 'wkskbm':
-
-                                        $pdo->exec("
-                                        DROP TEMPORARY TABLE IF EXISTS temporary_table;
-                                        
-                                        CREATE TEMPORARY TABLE temporary_table SELECT * FROM psks_wksbs WHERE 1=0;
-
-                                        LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE temporary_table FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (
-                                            nama_wksb,
-                                            desa_kelurahan,
-                                            kecamatan,
-                                            no_hp,
-                                            email, 
-                                            nama_ketua_wksbm,
-                                            legalitas_wksbm,
-                                            jumlah_pengurus,
-                                            jumlah_anggota,
-                                            jenis_kegiatan,
-                                            @created_at, @updated_at,@dtks_import_id,@kabupaten_kota) 
-                                            SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();
-                                            
-                                        
-                                        SHOW COLUMNS FROM psks_wksbs;
-
-                                        INSERT INTO psks_wksbs
-                                            SELECT * FROM temporary_table
-                                            ON DUPLICATE KEY UPDATE 
-                                            dtks_import_id = '".$this->dtksimportId."',
-                                            nama_wksb = VALUES(nama_wksb),
-                                            desa_kelurahan = VALUES(desa_kelurahan),
-                                            kecamatan = VALUES(kecamatan),
-                                            no_hp = VALUES(no_hp),
-                                            email = VALUES(email),
-                                            nama_ketua_wksbm = VALUES(nama_ketua_wksbm),
-                                            legalitas_wksbm = VALUES(legalitas_wksbm),
-                                            jumlah_pengurus = VALUES(jumlah_pengurus),
-                                            jumlah_anggota = VALUES(jumlah_anggota),
-                                            jenis_kegiatan = VALUES(jenis_kegiatan),
-                                            kabupaten_kota = VALUES(kabupaten_kota);
-                                            
-                                        DROP TEMPORARY TABLE temporary_table;
-                                        
-                                            ");
-                                    break;
-                                    case 'fcsr':
-
-                                        $pdo->exec("
-                                        DROP TEMPORARY TABLE IF EXISTS temporary_table;
-                                        
-                                        CREATE TEMPORARY TABLE temporary_table SELECT * FROM psks_fcsrs WHERE 1=0;
-
-                                        LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE temporary_table FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (
-                                            nama_fcsr,
-                                            desa_kelurahan,
-                                            kecamatan,
-                                            no_hp,
-                                            email,
-                                            nama_ketua_pengurus_fcsr,
-                                            legalitas_fcsr,
-                                            jumlah_pengurus,
-                                            jumlah_anggota,
-                                            jumlah_csr_kesos_perusahaan,
-                                            @created_at, @updated_at,@dtks_import_id,@kabupaten_kota) 
-                                            SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();
-                                            
-                                        
-                                        SHOW COLUMNS FROM psks_fcsrs;
-
-                                        INSERT INTO psks_fcsrs
-                                            SELECT * FROM temporary_table
-                                            ON DUPLICATE KEY UPDATE 
-                                            dtks_import_id = '".$this->dtksimportId."',
-                                            nama_fcsr = VALUES(nama_fcsr),
-                                            desa_kelurahan = VALUES(desa_kelurahan),
-                                            kecamatan = VALUES(kecamatan),
-                                            no_hp = VALUES(no_hp),
-                                            email = VALUES(email),
-                                            nama_ketua_pengurus_fcsr = VALUES(nama_ketua_pengurus_fcsr),
-                                            legalitas_fcsr = VALUES(legalitas_fcsr),
-                                            jumlah_pengurus = VALUES(jumlah_pengurus),
-                                            jumlah_anggota = VALUES(jumlah_anggota),
-                                            jumlah_csr_kesos_perusahaan = VALUES(jumlah_csr_kesos_perusahaan),
-                                            kabupaten_kota = VALUES(kabupaten_kota);
-                                            
-                                        DROP TEMPORARY TABLE temporary_table;
-                                        
-                                            ");
-                                    break;
-                                    case 'fcu':
-
-                                        $pdo->exec("
-                                        DROP TEMPORARY TABLE IF EXISTS temporary_table;
-                                        
-                                        CREATE TEMPORARY TABLE temporary_table SELECT * FROM psks_fcus WHERE 1=0;
-
-                                        LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE temporary_table FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (
-                                            nama_fcu,
-                                            desa_kelurahan,
-                                            kecamatan,
-                                            email,
-                                            nama_ketua_fcu,
-                                            no_hp_ketua_fcu,
-                                            legalitas_fcu,
-                                            jumlah_keluarga_pionir,
-                                            jumlah_keluarga_plasma,
-                                            @created_at, @updated_at,@dtks_import_id,@kabupaten_kota) 
-                                            SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();
-                                            
-                                        
-                                        SHOW COLUMNS FROM psks_fcus;
-
-                                        INSERT INTO psks_fcus
-                                            SELECT * FROM temporary_table
-                                            ON DUPLICATE KEY UPDATE 
-                                            dtks_import_id = '".$this->dtksimportId."',
-                                            nama_fcu = VALUES(nama_fcu),
-                                            desa_kelurahan = VALUES(desa_kelurahan),
-                                            kecamatan = VALUES(kecamatan),
-                                            email = VALUES(email),
-                                            nama_ketua_fcu = VALUES(nama_ketua_fcu),
-                                            no_hp_ketua_fcu = VALUES(no_hp_ketua_fcu),
-                                            legalitas_fcu = VALUES(legalitas_fcu),
-                                            jumlah_keluarga_pionir = VALUES(jumlah_keluarga_pionir),
-                                            jumlah_keluarga_plasma = VALUES(jumlah_keluarga_plasma),
-                                            kabupaten_kota = VALUES(kabupaten_kota);
-                                            
-                                        DROP TEMPORARY TABLE temporary_table;
-                                        
-                                            ");
-                                    break;
+                                    $pdo->exec("LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE psks_tksks FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (no_induk_tksk_a,no_induk_tksk_b,kecamatan,nama,nama_ibu_kandung,nomor_nik,tempat_lahir,tanggal_lahir,jenis_kelamin,alamat_rumah,no_hp,pendidikan_terakhir,tahun_pengangkatan_tksk,mulai_aktif,legalitas_sertifikat,jenis_diklat_yg_diikuti,pendampingan,@created_at, @updated_at,@dtks_import_id,@kabupaten_kota) SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();");
+                                break;
+                                case 'lks':
+                                    $pdo->exec("LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE psks_lks FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (nama_lks,desa_kelurahan,kecamatan,no_hp,email,nama_ketua_lks,legalitas_lks,posisi_lks,ruang_lingkup,jenis_kegiatan,@created_at, @updated_at,@dtks_import_id,@kabupaten_kota) SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();");
+                                break;
+                                case 'kt':
+                                    $pdo->exec("LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE psks_kts FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (nama_kt,desa_kelurahan,kecamatan,no_hp,email,nama_ketua_kt,legalitas_kt,klasifikasi_kt,jumlah_pengurus,jenis_kegiatan,@created_at, @updated_at,@dtks_import_id,@kabupaten_kota) SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();");
+                                break;
+                                case 'wkskbm':
+                                    $pdo->exec("LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE psks_wksbs FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (nama_wksb,desa_kelurahan,kecamatan,no_hp,email, nama_ketua_wksbm,legalitas_wksbm,jumlah_pengurus,jumlah_anggota,jenis_kegiatan,@created_at, @updated_at,@dtks_import_id,@kabupaten_kota) SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();");
+                                break;
+                                case 'fcsr':
+                                    $pdo->exec("LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE psks_fcsrs FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (nama_fcsr,desa_kelurahan,kecamatan,no_hp,email,nama_ketua_pengurus_fcsr,legalitas_fcsr,jumlah_pengurus,jumlah_anggota,jumlah_csr_kesos_perusahaan,@created_at, @updated_at,@dtks_import_id,@kabupaten_kota) SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();");
+                                break;
+                                case 'fcu':
+                                    $pdo->exec("LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE psks_fcus FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (nama_fcu,desa_kelurahan,kecamatan,email,nama_ketua_fcu,no_hp_ketua_fcu,legalitas_fcu,jumlah_keluarga_pionir,jumlah_keluarga_plasma,@created_at, @updated_at,@dtks_import_id,@kabupaten_kota) SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();");
+                                break;
+                                case 'psm':
+                                    $pdo->exec("LOAD DATA LOCAL INFILE '" . $path . "' INTO TABLE psks_psms FIELDS TERMINATED BY ';' enclosed by '\"' lines terminated by '\\n' IGNORE 1 LINES (nama_psm,jenis_kelamin,pendidikan_terakhir,nik_no_ktp,alamat_rumah,no_hp,email,mulai_aktif,legalitas_sertifikat,jenis_diklat_yg_diikuti,pendampingan, @created_at, @updated_at,@dtks_import_id,@kabupaten_kota) SET kabupaten_kota = '".$kabupaten_kota."', dtks_import_id = '".$this->dtksimportId."', created_at = NOW(), updated_at = NOW();");
+                                break;
+                                default :
+                                    DtksErrorsImport::create([
+                                        'dtks_import_id' => $this->dtksimportId,
+                                        'row' => 0,
+                                        'attribute' => 'line: -',
+                                        'values' => 'code: -',
+                                        'errors' => 'Jenis PSKS tdk ditemukan.'
+                                    ]);
+                                    DtksImport::find($this->dtksimportId)
+                                            ->update(['status_import' => 'GAGAL IMPORT']);
+                                    return false;
+                                break;
                             }
 
-                            
                             
                            
                         } catch(\Illuminate\Database\QueryException $ex){ 
