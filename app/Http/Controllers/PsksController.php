@@ -65,9 +65,48 @@ class PsksController extends Controller
 
     }
 
+  
     public function getDownloadExcelList(Request $request){
+        if($request->get('jenis_psks') == "psm")
+        $tablePsks = '';
+        switch ($request->get('jenis_psks')) {
+            case 'psm':
+                $tablePsks = 'psks_psms';
+                break;
 
-        $psmDataInstance = DB::table('psks_psms')->orderBy('id');
+            case 'tksk':
+                $tablePsks = 'psks_tksks';
+                break;
+            
+            case 'lk3':
+                $tablePsks =  'psks_lk3s';
+                break;
+
+            case 'lks':
+                $tablePsks = 'psks_lks';
+                break;
+
+            case 'kt':
+                $tablePsks = 'psks_kts';
+                break;
+
+            case 'wksbm':
+                $tablePsks = 'psks_wksbms';
+                break;
+
+            case 'fcsr':
+                $tablePsks = 'psks_fcsrs';
+                break;
+
+            case 'fcu':
+                $tablePsks = 'psks_fcus';
+                break;
+            default:
+                $tablePsks = 'psks_psms';
+                break;
+        }
+
+        $psmDataInstance = DB::table($tablePsks)->orderBy('id');
         $psmDataInstance->when(!empty($request->get('kabupaten_kota')), function ($q) use($request){
             return $q->where('kabupaten_kota', $request->get('kabupaten_kota'));
         });
@@ -81,6 +120,43 @@ class PsksController extends Controller
         $jenis = $request->input('psks');
         // $kabupatenKota = $request->input('kabupaten_kota');
         // $kabupatenKota = DB::table('indonesia_cities')->select('name')->where('id',$request->get('kabupaten_kota'))->first();
+
+        switch ($jenis) {
+            case 'psm':
+                $psmDataInstance = DB::table('psks_psms')->orderBy('id');
+                break;
+
+            case 'tksk':
+                $psmDataInstance = DB::table('psks_tksks')->orderBy('id');
+                break;
+            
+            case 'lk3':
+                $psmDataInstance = DB::table('psks_lk3s')->orderBy('id');
+                break;
+
+            case 'lks':
+                $psmDataInstance = DB::table('psks_lks')->orderBy('id');
+                break;
+
+            case 'kt':
+                $psmDataInstance = DB::table('psks_kts')->orderBy('id');
+                break;
+
+            case 'wksbm':
+                $psmDataInstance = DB::table('psks_wksbms')->orderBy('id');
+                break;
+
+            case 'fcsr':
+                $psmDataInstance = DB::table('psks_fcsrs')->orderBy('id');
+                break;
+
+            case 'fcu':
+                $psmDataInstance = DB::table('psks_fcus')->orderBy('id');
+                break;
+            default:
+                $psmDataInstance = DB::table('psks_psms')->orderBy('id');
+                break;
+        }
 
         $psmDataInstance = DB::table('psks_psms')->orderBy('id');
         $psmDataInstance->when(!empty($request->input('kabupaten_kota')), function ($q) use($request){
