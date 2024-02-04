@@ -274,7 +274,6 @@
                 }
             },
             success: function(data){
-                console.log(data);
                 download(data);
                 loadingSpinner.style.display = "none";
                 let elems = document.getElementsByClassName("btn-download-excel");
