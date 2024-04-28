@@ -259,7 +259,7 @@ form .create-account:hover {
         <div class="content">
             <div class="flex-div">
               <div class="name-content" style="text-align: justify;text-justify:inter-word">
-                <h1 class="logo">SIMPOTEN</h1>
+                <h1 class="logo">SINTEN</h1>
                 <p><strong> Sistem Informasi Potensi Sumber Kesejahteraan Sosial</strong> adalah perseorangan, keluarga, kelompok, dan/atau masyarakat yang dapat berperan serta untuk menjaga, menciptakan, mendukung, mmprkuat, penyelenggaran kesejahteraan sosial.</p>
               </div>
               <form method="POST" action="{{ route('post.login.psks') }}">

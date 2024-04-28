@@ -70,7 +70,7 @@ https://templatemo.com/tm-550-diagoona
                                     <a class="nav-link tm-nav-link" href="{{ route('login.pmks') }}">SIMAKS <i class="far fa-arrow-alt-circle-right "></i></a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link tm-nav-link" href="{{ route('login.psks') }}">SIMPOTEN <i class="far fa-arrow-alt-circle-right"></i> </a>
+                                    <a class="nav-link tm-nav-link" href="{{ route('login.psks') }}">SINTEN <i class="far fa-arrow-alt-circle-right"></i> </a>
                                 </li>                            
                               
                             </ul>                            
@@ -87,7 +87,7 @@ https://templatemo.com/tm-550-diagoona
                         <h2 class="mb-5 tm-content-title">DATA TERPADU KESEJAHTERAAN SOSIAL</h2>
                         <p class="mb-5"><strong> SIMAKS  (Sistem Infomasi Pemerlu Pelayanan Kesejahteraan Sosial) </strong> adalah seseorang, keluarga atau kelompok masyarakat yang karena suatu hambatan, kesulitan atau gangguan, tidak dapat melaksanakan fungsi sosialnya, sehingga tidak dapat terpenuhi kebutuhan hidupnya(jasmani, rohani, dan sosial) secara memadai dan wajar.</p>
                         <hr class="mb-5">
-                        <p class="mb-5"><strong> SIMPOTEN (Sisitem Informasi Potensi Sumber Kesejahteraan Sosial) </strong> adalah perseorangan, keluarga, kelompok, dan/atau masyarakat yang dapat berperan serta untuk menjaga, menciptakan, mendukung, dan memperkuat penyelenggaraan kesejahteraan sosial.</p>                        
+                        <p class="mb-5"><strong> SINTEN (Sisitem Informasi Potensi Sumber Kesejahteraan Sosial) </strong> adalah perseorangan, keluarga, kelompok, dan/atau masyarakat yang dapat berperan serta untuk menjaga, menciptakan, mendukung, dan memperkuat penyelenggaraan kesejahteraan sosial.</p>                        
                       
                     </section>
                 </main>
